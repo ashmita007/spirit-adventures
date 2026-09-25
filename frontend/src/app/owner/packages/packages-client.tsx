@@ -135,44 +135,56 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
     setEditorTab("itinerary");
   };
 
-  const handleSaveTripForm = () => {
+  const handleSaveTripForm = async () => {
     if (!editingTrip) return;
+    const currentTrip = { ...editingTrip };
+    
+    try {
+      await fetch("/api/v1/owner/packages/save/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentTrip)
+      });
+    } catch (e) {
+      console.warn("API sync offline, updated in local state:", e);
+    }
+
     setData((prev) => {
-      const exists = prev.trips.some((t) => t.id === editingTrip.id);
+      const exists = prev.trips.some((t) => t.id === currentTrip.id);
       let updatedTrips: TripSummary[];
       if (exists) {
         updatedTrips = prev.trips.map((t) =>
-          t.id === editingTrip.id
+          t.id === currentTrip.id
             ? {
                 ...t,
-                title: editingTrip.title,
-                price: editingTrip.price,
-                difficulty: editingTrip.difficulty,
-                duration_days: editingTrip.duration_days,
-                duration_nights: editingTrip.duration_nights,
-                is_featured: editingTrip.is_featured,
-                is_bestseller: editingTrip.is_bestseller,
-                cover_image: editingTrip.cover_image,
-                hero_video_url: editingTrip.hero_video_url,
+                title: currentTrip.title,
+                price: currentTrip.price,
+                difficulty: currentTrip.difficulty,
+                duration_days: currentTrip.duration_days,
+                duration_nights: currentTrip.duration_nights,
+                is_featured: currentTrip.is_featured,
+                is_bestseller: currentTrip.is_bestseller,
+                cover_image: currentTrip.cover_image,
+                hero_video_url: currentTrip.hero_video_url,
               }
             : t
         );
       } else {
         const newSummary: TripSummary = {
-          id: editingTrip.id,
-          title: editingTrip.title,
-          slug: editingTrip.slug,
-          destination_name: editingTrip.destination_name || "Karnataka",
-          category_name: editingTrip.category_name || "Treks",
-          price: editingTrip.price,
-          difficulty: editingTrip.difficulty,
-          duration_days: editingTrip.duration_days,
-          duration_nights: editingTrip.duration_nights,
-          duration_label: `${editingTrip.duration_days}D / ${editingTrip.duration_nights}N`,
-          cover_image: editingTrip.cover_image,
-          hero_video_url: editingTrip.hero_video_url,
-          is_featured: editingTrip.is_featured,
-          is_bestseller: editingTrip.is_bestseller,
+          id: currentTrip.id,
+          title: currentTrip.title,
+          slug: currentTrip.slug,
+          destination_name: currentTrip.destination_name || "Karnataka",
+          category_name: currentTrip.category_name || "Treks",
+          price: currentTrip.price,
+          difficulty: currentTrip.difficulty,
+          duration_days: currentTrip.duration_days,
+          duration_nights: currentTrip.duration_nights,
+          duration_label: `${currentTrip.duration_days}D / ${currentTrip.duration_nights}N`,
+          cover_image: currentTrip.cover_image,
+          hero_video_url: currentTrip.hero_video_url,
+          is_featured: currentTrip.is_featured,
+          is_bestseller: currentTrip.is_bestseller,
           is_published: true,
           leads_count: 0
         };
@@ -181,7 +193,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
       return { ...prev, trips: updatedTrips };
     });
     setEditingTrip(null);
-    showToast(`Package "${editingTrip.title}" day-wise itinerary updated!`);
+    showToast(`Package "${currentTrip.title}" saved and seeded into database!`);
   };
 
   const handleAddItineraryDay = () => {

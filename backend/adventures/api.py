@@ -631,6 +631,150 @@ def update_owner_trip_config(request, trip_id: int, payload: UpdateTripConfigIn)
         "message": f"Trip {trip.title} updated successfully"
     }
 
+class SavePackageIn(Schema):
+    id: Optional[int] = None
+    title: str
+    slug: Optional[str] = ""
+    destination_name: Optional[str] = "Karnataka"
+    category_name: Optional[str] = "Treks"
+    price: float
+    original_price: Optional[float] = None
+    duration_days: Optional[int] = 2
+    duration_nights: Optional[int] = 1
+    difficulty: Optional[str] = "MODERATE"
+    cover_image: Optional[str] = ""
+    hero_video_url: Optional[str] = ""
+    short_description: Optional[str] = ""
+    full_description: Optional[str] = ""
+    pickup_location: Optional[str] = ""
+    drop_location: Optional[str] = ""
+    altitude: Optional[str] = ""
+    trek_distance: Optional[str] = ""
+    best_season: Optional[str] = "All Year"
+    is_featured: Optional[bool] = False
+    is_bestseller: Optional[bool] = False
+    inclusions: Optional[List[str]] = []
+    exclusions: Optional[List[str]] = []
+    things_to_carry: Optional[List[str]] = []
+    itinerary_days: Optional[List[dict]] = []
+
+@api.post("/owner/packages/save/", response=ApiResponse, tags=["Owner"])
+def save_owner_package(request, payload: SavePackageIn):
+    from django.utils.text import slugify
+    
+    slug = payload.slug or slugify(payload.title)
+    if not slug:
+        slug = f"trip-{int(timezone.now().timestamp())}"
+    
+    dest, _ = Destination.objects.get_or_create(
+        name=payload.destination_name or "Karnataka",
+        defaults={"slug": slugify(payload.destination_name or "Karnataka")}
+    )
+    
+    cat, _ = Category.objects.get_or_create(
+        name=payload.category_name or "Treks",
+        defaults={"slug": slugify(payload.category_name or "Treks")}
+    )
+    
+    trip = None
+    if payload.id:
+        trip = Trip.objects.filter(id=payload.id).first()
+    if not trip:
+        trip = Trip.objects.filter(slug=slug).first()
+    
+    if trip:
+        trip.title = payload.title
+        trip.destination = dest
+        trip.category = cat
+        trip.price = payload.price
+        if payload.original_price:
+            trip.original_price = payload.original_price
+        trip.duration_days = payload.duration_days or 2
+        trip.duration_nights = payload.duration_nights or 1
+        trip.difficulty = payload.difficulty or "MODERATE"
+        if payload.cover_image:
+            trip.cover_image = payload.cover_image
+        if payload.hero_video_url is not None:
+            trip.hero_video_url = payload.hero_video_url
+        if payload.short_description:
+            trip.short_description = payload.short_description
+        if payload.full_description:
+            trip.full_description = payload.full_description
+        if payload.pickup_location:
+            trip.pickup_location = payload.pickup_location
+        if payload.drop_location:
+            trip.drop_location = payload.drop_location
+        if payload.altitude:
+            trip.altitude = payload.altitude
+        if payload.trek_distance:
+            trip.trek_distance = payload.trek_distance
+        if payload.best_season:
+            trip.best_season = payload.best_season
+        trip.is_featured = payload.is_featured or False
+        trip.is_bestseller = payload.is_bestseller or False
+        if payload.inclusions:
+            trip.inclusions = payload.inclusions
+        if payload.exclusions:
+            trip.exclusions = payload.exclusions
+        if payload.things_to_carry:
+            trip.things_to_carry = payload.things_to_carry
+        trip.save()
+    else:
+        trip = Trip.objects.create(
+            title=payload.title,
+            slug=slug,
+            destination=dest,
+            category=cat,
+            price=payload.price,
+            original_price=payload.original_price,
+            duration_days=payload.duration_days or 2,
+            duration_nights=payload.duration_nights or 1,
+            difficulty=payload.difficulty or "MODERATE",
+            cover_image=payload.cover_image or "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
+            hero_video_url=payload.hero_video_url or "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
+            short_description=payload.short_description or f"Experience the wild beauty of {payload.title}.",
+            full_description=payload.full_description or f"Join Spirit Adventures on this curated expedition to {payload.title}.",
+            pickup_location=payload.pickup_location or "Designated Pickup Point",
+            drop_location=payload.drop_location or "Designated Drop Point",
+            altitude=payload.altitude or "Western Ghats / Himalayas",
+            trek_distance=payload.trek_distance or "10 km trail",
+            best_season=payload.best_season or "All Year",
+            is_featured=payload.is_featured or False,
+            is_bestseller=payload.is_bestseller or False,
+            is_published=True,
+            inclusions=payload.inclusions or ["Stay included", "Certified trek lead", "Meals as per itinerary"],
+            exclusions=payload.exclusions or ["Personal expenses"],
+            things_to_carry=payload.things_to_carry or ["Trekking shoes", "Water bottle"]
+        )
+    
+    # Update itinerary days if provided
+    if payload.itinerary_days:
+        trip.itinerary_days.all().delete()
+        for idx, day in enumerate(payload.itinerary_days):
+            TripItinerary.objects.create(
+                trip=trip,
+                day_number=day.get('day_number', idx + 1),
+                title=day.get('title', f"Day {idx + 1}"),
+                description=day.get('description', 'Exciting day of adventure.'),
+                altitude=day.get('altitude', ''),
+                distance=day.get('distance', ''),
+                meals=day.get('meals', 'All Meals'),
+                stay_type=day.get('stay_type', 'Camp / Homestay')
+            )
+
+    return {
+        "success": True,
+        "data": {
+            "id": trip.id,
+            "title": trip.title,
+            "slug": trip.slug,
+            "price": float(trip.price),
+            "cover_image": trip.cover_image,
+            "hero_video_url": trip.hero_video_url
+        },
+        "message": f"Package '{trip.title}' saved and seeded into database successfully"
+    }
+
 # ----------------- Owner: Cron Jobs Engine -----------------
 @api.get("/owner/crons/", response=ApiResponse, tags=["Owner Cron Engine"])
 def get_owner_crons(request):
