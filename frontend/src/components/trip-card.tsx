@@ -13,18 +13,18 @@ interface TripCardProps {
 }
 
 const LOCAL_VIDEO_MAP: Record<string, string> = {
-  "dandeli-river-rafting-jungle-expedition": "/videos/shorts/dandeli_rafting.mp4",
-  "gokarna-beach-cliff-trek": "/videos/shorts/gokarna_beach.mp4",
-  "coorg-tadiandamol-coffee-trail": "/videos/shorts/coorg_mist.mp4",
-  "chikmagalur-mullayanagiri-ridge-trek": "/videos/shorts/chikmagalur_peak.mp4",
-  "ooty-nilgiri-pine-forest-expedition": "/videos/shorts/ooty_train.mp4",
-  "wayanad-chembra-peak-waterfall-trail": "/videos/shorts/wayanad_waterfall.mp4",
-  "leh-ladakh-motorcycle-odyssey": "/videos/hero/ladakh_bike.mp4",
-  "kedarkantha-trek": "/videos/hero/mountain_trek.mp4",
-  "hampta-pass-trek": "/videos/hero/mountain_trek.mp4",
-  "kashmir-great-lakes-trek": "/videos/nature/waterfall.mp4",
-  "spiti-valley-road-trip": "/videos/hero/ladakh_bike.mp4",
-  "sandhan-valley-trek": "/videos/nature/waterfall.mp4",
+  "dandeli-river-rafting-jungle-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
+  "gokarna-beach-cliff-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
+  "coorg-tadiandamol-coffee-trail": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
+  "chikmagalur-mullayanagiri-ridge-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
+  "ooty-nilgiri-pine-forest-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
+  "wayanad-chembra-peak-waterfall-trail": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
+  "leh-ladakh-motorcycle-odyssey": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341157/spirit_adventures/hero/ladakh_bike.mp4",
+  "kedarkantha-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
+  "hampta-pass-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
+  "kashmir-great-lakes-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4",
+  "spiti-valley-road-trip": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341157/spirit_adventures/hero/ladakh_bike.mp4",
+  "sandhan-valley-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4",
 };
 
 export default function TripCard({ trip, priority = false }: TripCardProps) {

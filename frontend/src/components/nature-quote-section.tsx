@@ -6,8 +6,8 @@ import { Compass, Sparkles } from "lucide-react";
 
 export default function NatureQuoteSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const posterUrl = "/videos/nature/waterfall_poster.jpg";
-  const videoUrl = "/videos/nature/waterfall.mp4";
+  const posterUrl = "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
+  const videoUrl = "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4";
 
   React.useEffect(() => {
     if (videoRef.current) {

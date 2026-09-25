@@ -20,21 +20,21 @@ interface HeroScene {
 const HERO_SCENES: HeroScene[] = [
   {
     id: 1,
-    video8kUrl: "/videos/hero/rhythms_of_india.mp4",
-    videoUrl: "/videos/hero/rhythms_of_india.mp4",
-    posterUrl: "/videos/hero/rhythms_of_india_poster.jpg",
+    video8kUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341135/spirit_adventures/hero/rhythms_of_india.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341135/spirit_adventures/hero/rhythms_of_india.mp4",
+    posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341312/spirit_adventures/hero/rhythms_of_india_poster.jpg",
   },
   {
     id: 2,
-    video8kUrl: "/videos/hero/maldives_travel.mp4",
-    videoUrl: "/videos/hero/maldives_travel.mp4",
-    posterUrl: "/videos/hero/maldives_travel_poster.jpg",
+    video8kUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341146/spirit_adventures/hero/maldives_travel.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341146/spirit_adventures/hero/maldives_travel.mp4",
+    posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg",
   },
   {
     id: 3,
-    video8kUrl: "/videos/hero/kerala_cinematic.mp4",
-    videoUrl: "/videos/hero/kerala_cinematic.mp4",
-    posterUrl: "/videos/hero/kerala_cinematic_poster.jpg",
+    video8kUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341154/spirit_adventures/hero/kerala_cinematic.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341154/spirit_adventures/hero/kerala_cinematic.mp4",
+    posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341323/spirit_adventures/hero/kerala_cinematic_poster.jpg",
   },
 ];
 
