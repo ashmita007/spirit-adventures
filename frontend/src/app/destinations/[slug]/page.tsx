@@ -43,25 +43,34 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
     <div className="min-h-screen bg-white">
       {/* Hero Banner */}
       <div className="relative h-[50vh] sm:h-[60vh] w-full bg-brand-navy overflow-hidden">
-        {(destination.hero_image || destination.cover_image).endsWith(".mp4") ? (
-          <video
-            src={destination.hero_image || destination.cover_image}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover object-center scale-105"
-          />
-        ) : (
-          <Image
-            src={destination.hero_image || destination.cover_image}
-            alt={destination.name}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        )}
+        {(() => {
+          const bannerMedia = destination.hero_image || destination.cover_image || "";
+          if (bannerMedia.endsWith(".mp4")) {
+            return (
+              <video
+                src={bannerMedia}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover object-center scale-105"
+              />
+            );
+          }
+          if (bannerMedia) {
+            return (
+              <Image
+                src={bannerMedia}
+                alt={destination.name}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover object-center"
+              />
+            );
+          }
+          return <div className="w-full h-full bg-slate-900" />;
+        })()}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/50 to-black/50 pointer-events-none" />
 
         {/* Back Link */}
