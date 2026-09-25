@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { getOwnerOverview } from "@/lib/api";
 import LeadsClientPage from "./leads-client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Customer Leads & CRM Pipeline | Spirit Adventures Owner HQ",
   description: "High-volume inquiry management, WhatsApp itinerary dispatch, and follow-up tracker.",

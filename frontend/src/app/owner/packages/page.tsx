@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { getOwnerOverview } from "@/lib/api";
 import PackagesClientPage from "./packages-client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Day-Wise Itinerary & Package Studio | Spirit Adventures Owner HQ",
   description: "Configure local looping videos, trail milestones, altitude, distances, and meals.",

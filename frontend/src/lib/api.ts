@@ -805,11 +805,21 @@ Remember: It is far easier to stay warm than to warm up once you're cold. Keep h
 ];
 
 async function fetchFromApi<T>(endpoint: string, fallback: T): Promise<T> {
+  // If in build phase or relative URL in SSR without full host, return fallback immediately
+  if (typeof window === "undefined" && (!API_BASE_URL || !API_BASE_URL.startsWith("http"))) {
+    return fallback;
+  }
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second fast timeout
+
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       next: { revalidate: 60 },
+      signal: controller.signal,
       headers: { "Content-Type": "application/json" }
     });
+    clearTimeout(timeoutId);
+
     if (!res.ok) {
       return fallback;
     }

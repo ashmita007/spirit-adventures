@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { getOwnerOverview } from "@/lib/api";
 import OwnerOverviewClient from "./owner-overview-client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Owner HQ & Business Operations | Spirit Adventures",
   description: "Executive overview, multi-page CRM, itinerary studio, and regional demand intelligence.",

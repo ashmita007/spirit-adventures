@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { getOwnerOverview } from "@/lib/api";
 import { AnalyticsClient } from "./analytics-client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Destination Demand & Revenue Breakdown Table | Spirit Adventures Owner HQ",
   description: "Tabular analytics and regional booking demand metrics.",
