@@ -1,18 +1,15 @@
 services:
-  # ----------------------------------------------------
-  # 1. Django Backend API Service
-  # ----------------------------------------------------
+  # ====================================================
+  # Spirit Adventures - Complete Unified 1-Service Deploy
+  # Runs Next.js Website + Django API together on Free Tier
+  # ====================================================
   - type: web
-    name: spirit-adventures-backend
-    runtime: python
-    rootDir: backend
+    name: spirit-adventures
+    runtime: docker
     plan: free
     region: oregon
-    buildCommand: ./build.sh
-    startCommand: gunicorn spirit_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.9
       - key: DEBUG
         value: "False"
       - key: SECRET_KEY
@@ -25,24 +22,3 @@ services:
         value: "hello@spiritadventures.in"
       - key: SUPPORT_PHONE
         value: "+91 96665 67551"
-
-  # ----------------------------------------------------
-  # 2. Next.js Frontend Consumer Website
-  # ----------------------------------------------------
-  - type: web
-    name: spirit-adventures-frontend
-    runtime: node
-    rootDir: frontend
-    plan: free
-    region: oregon
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_VERSION
-        value: 20
-      - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: spirit-adventures-backend
-          property: host
-          transformation: https://{host}/api/v1
