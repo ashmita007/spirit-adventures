@@ -17,12 +17,41 @@ interface TripDetailClientProps {
   trip: Trip;
 }
 
+const LOCAL_VIDEO_MAP: Record<string, string> = {
+  "dandeli-river-rafting-jungle-expedition": "/videos/shorts/dandeli_rafting.mp4",
+  "gokarna-beach-cliff-trek": "/videos/shorts/gokarna_beach.mp4",
+  "coorg-tadiandamol-coffee-trail": "/videos/shorts/coorg_mist.mp4",
+  "chikmagalur-mullayanagiri-ridge-trek": "/videos/shorts/chikmagalur_peak.mp4",
+  "ooty-nilgiri-pine-forest-expedition": "/videos/shorts/ooty_train.mp4",
+  "wayanad-chembra-peak-waterfall-trail": "/videos/shorts/wayanad_waterfall.mp4",
+  "leh-ladakh-motorcycle-odyssey": "/videos/hero/ladakh_bike.mp4",
+  "kedarkantha-trek": "/videos/hero/mountain_trek.mp4",
+  "hampta-pass-trek": "/videos/hero/mountain_trek.mp4",
+  "kashmir-great-lakes-trek": "/videos/nature/waterfall.mp4",
+  "spiti-valley-road-trip": "/videos/hero/ladakh_bike.mp4",
+  "sandhan-valley-trek": "/videos/nature/waterfall.mp4",
+};
+
 export default function TripDetailClient({ trip }: TripDetailClientProps) {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
   const [openDay, setOpenDay] = useState<number | null>(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  const videoSrc = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug];
+
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+  }, [videoSrc]);
 
   const images = (trip.gallery_images && trip.gallery_images.length > 0)
     ? trip.gallery_images.map((g) => ({ url: g.image_url, caption: g.caption, title: trip.title }))
@@ -36,15 +65,16 @@ export default function TripDetailClient({ trip }: TripDetailClientProps) {
     <div className="min-h-screen bg-white">
       {/* 1. Full-Width Cinematic Header Banner */}
       <div className="relative h-[60vh] sm:h-[70vh] w-full bg-brand-navy overflow-hidden">
-        {trip.hero_video_url ? (
+        {videoSrc ? (
           <video
-            src={trip.hero_video_url}
+            ref={videoRef}
+            src={videoSrc}
             poster={trip.cover_image}
             autoPlay
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
             className="w-full h-full object-cover object-center scale-105"
           />
         ) : (

@@ -29,6 +29,7 @@ const LOCAL_VIDEO_MAP: Record<string, string> = {
 
 export default function TripCard({ trip, priority = false }: TripCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const difficultyColors = {
     EASY: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
@@ -40,6 +41,19 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
   const difficultyClass = difficultyColors[trip.difficulty] || difficultyColors.MODERATE;
   const videoSrc = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug];
 
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay was prevented by browser policy
+        });
+      }
+    }
+  }, [videoSrc]);
+
   return (
     <Link
       href={`/trips/${trip.slug}`}
@@ -49,13 +63,14 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-950">
         {videoSrc ? (
           <video
+            ref={videoRef}
             src={videoSrc}
             poster={trip.cover_image}
             autoPlay
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
             className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
           />
         ) : (

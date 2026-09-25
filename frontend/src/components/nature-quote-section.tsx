@@ -9,6 +9,17 @@ export default function NatureQuoteSection() {
   const posterUrl = "/videos/nature/waterfall_poster.jpg";
   const videoUrl = "/videos/nature/waterfall.mp4";
 
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+  }, []);
+
   return (
     <section className="relative h-[65vh] sm:h-[75vh] w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
       {/* Background Poster fallback */}
