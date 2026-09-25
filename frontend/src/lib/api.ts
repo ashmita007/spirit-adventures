@@ -71,7 +71,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     slug: "dandeli",
     subtitle: "Kali River White Water Rafting & Dense Jungle",
     description: "Grade 3 white water rapids, jungle kayaking, and rainforest wildlife safaris.",
-    cover_image: "/videos/shorts/dandeli_rafting_poster.jpg",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
     is_featured: true,
     trip_count: 1,
   },
@@ -81,7 +81,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     slug: "coorg",
     subtitle: "Scotland of India, Misty Peaks & Coffee Trails",
     description: "Rolling emerald shola hills, coffee estates, and Tadiandamol summit.",
-    cover_image: "/videos/shorts/coorg_mist_poster.jpg",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg",
     is_featured: true,
     trip_count: 1,
   },
@@ -91,7 +91,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     slug: "chikmagalur",
     subtitle: "Mullayanagiri Peak & Sea of Clouds",
     description: "Karnataka's highest mountain peak, misty ridge walks, and waterfalls.",
-    cover_image: "/videos/shorts/chikmagalur_peak_poster.jpg",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg",
     is_featured: true,
     trip_count: 1,
   },
@@ -101,7 +101,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     slug: "ooty",
     subtitle: "Queen of Nilgiri Hills & Pine Sanctuaries",
     description: "Heritage toy trains, dense pine forests, and quiet alpine lake trails.",
-    cover_image: "/videos/shorts/ooty_train_poster.jpg",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg",
     is_featured: true,
     trip_count: 1,
   },
@@ -111,7 +111,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     slug: "wayanad",
     subtitle: "Chembra Heart Lake & Cascading Waterfalls",
     description: "Ancient caves, misty rainforest peaks, and heart-shaped alpine lakes.",
-    cover_image: "/videos/shorts/wayanad_waterfall_poster.jpg",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg",
     is_featured: true,
     trip_count: 1,
   },
@@ -139,8 +139,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "Sea level to 1,550 ft",
     trek_distance: "18 km total activities",
     best_season: "All Year",
-    cover_image: "/videos/shorts/gokarna_beach_poster.jpg",
-    hero_video_url: "/videos/shorts/gokarna_beach.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
     is_featured: true,
     is_bestseller: true,
     rating: 5.0,
@@ -154,7 +154,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Experienced trek leaders (Aditya / Sathwik)"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/gokarna_beach_poster.jpg", caption: "Gokarna cliff trail at golden hour", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg", caption: "Gokarna cliff trail at golden hour", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -178,8 +178,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "7,200 ft Nilgiris",
     trek_distance: "20 km nature trails",
     best_season: "Sep - May",
-    cover_image: "/videos/shorts/ooty_train_poster.jpg",
-    hero_video_url: "/videos/shorts/ooty_train.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
     is_featured: true,
     is_bestseller: true,
     rating: 4.9,
@@ -192,7 +192,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Spirit Adventures certified tour captain"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/ooty_train_poster.jpg", caption: "Toy train in the Nilgiri hills", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg", caption: "Toy train in the Nilgiri hills", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -253,8 +253,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "1,550 ft Western Ghats",
     trek_distance: "9 km river rafting + 5 km jungle trek",
     best_season: "Sep - Jun",
-    cover_image: "/videos/shorts/dandeli_rafting_poster.jpg",
-    hero_video_url: "/videos/shorts/dandeli_rafting.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
     is_featured: true,
     is_bestseller: true,
     rating: 4.9,
@@ -267,7 +267,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Life jackets, helmets and safety gear"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/dandeli_rafting_poster.jpg", caption: "White water rafting on Kali river", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg", caption: "White water rafting on Kali river", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -291,8 +291,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "Sea level to 450 ft headlands",
     trek_distance: "14 km coastal cliff trail",
     best_season: "Oct - Apr",
-    cover_image: "/videos/shorts/gokarna_beach_poster.jpg",
-    hero_video_url: "/videos/shorts/gokarna_beach.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
     is_featured: true,
     is_bestseller: true,
     rating: 5.0,
@@ -304,7 +304,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Campfire & beach games"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/gokarna_beach_poster.jpg", caption: "Sunset cliff trail overlooking Arabian Sea", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg", caption: "Sunset cliff trail overlooking Arabian Sea", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -328,8 +328,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "5,735 ft / 1,748 m",
     trek_distance: "12 km round trip",
     best_season: "Sep - Mar",
-    cover_image: "/videos/shorts/coorg_mist_poster.jpg",
-    hero_video_url: "/videos/shorts/coorg_mist.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
     is_featured: true,
     is_bestseller: false,
     rating: 4.8,
@@ -341,7 +341,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Guided coffee & spice plantation walk"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/coorg_mist_poster.jpg", caption: "Misty shola grasslands on Tadiandamol", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg", caption: "Misty shola grasslands on Tadiandamol", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -365,8 +365,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "6,330 ft / 1,930 m",
     trek_distance: "14 km ridge walk",
     best_season: "Sep - Apr",
-    cover_image: "/videos/shorts/chikmagalur_peak_poster.jpg",
-    hero_video_url: "/videos/shorts/chikmagalur_peak.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
     is_featured: true,
     is_bestseller: true,
     rating: 4.9,
@@ -378,7 +378,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Forest permits and Jeep transfers"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/chikmagalur_peak_poster.jpg", caption: "Walking above the clouds at Mullayanagiri", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg", caption: "Walking above the clouds at Mullayanagiri", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -402,8 +402,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "7,200 ft Nilgiris",
     trek_distance: "16 km nature trails",
     best_season: "All year",
-    cover_image: "/videos/shorts/ooty_train_poster.jpg",
-    hero_video_url: "/videos/shorts/ooty_train.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
     is_featured: true,
     is_bestseller: false,
     rating: 4.9,
@@ -415,7 +415,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Heritage Nilgiri mountain railway experience"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/ooty_train_poster.jpg", caption: "Heritage mountain train crossing pine valleys", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg", caption: "Heritage mountain train crossing pine valleys", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -439,8 +439,8 @@ const FALLBACK_TRIPS: Trip[] = [
     altitude: "6,890 ft / 2,100 m",
     trek_distance: "15 km total trails",
     best_season: "Oct - May",
-    cover_image: "/videos/shorts/wayanad_waterfall_poster.jpg",
-    hero_video_url: "/videos/shorts/wayanad_waterfall.mp4",
+    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg",
+    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
     is_featured: true,
     is_bestseller: true,
     rating: 5.0,
@@ -452,7 +452,7 @@ const FALLBACK_TRIPS: Trip[] = [
       "Bamboo rafting on Banasura lake"
     ],
     gallery_images: [
-      { id: 1, image_url: "/videos/shorts/wayanad_waterfall_poster.jpg", caption: "Chembra heart-shaped high altitude lake", ordering: 1, is_cover: true }
+      { id: 1, image_url: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg", caption: "Chembra heart-shaped high altitude lake", ordering: 1, is_cover: true }
     ]
   },
   {
@@ -1142,8 +1142,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: true,
         is_published: true,
         leads_count: 5,
-        cover_image: "/videos/shorts/dandeli_rafting_poster.jpg",
-        hero_video_url: "/videos/shorts/dandeli_rafting.mp4"
+        cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4"
       },
       {
         id: 102,
@@ -1159,8 +1159,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: true,
         is_published: true,
         leads_count: 6,
-        cover_image: "/videos/shorts/gokarna_beach_poster.jpg",
-        hero_video_url: "/videos/shorts/gokarna_beach.mp4"
+        cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4"
       },
       {
         id: 103,
@@ -1176,8 +1176,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: false,
         is_published: true,
         leads_count: 4,
-        cover_image: "/videos/shorts/coorg_mist_poster.jpg",
-        hero_video_url: "/videos/shorts/coorg_mist.mp4"
+        cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341227/spirit_adventures/shorts/coorg_mist.mp4"
       },
       {
         id: 104,
@@ -1193,8 +1193,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: true,
         is_published: true,
         leads_count: 7,
-        cover_image: "/videos/shorts/chikmagalur_peak_poster.jpg",
-        hero_video_url: "/videos/shorts/chikmagalur_peak.mp4"
+        cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4"
       },
       {
         id: 105,
@@ -1210,8 +1210,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: false,
         is_published: true,
         leads_count: 3,
-        cover_image: "/videos/shorts/ooty_train_poster.jpg",
-        hero_video_url: "/videos/shorts/ooty_train.mp4"
+        cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4"
       },
       {
         id: 106,
@@ -1227,8 +1227,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: true,
         is_published: true,
         leads_count: 5,
-        cover_image: "/videos/shorts/wayanad_waterfall_poster.jpg",
-        hero_video_url: "/videos/shorts/wayanad_waterfall.mp4"
+        cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4"
       },
       {
         id: 10,
@@ -1244,8 +1244,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: true,
         is_published: true,
         leads_count: 8,
-        cover_image: "/videos/hero/ladakh_bike_poster.jpg",
-        hero_video_url: "/videos/hero/ladakh_bike.mp4"
+        cover_image: "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1200&q=80",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341157/spirit_adventures/hero/ladakh_bike.mp4"
       },
       {
         id: 1,
@@ -1261,8 +1261,8 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
         is_bestseller: true,
         is_published: true,
         leads_count: 6,
-        cover_image: "/videos/hero/mountain_trek_poster.jpg",
-        hero_video_url: "/videos/hero/mountain_trek.mp4"
+        cover_image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+        hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341160/spirit_adventures/hero/mountain_trek.mp4"
       }
     ],
     config: {

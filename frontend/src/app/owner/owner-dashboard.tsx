@@ -37,15 +37,15 @@ const PIPELINE_STAGES: Array<{
 ];
 
 const AVAILABLE_LOCAL_VIDEOS = [
-  { label: "Dandeli Kali River Rafting", value: "/videos/shorts/dandeli_rafting.mp4", poster: "/videos/shorts/dandeli_rafting_poster.jpg", region: "Karnataka" },
-  { label: "Gokarna Coastal Trail & Om Beach", value: "/videos/shorts/gokarna_beach.mp4", poster: "/videos/shorts/gokarna_beach_poster.jpg", region: "Karnataka" },
-  { label: "Coorg Misty Coffee Highlands", value: "/videos/shorts/coorg_mist.mp4", poster: "/videos/shorts/coorg_mist_poster.jpg", region: "Karnataka" },
-  { label: "Chikmagalur Mullayanagiri Clouds", value: "/videos/shorts/chikmagalur_peak.mp4", poster: "/videos/shorts/chikmagalur_peak_poster.jpg", region: "Karnataka" },
-  { label: "Ooty Nilgiri Mountain Train & Pines", value: "/videos/shorts/ooty_train.mp4", poster: "/videos/shorts/ooty_train_poster.jpg", region: "Tamil Nadu" },
-  { label: "Wayanad Chembra Peak & Heart Lake", value: "/videos/shorts/wayanad_waterfall.mp4", poster: "/videos/shorts/wayanad_waterfall_poster.jpg", region: "Kerala" },
-  { label: "Ladakh Himalayan Motorcycle Pass", value: "/videos/hero/ladakh_bike.mp4", poster: "/videos/hero/ladakh_bike_poster.jpg", region: "Himalayas" },
-  { label: "Kedarkantha Alpine Snow Summit", value: "/videos/hero/mountain_trek.mp4", poster: "/videos/hero/mountain_trek_poster.jpg", region: "Uttarakhand" },
-  { label: "Western Ghats Waterfall Plunge", value: "/videos/nature/waterfall.mp4", poster: "/videos/nature/waterfall_poster.jpg", region: "Western Ghats" },
+  { label: "Dandeli Kali River Rafting", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg", region: "Karnataka" },
+  { label: "Gokarna Coastal Trail & Om Beach", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg", region: "Karnataka" },
+  { label: "Coorg Misty Coffee Highlands", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341227/spirit_adventures/shorts/coorg_mist.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg", region: "Karnataka" },
+  { label: "Chikmagalur Mullayanagiri Clouds", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg", region: "Karnataka" },
+  { label: "Ooty Nilgiri Mountain Train & Pines", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg", region: "Tamil Nadu" },
+  { label: "Wayanad Chembra Peak & Heart Lake", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg", region: "Kerala" },
+  { label: "Ladakh Himalayan Motorcycle Pass", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341157/spirit_adventures/hero/ladakh_bike.mp4", poster: "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1200&q=80", region: "Himalayas" },
+  { label: "Kedarkantha Alpine Snow Summit", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341160/spirit_adventures/hero/mountain_trek.mp4", poster: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80", region: "Uttarakhand" },
+  { label: "Western Ghats Waterfall Plunge", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg", region: "Western Ghats" },
 ];
 
 const WHATSAPP_TEMPLATES = [
@@ -292,8 +292,8 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
       altitude: isSouthIndia ? "5,800 ft Western Ghats" : "14,500 ft High Himalayas",
       trek_distance: "16 km circuit",
       best_season: isSouthIndia ? "Sep to May" : "May to Oct / Dec to Apr",
-      cover_image: summary.cover_image || "/videos/shorts/dandeli_rafting_poster.jpg",
-      hero_video_url: summary.hero_video_url || "/videos/shorts/dandeli_rafting.mp4",
+      cover_image: summary.cover_image || "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
+      hero_video_url: summary.hero_video_url || "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
       is_featured: summary.is_featured,
       is_bestseller: summary.is_bestseller,
       inclusions: [
@@ -1033,8 +1033,8 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                     altitude: "2,500 ft",
                     trek_distance: "14 km",
                     best_season: "Sep to May",
-                    cover_image: "/videos/shorts/dandeli_rafting_poster.jpg",
-                    hero_video_url: "/videos/shorts/dandeli_rafting.mp4",
+                    cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
+                    hero_video_url: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
                     is_featured: true,
                     is_bestseller: false,
                     inclusions: ["All meals", "Certified leader", "Stay", "Safety gear"],
@@ -1084,7 +1084,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                       />
                     ) : (
                       <Image
-                        src={trip.cover_image || "/videos/shorts/dandeli_rafting_poster.jpg"}
+                        src={trip.cover_image || "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg"}
                         alt={trip.title}
                         fill
                         className="object-cover"
