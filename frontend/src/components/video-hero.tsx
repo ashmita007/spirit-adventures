@@ -20,19 +20,19 @@ interface HeroScene {
 const HERO_SCENES: HeroScene[] = [
   {
     id: 1,
-    video8kUrl: "/videos/hero/rhythms_of_india_8k.mp4",
+    video8kUrl: "/videos/hero/rhythms_of_india.mp4",
     videoUrl: "/videos/hero/rhythms_of_india.mp4",
     posterUrl: "/videos/hero/rhythms_of_india_poster.jpg",
   },
   {
     id: 2,
-    video8kUrl: "/videos/hero/maldives_travel_8k.mp4",
+    video8kUrl: "/videos/hero/maldives_travel.mp4",
     videoUrl: "/videos/hero/maldives_travel.mp4",
     posterUrl: "/videos/hero/maldives_travel_poster.jpg",
   },
   {
     id: 3,
-    video8kUrl: "/videos/hero/kerala_cinematic_8k.mp4",
+    video8kUrl: "/videos/hero/kerala_cinematic.mp4",
     videoUrl: "/videos/hero/kerala_cinematic.mp4",
     posterUrl: "/videos/hero/kerala_cinematic_poster.jpg",
   },
@@ -43,6 +43,7 @@ const POPULAR_TAGS = ["Gokarna", "Dandeli", "Kedarkantha", "Coorg", "Ladakh"];
 export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
 
   // Auto-cycle through scenes every 10 seconds
@@ -68,30 +69,48 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 
   return (
     <div className="relative min-h-[92vh] sm:min-h-screen w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
-      {/* 1. Full-Screen Clean Video Background with Slow Cinematic Zoom */}
+      {/* 1. Full-Screen Clean Video Background with Instant Poster & Smooth Playback */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {HERO_SCENES.map((scene, idx) => (
-          <div
-            key={scene.id}
-            className={cn(
-              "absolute inset-0 transition-opacity duration-1000 ease-in-out",
-              idx === currentSceneIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-            )}
-          >
-            <video
-              poster={scene.posterUrl}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="w-full h-full object-cover object-center animate-cinematic-zoom scale-105"
+        {HERO_SCENES.map((scene, idx) => {
+          const isActive = idx === currentSceneIndex;
+          const isNext = idx === (currentSceneIndex + 1) % HERO_SCENES.length;
+
+          return (
+            <div
+              key={scene.id}
+              className={cn(
+                "absolute inset-0 transition-opacity duration-1000 ease-in-out",
+                isActive ? "opacity-100 z-10" : "opacity-0 z-0"
+              )}
             >
-              <source src={scene.video8kUrl} type='video/mp4; codecs="hvc1"' />
-              <source src={scene.videoUrl} type='video/mp4; codecs="avc1.640028"' />
-            </video>
-          </div>
-        ))}
+              {/* Instant High-Res Poster Image Background */}
+              <img
+                src={scene.posterUrl}
+                alt="Adventure Scene"
+                className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+                loading={idx === 0 ? "eager" : "lazy"}
+              />
+
+              {/* Ultra-Fast Web Stream Video (loaded only for active & next scene) */}
+              {(isActive || isNext) && (
+                <video
+                  poster={scene.posterUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload={isActive ? "auto" : "metadata"}
+                  onCanPlay={() => {
+                    if (isActive) setIsLoaded(true);
+                  }}
+                  className="absolute inset-0 w-full h-full object-cover object-center animate-cinematic-zoom scale-105 transition-opacity duration-700"
+                >
+                  <source src={scene.videoUrl} type="video/mp4" />
+                </video>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* 2. Atmospheric Dark Vignette & Gradient Overlays */}
