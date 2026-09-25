@@ -12,11 +12,11 @@ python -c "
 import os, django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'spirit_backend.settings')
 django.setup()
-from adventures.models import Review
-if Review.objects.count() == 0:
+from adventures.models import Trip
+if Trip.objects.count() == 0:
     try:
-        import update_reviews
-        update_reviews.update_reviews()
+        from django.core.management import call_command
+        call_command('seed_data')
     except Exception as e:
         print('Seed error:', e)
 " || true

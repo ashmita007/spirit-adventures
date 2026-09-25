@@ -5,6 +5,18 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   skipTrailingSlashRedirect: true,
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://127.0.0.1:8000/api/:path*",
+      },
+      {
+        source: "/admin/:path*",
+        destination: "http://127.0.0.1:8000/admin/:path*",
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days image caching
@@ -24,6 +36,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
       },
     ],
   },

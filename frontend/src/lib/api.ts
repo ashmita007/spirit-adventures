@@ -2,7 +2,16 @@ import {
   Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload 
 } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+export const getApiBaseUrl = (): string => {
+  if (typeof window !== "undefined") {
+    // In client browser, use relative path so Next.js rewrites forward to internal Django port
+    return "/api/v1";
+  }
+  // In server-side Node.js (SSR / ISR), use full internal loopback IPv4 address
+  return process.env.DJANGO_API_URL || process.env.INTERNAL_API_URL || "http://127.0.0.1:8000/api/v1";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Fallback demo data to ensure zero render breaking even during boot
 const FALLBACK_CATEGORIES: Category[] = [
@@ -805,15 +814,16 @@ Remember: It is far easier to stay warm than to warm up once you're cold. Keep h
 ];
 
 async function fetchFromApi<T>(endpoint: string, fallback: T): Promise<T> {
+  const baseUrl = getApiBaseUrl();
   // If in build phase or relative URL in SSR without full host, return fallback immediately
-  if (typeof window === "undefined" && (!API_BASE_URL || !API_BASE_URL.startsWith("http"))) {
+  if (typeof window === "undefined" && (!baseUrl || !baseUrl.startsWith("http"))) {
     return fallback;
   }
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second fast timeout
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const res = await fetch(`${baseUrl}${endpoint}`, {
       next: { revalidate: 60 },
       signal: controller.signal,
       headers: { "Content-Type": "application/json" }
@@ -911,7 +921,7 @@ export async function getBlogBySlug(slug: string): Promise<BlogPost | null> {
 
 export async function submitEnquiry(payload: EnquiryPayload): Promise<{ success: boolean; message: string }> {
   try {
-    const res = await fetch(`${API_BASE_URL}/enquiries/`, {
+    const res = await fetch(`${getApiBaseUrl()}/enquiries/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -1278,7 +1288,7 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
 
 export async function updateEnquiryStatus(id: number, status: string, notes?: string): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE_URL}/owner/enquiries/${id}/status/`, {
+    const res = await fetch(`${getApiBaseUrl()}/owner/enquiries/${id}/status/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, admin_notes: notes }),
@@ -1291,7 +1301,7 @@ export async function updateEnquiryStatus(id: number, status: string, notes?: st
 
 export async function updateTripConfig(id: number, config: { price?: number; is_featured?: boolean; is_bestseller?: boolean }): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE_URL}/owner/trips/${id}/quick-update/`, {
+    const res = await fetch(`${getApiBaseUrl()}/owner/trips/${id}/quick-update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(config),
