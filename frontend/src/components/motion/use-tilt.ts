@@ -18,7 +18,7 @@ export function useTilt(ref: RefObject<HTMLElement | null>, max = 7) {
     if (!ok) return;
 
     const glare = el.querySelector<HTMLElement>("[data-tilt-glare]");
-    gsap.set(el, { transformPerspective: 1000, transformStyle: "preserve-3d" });
+    gsap.set(el, { transformPerspective: 1000 });
     const rx = gsap.quickTo(el, "rotationX", { duration: 0.5, ease: "power3.out" });
     const ry = gsap.quickTo(el, "rotationY", { duration: 0.5, ease: "power3.out" });
 

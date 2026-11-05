@@ -1,16 +1,38 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Compass, Sparkles } from "lucide-react";
 
 export default function NatureQuoteSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const posterUrl = "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
-  const videoUrl = "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4";
+  const [inView, setInView] = useState(false);
 
-  React.useEffect(() => {
-    if (videoRef.current) {
+  const posterUrl = "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
+  const videoUrl = "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4";
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (inView && videoRef.current) {
       videoRef.current.defaultMuted = true;
       videoRef.current.muted = true;
       const playPromise = videoRef.current.play();
@@ -18,10 +40,10 @@ export default function NatureQuoteSection() {
         playPromise.catch(() => {});
       }
     }
-  }, []);
+  }, [inView]);
 
   return (
-    <section className="relative h-[65vh] sm:h-[75vh] w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
+    <section ref={sectionRef} className="relative h-[65vh] sm:h-[75vh] w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
       {/* Parallax media layer (taller than the section so it can drift) */}
       <div data-parallax="0.12" className="absolute -inset-y-[12%] inset-x-0 z-0 will-change-transform">
       <Image
@@ -33,17 +55,20 @@ export default function NatureQuoteSection() {
         className="object-cover object-center"
       />
 
-      {/* Cinematic Looping video with subtle zoom */}
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        poster={posterUrl}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0 opacity-80 scale-105"
-      />
+      {/* Cinematic Looping video with subtle zoom - mounted only when scrolled into view */}
+      {inView && (
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          poster={posterUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 w-full h-full object-cover z-0 opacity-80 scale-105"
+        />
+      )}
       </div>
 
       {/* Atmospheric Vignette & Contrast Overlay */}

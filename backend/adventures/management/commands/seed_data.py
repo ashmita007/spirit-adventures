@@ -1,3 +1,4 @@
+import os
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -404,5 +405,108 @@ class Command(BaseCommand):
             is_featured=True,
             is_approved=True
         )
+
+        # Load Scraped Trips from Spirit Adventures Live Site if fixture exists
+        fixture_path = os.path.join(os.path.dirname(__file__), "..", "..", "fixtures", "scraped_trips.json")
+        if os.path.exists(fixture_path):
+            self.stdout.write(self.style.SUCCESS("Importing scraped destination packages..."))
+            try:
+                import json, html, re
+                from django.utils.text import slugify
+                with open(fixture_path) as f:
+                    scraped_trips = json.load(f)
+
+                # Ensure couple-packages category
+                cat_couple, _ = Category.objects.get_or_create(
+                    slug="couple-packages",
+                    defaults={"name": "Couple Packages", "icon": "Heart", "description": "Romantic curated getaways for couples."}
+                )
+
+                for idx, item in enumerate(scraped_trips):
+                    t_title = html.unescape(item["title"]).replace("&amp;", "&").strip()
+                    t_slug = item["slug"]
+                    d_name = item["destination_name"]
+                    
+                    # Match or create destination
+                    dest, _ = Destination.objects.get_or_create(
+                        slug=slugify(d_name),
+                        defaults={
+                            "name": d_name,
+                            "subtitle": f"Scenic {d_name} Trails & Wilderness",
+                            "description": f"Explore breathtaking nature trails, waterfalls, and scenic viewpoints in {d_name} with Spirit Adventures.",
+                            "cover_image": item.get("cover_image", "").replace("http://", "https://") or "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80",
+                            "hero_image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1920&q=80",
+                            "is_featured": True,
+                            "is_published": True,
+                        }
+                    )
+
+                    c_slug = item.get("category_slug", "weekend")
+                    if "couple" in t_title.lower():
+                        category = cat_couple
+                    elif c_slug == "water":
+                        category = cat_water
+                    elif c_slug == "treks":
+                        category = cat_treks
+                    elif c_slug == "group-trips":
+                        category = cat_group
+                    else:
+                        category = cat_weekend
+
+                    price = float(item["price"])
+                    if price < 2000 and item["duration_days"] >= 3:
+                        price = 11000.0
+                    orig_price = float(item.get("original_price") or round(price * 1.25))
+
+                    trip, _ = Trip.objects.update_or_create(
+                        slug=t_slug,
+                        defaults={
+                            "title": t_title,
+                            "destination": dest,
+                            "category": category,
+                            "short_description": item.get("short_description", f"Curated adventure through {d_name}.")[:300],
+                            "full_description": item.get("full_description", f"Join Spirit Adventures in {d_name}."),
+                            "duration_days": item["duration_days"],
+                            "duration_nights": item["duration_nights"],
+                            "difficulty": item.get("difficulty", "MODERATE"),
+                            "price": price,
+                            "original_price": orig_price,
+                            "cover_image": item.get("cover_image", "").replace("http://", "https://") or dest.cover_image,
+                            "inclusions": item.get("inclusions", []),
+                            "exclusions": item.get("exclusions", []),
+                            "things_to_carry": [
+                                "Backpack (40-60L) with rain cover",
+                                "Sturdy trekking/walking shoes with good grip",
+                                "Quick-dry t-shirts and track pants",
+                                "Warm layer / light jacket for evening",
+                                "Reusable water bottle & energy snacks",
+                                "Personal toiletries, medications & power bank",
+                                "Government ID proof (original)"
+                            ],
+                            "is_featured": idx < 6,
+                            "is_bestseller": idx in [0, 1, 2, 4, 8, 14, 22, 28],
+                            "is_published": True,
+                            "ordering": 50 + idx
+                        }
+                    )
+
+                    # Update itineraries if none exist
+                    if not trip.itinerary_days.exists():
+                        for raw_d in item.get("itinerary_days", []):
+                            desc = html.unescape(raw_d.get("description", "")).strip()
+                            day_title = html.unescape(raw_d.get("title", "")).strip()
+                            if "Skip to content" in desc or "Hellip" in day_title or day_title.endswith('\" /'):
+                                continue
+                            TripItinerary.objects.create(
+                                trip=trip,
+                                day_number=raw_d.get("day_number", 1),
+                                title=day_title,
+                                description=desc or f"Adventure through {dest.name}.",
+                                meals="Breakfast & Dinner included",
+                                stay_type="Scenic Homestay / Nature Resort",
+                                ordering=raw_d.get("day_number", 1)
+                            )
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f"Could not load scraped trips fixture: {e}"))
 
         self.stdout.write(self.style.SUCCESS("Successfully seeded rich South India & Himalayan adventure data!"))

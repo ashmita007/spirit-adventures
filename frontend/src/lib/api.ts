@@ -875,7 +875,7 @@ export async function getTrips(params?: {
 }
 
 export async function getTripBySlug(slug: string): Promise<Trip | null> {
-  const fallback = FALLBACK_TRIPS.find((t) => t.slug === slug) || FALLBACK_TRIPS[0] || null;
+  const fallback = FALLBACK_TRIPS.find((t) => t.slug === slug) || null;
   return fetchFromApi<Trip | null>(`/trips/${slug}/`, fallback);
 }
 

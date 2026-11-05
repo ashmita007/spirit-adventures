@@ -42,7 +42,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     location: "Dandeli, Karnataka",
     state: "Karnataka",
     region: "South India",
-    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_360,c_limit,q_auto:eco,vc_h264,br_800k/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
     posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
     likes: 3420,
     views: "48K",
@@ -56,7 +56,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     location: "Gokarna, Karnataka",
     state: "Karnataka",
     region: "South India",
-    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_360,c_limit,q_auto:eco,vc_h264,br_800k/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
     posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341326/spirit_adventures/shorts/gokarna_beach_poster.jpg",
     likes: 4890,
     views: "62K",
@@ -70,7 +70,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     location: "Coorg (Kodagu), Karnataka",
     state: "Karnataka",
     region: "South India",
-    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_360,c_limit,q_auto:eco,vc_h264,br_800k/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
     posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg",
     likes: 2980,
     views: "39K",
@@ -84,7 +84,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     location: "Chikmagalur, Karnataka",
     state: "Karnataka",
     region: "South India",
-    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_360,c_limit,q_auto:eco,vc_h264,br_800k/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
     posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg",
     likes: 5120,
     views: "71K",
@@ -98,7 +98,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     location: "Wayanad, Kerala",
     state: "Kerala",
     region: "South India",
-    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_360,c_limit,q_auto:eco,vc_h264,br_800k/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
     posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg",
     likes: 4180,
     views: "54K",
@@ -112,7 +112,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     location: "Ooty, Tamil Nadu",
     state: "Tamil Nadu",
     region: "South India",
-    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
+    videoUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_360,c_limit,q_auto:eco,vc_h264,br_800k/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
     posterUrl: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg",
     likes: 3870,
     views: "44K",
@@ -124,6 +124,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
 
 export default function AdventureReelsSection() {
   const [activeShort, setActiveShort] = useState<AdventureShort | null>(null);
+  const [hoveredShortId, setHoveredShortId] = useState<string | null>(null);
   const [likedShorts, setLikedShorts] = useState<Record<string, boolean>>({});
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -242,27 +243,54 @@ export default function AdventureReelsSection() {
           ref={scrollContainerRef}
           className="flex space-x-4 sm:space-x-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory"
         >
-          {ADVENTURE_SHORTS.map((item) => {
+          {ADVENTURE_SHORTS.map((item, idx) => {
             const isLiked = !!likedShorts[item.id];
+            const isHovered = hoveredShortId === item.id;
             return (
               <div
                 key={item.id}
                 onClick={() => handleOpenReel(item)}
+                onPointerEnter={() => setHoveredShortId(item.id)}
+                onPointerLeave={() => setHoveredShortId((curr) => curr === item.id ? null : curr)}
                 className="flex-shrink-0 w-[240px] sm:w-[280px] aspect-[9/16] rounded-2xl overflow-hidden relative group cursor-pointer border border-white/10 shadow-2xl snap-start bg-slate-900 transition-all duration-300 hover:scale-[1.02]"
               >
-                {/* Looping video preview */}
-                <video
-                  src={item.videoUrl}
-                  poster={item.posterUrl}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                {/* Instant High-Res Poster Image */}
+                <Image
+                  src={item.posterUrl}
+                  alt={item.title}
+                  fill
+                  sizes="280px"
+                  className={cn(
+                    "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105",
+                    isHovered ? "opacity-0" : "opacity-100"
+                  )}
                 />
 
+                {/* Looping lightweight video preview - loaded only on hover / active */}
+                {isHovered && (
+                  <video
+                    src={item.videoUrl}
+                    poster={item.posterUrl}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 z-0"
+                  />
+                )}
+
+                {/* Play pulse icon on center when not playing */}
+                {!isHovered && (
+                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                    <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/90 group-hover:scale-110 group-hover:bg-brand-ocean transition-all shadow-lg">
+                      <Play className="w-5 h-5 fill-current ml-0.5" />
+                    </div>
+                  </div>
+                )}
+
                 {/* Subtle dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/40 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/40 pointer-events-none z-10" />
 
                 {/* Top Badge & Views */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">

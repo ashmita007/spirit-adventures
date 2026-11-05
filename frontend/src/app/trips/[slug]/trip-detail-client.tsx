@@ -21,18 +21,29 @@ interface TripDetailClientProps {
 }
 
 const LOCAL_VIDEO_MAP: Record<string, string> = {
-  "dandeli-river-rafting-jungle-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
-  "gokarna-beach-cliff-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
-  "coorg-tadiandamol-coffee-trail": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
-  "chikmagalur-mullayanagiri-ridge-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
-  "ooty-nilgiri-pine-forest-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
-  "wayanad-chembra-peak-waterfall-trail": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
-  "leh-ladakh-motorcycle-odyssey": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341157/spirit_adventures/hero/ladakh_bike.mp4",
-  "kedarkantha-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
-  "hampta-pass-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
-  "kashmir-great-lakes-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4",
-  "spiti-valley-road-trip": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341157/spirit_adventures/hero/ladakh_bike.mp4",
-  "sandhan-valley-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4",
+  "dandeli-river-rafting-jungle-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
+  "gokarna-beach-cliff-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
+  "coorg-tadiandamol-coffee-trail": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
+  "chikmagalur-mullayanagiri-ridge-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
+  "ooty-nilgiri-pine-forest-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
+  "wayanad-chembra-peak-waterfall-trail": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
+  "leh-ladakh-motorcycle-odyssey": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341157/spirit_adventures/hero/ladakh_bike.mp4",
+  "kedarkantha-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
+  "hampta-pass-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
+  "kashmir-great-lakes-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4",
+  "spiti-valley-road-trip": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341157/spirit_adventures/hero/ladakh_bike.mp4",
+  "sandhan-valley-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4",
+};
+
+const DESTINATION_VIDEO_MAP: Record<string, string> = {
+  coorg: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341227/spirit_adventures/shorts/coorg_mist.mp4",
+  dandeli: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
+  gokarna: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341208/spirit_adventures/shorts/gokarna_beach.mp4",
+  chikmagalur: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341233/spirit_adventures/shorts/chikmagalur_peak.mp4",
+  ooty: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341289/spirit_adventures/shorts/ooty_train.mp4",
+  wayanad: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341310/spirit_adventures/shorts/wayanad_waterfall.mp4",
+  kashmir: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4",
+  manali: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
 };
 
 const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").replace(/\D/g, "");
@@ -45,7 +56,8 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
-  const videoSrc = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug];
+  const destKey = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
+  const videoSrc = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug] || DESTINATION_VIDEO_MAP[destKey];
 
   React.useEffect(() => {
     if (videoRef.current) {
@@ -218,20 +230,21 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                 </div>
 
                 <div className="space-y-4">
-                  {trip.itinerary_days.map((day) => {
-                    const isOpen = openDay === day.day_number;
+                  {trip.itinerary_days.map((day, idx) => {
+                    const dayNum = day.day_number || idx + 1;
+                    const isOpen = openDay === dayNum;
                     return (
                       <div
-                        key={day.day_number}
+                        key={`${dayNum}-${idx}`}
                         className="border border-slate-200 rounded-2xl overflow-hidden transition-all duration-200"
                       >
                         <button
-                          onClick={() => setOpenDay(isOpen ? null : day.day_number)}
+                          onClick={() => setOpenDay(isOpen ? null : dayNum)}
                           className="w-full flex items-center justify-between p-5 text-left bg-white hover:bg-slate-50 transition"
                         >
                           <div className="flex items-center space-x-3">
                             <span className="w-8 h-8 rounded-xl bg-brand-navy text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
-                              D{day.day_number}
+                              D{dayNum}
                             </span>
                             <h3 className="font-display font-bold text-base text-brand-navy">
                               {day.title}
