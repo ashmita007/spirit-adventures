@@ -9,6 +9,7 @@ services:
     plan: free
     region: oregon
     dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/v1/health/
     envVars:
       - key: DEBUG
         value: "False"
