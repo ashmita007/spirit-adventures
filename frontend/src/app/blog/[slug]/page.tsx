@@ -19,7 +19,9 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title: `${post.title} | Spirit Adventures`,
     description: post.excerpt,
+    alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
+      type: "article",
       title: post.title,
       description: post.excerpt,
       images: [{ url: post.cover_image }],
@@ -52,7 +54,7 @@ export default async function BlogPostDetailPage({ params }: BlogPageProps) {
             {post.category}
           </span>
 
-          <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-brand-navy uppercase tracking-tight leading-tight">
+          <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-4xl md:text-5xl text-brand-navy uppercase tracking-tight leading-tight">
             {post.title}
           </h1>
 

@@ -12,3 +12,8 @@ export function formatCurrency(amount: number): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
+
+/** Owner portal and CRM pages: no public-site navbar, footer, WhatsApp button or scroll effects. */
+export function isPortalPath(pathname?: string | null): boolean {
+  return Boolean(pathname && (pathname.startsWith("/owner") || pathname.startsWith("/crm")));
+}

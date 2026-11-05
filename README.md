@@ -20,21 +20,12 @@ Spirit Adventures is a lightweight, cinematic, high-performance nature and adven
 
 ## 🚀 Quick Start (Local-First)
 
-### 1. Run with Docker Compose (Recommended)
+### 1. Run with Docker (production stack)
 
-```bash
-# Clone and enter directory
-cd spirit_adventutes
+The whole project (website, owner portal, CRM, API, Postgres, HTTPS, nightly backups) runs with
+`docker compose up -d --build`. Full guide: **[DEPLOY.md](DEPLOY.md)**.
 
-# Launch PostgreSQL, Django Ninja Backend, and Next.js Frontend
-docker compose up --build
-```
-
-- **Frontend Website**: [http://localhost:3000](http://localhost:3000)
-- **Backend API**: [http://localhost:8000/api/v1/](http://localhost:8000/api/v1/)
-- **API Docs (Interactive OpenAPI/Swagger)**: [http://localhost:8000/api/v1/docs](http://localhost:8000/api/v1/docs)
-- **Health Check**: [http://localhost:8000/api/v1/health/](http://localhost:8000/api/v1/health/)
-- **Django Admin**: [http://localhost:8000/admin/](http://localhost:8000/admin/)
+For local development use the venv + `npm run dev` instead (Django on :8000, Next.js on :3000).
 
 ---
 
@@ -132,3 +123,52 @@ White → Photography → White → Light Blue → Photography → Deep Navy
 - `412 × 915` (Pixel / Galaxy)
 - `768 × 1024` (iPad)
 - `1440 × 900` (Desktop)
+
+---
+
+## 🔐 Team Login, Owner Portal & Sales CRM
+
+The sales CRM is part of this project: one Django backend, one database, one login.
+
+| Area | URL | Who |
+|---|---|---|
+| Team sign in | `/owner/login` | everyone, with their **email** |
+| Owner portal (packages, leads, analytics) | `/owner` | staff accounts |
+| Sales CRM (leads, follow-ups, payments, departures, targets) | `/crm` | every active, approved team member |
+| Django admin | `/admin/` | staff accounts |
+| API docs | `/api/v1/docs` | |
+
+- **Roles:** `admin` / `manager` see every lead and manage the team; `sales_person` / `counselor` only see their own leads.
+- **First owner account:** `cd backend && ../venv/bin/python manage.py createsuperuser` (asks for email, first and last name).
+  On Render, set `DJANGO_SUPERUSER_EMAIL`, `DJANGO_SUPERUSER_PASSWORD`, `DJANGO_SUPERUSER_FIRST_NAME`, `DJANGO_SUPERUSER_LAST_NAME` and `build.sh` creates it.
+- **Add sales reps:** CRM → Team, or Django admin → *CRM · Team*.
+- Step-by-step guide inside the portal: **`/owner/help`**.
+
+### Photos, videos & gallery
+- **Owner portal → Photo Gallery** (`/owner/gallery`): *Add photos* uploads several at once, *Paste link* adds an existing URL, click a photo to edit title / category / caption / featured, eye icon hides it, bin removes it.
+- **Owner portal → Packages → Video loop selector**: *Upload cover photo*, *Upload your own video* (up to 100 MB), *Add trip photos* (the trip page's "View Photos").
+- Files go from the browser straight to Cloudinary using a short-lived signature from `POST /api/v1/owner/media/sign/` (staff only), so Django never handles the bytes. Saved links use `f_auto,q_auto` for WebP/AVIF delivery.
+
+### Website → CRM
+Every website enquiry becomes a CRM lead the moment it is saved (`adventures/crm.py` → `crm/enquiries/services.py`),
+tagged **Website** and assigned to the rep with the fewest open leads. Saved trips are mirrored as CRM packages.
+If anything was missed: `../venv/bin/python manage.py sync_crm` (`--all` re-sends everything; safe to repeat).
+
+### Code layout
+- `backend/crm/accounts` – team accounts (`AUTH_USER_MODEL = accounts.CustomUser`, email login) and the CRM session auth
+- `backend/crm/enquiries` – leads, comments, tour packages, website bridge
+- `backend/crm/targets` – monthly targets
+- `frontend/src/app/crm`, `frontend/src/components/crm`, `frontend/src/lib/crm` – CRM screens
+
+## ⚙️ Environment Variables
+
+| Where | Variable | Purpose |
+|---|---|---|
+| Backend | `CSRF_TRUSTED_ORIGINS_EXTRA` | Extra comma-separated origins for the team login in production |
+| Backend | `DJANGO_SUPERUSER_*` | Optional first owner account created by `build.sh` |
+| Backend | `CLOUDINARY_URL` | `cloudinary://<api_key>:<api_secret>@<cloud_name>` (Cloudinary → Settings → API Keys). Turns on photo/video uploads in the owner portal. Keep it secret. |
+| Backend | `CLOUDINARY_FOLDER` | Folder for uploads (default `spirit_adventures`) |
+| Frontend | `BACKEND_URL` | Django address for the Next.js rewrites (default `http://127.0.0.1:8000`) |
+| Frontend | `NEXT_PUBLIC_SITE_URL` | Public site URL for canonicals, sitemap and OG tags |
+| Frontend | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console token |
+| Frontend | `NEXT_PUBLIC_WHATSAPP_NUMBER` | WhatsApp booking number (optional) |

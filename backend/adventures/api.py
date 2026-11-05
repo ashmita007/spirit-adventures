@@ -1,7 +1,11 @@
 from ninja import NinjaAPI, Router, Schema
-from typing import List, Optional
+from ninja.security import SessionAuth, SessionAuthIsStaff
+from django.contrib.auth import authenticate, login, logout
+from django.middleware.csrf import get_token
+from typing import List, Optional, Union
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Count
+from django.utils import timezone
 from .models import (
     Destination, Category, Trip, TripImage, TripVideo, 
     TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ
@@ -21,6 +25,64 @@ api = NinjaAPI(
     description="Cinematic nature and adventure travel API",
     urls_namespace="spirit_api"
 )
+
+# Owner portal: Django staff session + CSRF token required on every /owner/ call
+owner_auth = SessionAuthIsStaff()
+
+
+# ----------------- Team login (owner portal + CRM + admin share one session) -----------------
+class LoginIn(Schema):
+    username: str  # the team member's email address
+    password: str
+
+
+def _user_out(user):
+    is_member = bool(user.is_active and getattr(user, "is_approved", False))
+    return {
+        "username": user.get_username(),
+        "email": getattr(user, "email", ""),
+        "name": user.get_full_name() or getattr(user, "display_name", "") or user.get_username(),
+        "role": getattr(user, "role", ""),
+        "is_staff": bool(user.is_staff),
+        "can_use_crm": is_member,
+        # Where to land after signing in
+        "home": "/owner" if user.is_staff else "/crm",
+    }
+
+
+@api.post("/auth/login/", response=ApiResponse, tags=["Team Auth"])
+@rate_limit(max_requests=8, window_seconds=300, bucket_name="owner_login")
+def owner_login(request, payload: LoginIn):
+    user = authenticate(request, username=payload.username.strip().lower(), password=payload.password)
+    allowed = user is not None and user.is_active and (user.is_staff or getattr(user, "is_approved", False))
+    if not allowed:
+        return api.create_response(
+            request,
+            {"success": False, "data": None, "message": "Wrong email or password, or this account is not active."},
+            status=401,
+        )
+    login(request, user)
+    get_token(request)  # sets the csrftoken cookie the portal sends back on writes
+    return {"success": True, "data": _user_out(user), "message": "Signed in"}
+
+
+@api.post("/auth/logout/", response=ApiResponse, tags=["Team Auth"])
+def owner_logout(request):
+    logout(request)
+    return {"success": True, "data": None, "message": "Signed out"}
+
+
+class _SignedIn(SessionAuth):
+    def authenticate(self, request, key):
+        user = request.user
+        return user if user.is_authenticated and user.is_active else None
+
+
+@api.get("/auth/me/", auth=_SignedIn(), response=ApiResponse, tags=["Team Auth"])
+def owner_me(request):
+    get_token(request)
+    return {"success": True, "data": _user_out(request.auth), "message": "ok"}
+
 
 # ----------------- Health -----------------
 @api.get("/health/", response=ApiResponse, tags=["Health"])
@@ -459,7 +521,7 @@ class UpdateTripConfigIn(Schema):
     is_featured: Optional[bool] = None
     is_bestseller: Optional[bool] = None
 
-@api.get("/owner/overview/", response=ApiResponse, tags=["Owner"])
+@api.get("/owner/overview/", auth=owner_auth, response=ApiResponse, tags=["Owner"])
 def get_owner_overview(request):
     enquiries = Enquiry.objects.select_related('trip').order_by('-created_at')
     trips = Trip.objects.select_related('destination').all()
@@ -477,8 +539,7 @@ def get_owner_overview(request):
     for e in enquiries.filter(status='CONVERTED'):
         if e.trip:
             est_revenue += float(e.trip.price) * (e.travelers_count or 1)
-        else:
-            est_revenue += 15000.0 * (e.travelers_count or 1)
+        # leads without a trip have no price yet; they are not counted
 
     enquiry_list = []
     for e in enquiries:
@@ -557,16 +618,23 @@ class CreateLeadIn(Schema):
     follow_up_date: Optional[str] = "Tomorrow 11:00 AM"
     admin_notes: Optional[str] = ""
 
-@api.post("/owner/leads/create/", response=ApiResponse, tags=["Owner"])
+@api.post("/owner/leads/create/", auth=owner_auth, response=ApiResponse, tags=["Owner"])
 def create_owner_lead(request, payload: CreateLeadIn):
+    full_name = (payload.full_name or "").strip()
+    phone = (payload.phone or "").strip()
+    if not full_name or not phone:
+        return api.create_response(
+            request, {"success": False, "data": None, "message": "Customer name and phone are required."}, status=400
+        )
     trip = None
     if payload.trip_title:
-        trip = Trip.objects.filter(title__icontains=payload.trip_title.split()[0]).first()
+        title = payload.trip_title.strip()
+        trip = Trip.objects.filter(title__iexact=title).first() or Trip.objects.filter(title__icontains=title).first()
 
     lead = Enquiry.objects.create(
-        full_name=payload.full_name,
-        phone=payload.phone,
-        email=payload.email or f"{payload.full_name.lower().replace(' ', '')}@example.com",
+        full_name=full_name[:150],
+        phone=phone[:25],
+        email=(payload.email or "").strip(),
         trip=trip,
         travelers_count=payload.travelers_count or 1,
         travel_date=payload.travel_date or "",
@@ -590,7 +658,7 @@ def create_owner_lead(request, payload: CreateLeadIn):
         "message": f"Lead for {lead.full_name} created successfully"
     }
 
-@api.post("/owner/enquiries/{enquiry_id}/status/", response=ApiResponse, tags=["Owner"])
+@api.post("/owner/enquiries/{enquiry_id}/status/", auth=owner_auth, response=ApiResponse, tags=["Owner"])
 def update_owner_enquiry_status(request, enquiry_id: int, payload: UpdateEnquiryStatusIn):
     enquiry = get_object_or_404(Enquiry, id=enquiry_id)
     if payload.status:
@@ -609,7 +677,7 @@ def update_owner_enquiry_status(request, enquiry_id: int, payload: UpdateEnquiry
         "message": f"Lead {enquiry.full_name} status updated to {enquiry.get_status_display()}"
     }
 
-@api.post("/owner/trips/{trip_id}/quick-update/", response=ApiResponse, tags=["Owner"])
+@api.post("/owner/trips/{trip_id}/quick-update/", auth=owner_auth, response=ApiResponse, tags=["Owner"])
 def update_owner_trip_config(request, trip_id: int, payload: UpdateTripConfigIn):
     trip = get_object_or_404(Trip, id=trip_id)
     if payload.price is not None:
@@ -657,8 +725,10 @@ class SavePackageIn(Schema):
     exclusions: Optional[List[str]] = []
     things_to_carry: Optional[List[str]] = []
     itinerary_days: Optional[List[dict]] = []
+    # Trip photo gallery (links). None = leave as is; a list replaces the photos.
+    gallery_images: Optional[List[Union[str, dict]]] = None
 
-@api.post("/owner/packages/save/", response=ApiResponse, tags=["Owner"])
+@api.post("/owner/packages/save/", auth=owner_auth, response=ApiResponse, tags=["Owner"])
 def save_owner_package(request, payload: SavePackageIn):
     from django.utils.text import slugify
     
@@ -666,21 +736,41 @@ def save_owner_package(request, payload: SavePackageIn):
     if not slug:
         slug = f"trip-{int(timezone.now().timestamp())}"
     
-    dest, _ = Destination.objects.get_or_create(
-        name=payload.destination_name or "Karnataka",
-        defaults={"slug": slugify(payload.destination_name or "Karnataka")}
+    dest_name = (payload.destination_name or "Karnataka").strip()
+    dest = Destination.objects.filter(name__iexact=dest_name).first()
+    if not dest:
+        dest = Destination.objects.create(
+            name=dest_name,
+            slug=slugify(dest_name) or f"destination-{int(timezone.now().timestamp())}",
+            description=f"Adventures and treks in {dest_name}.",
+            # A new destination needs a picture for its card; reuse the package cover
+            cover_image=payload.cover_image or "",
+            hero_image=payload.cover_image or "",
+        )
+    elif not dest.cover_image and payload.cover_image:
+        dest.cover_image = payload.cover_image
+        dest.save(update_fields=["cover_image"])
+    
+    cat_name = (payload.category_name or "Treks").strip()
+    cat = Category.objects.filter(name__iexact=cat_name).first() or Category.objects.create(
+        name=cat_name, slug=slugify(cat_name) or f"category-{int(timezone.now().timestamp())}"
     )
     
-    cat, _ = Category.objects.get_or_create(
-        name=payload.category_name or "Treks",
-        defaults={"slug": slugify(payload.category_name or "Treks")}
-    )
-    
-    trip = None
-    if payload.id:
-        trip = Trip.objects.filter(id=payload.id).first()
+    if not (payload.title or "").strip() or not payload.price or payload.price <= 0:
+        return api.create_response(
+            request,
+            {"success": False, "data": None, "message": "Package title and a price above 0 are required."},
+            status=400,
+        )
+
+    # Only an explicit id edits an existing trip; a new package never takes over
+    # another trip that happens to share its slug.
+    trip = Trip.objects.filter(id=payload.id).first() if payload.id else None
     if not trip:
-        trip = Trip.objects.filter(slug=slug).first()
+        base, n = slug, 2
+        while Trip.objects.filter(slug=slug).exists():
+            slug = f"{base}-{n}"
+            n += 1
     
     if trip:
         trip.title = payload.title
@@ -731,7 +821,7 @@ def save_owner_package(request, payload: SavePackageIn):
             duration_nights=payload.duration_nights or 1,
             difficulty=payload.difficulty or "MODERATE",
             cover_image=payload.cover_image or "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
-            hero_video_url=payload.hero_video_url or "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
+            hero_video_url=payload.hero_video_url if payload.hero_video_url is not None else "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
             short_description=payload.short_description or f"Experience the wild beauty of {payload.title}.",
             full_description=payload.full_description or f"Join Spirit Adventures on this curated expedition to {payload.title}.",
             pickup_location=payload.pickup_location or "Designated Pickup Point",
@@ -747,6 +837,15 @@ def save_owner_package(request, payload: SavePackageIn):
             things_to_carry=payload.things_to_carry or ["Trekking shoes", "Water bottle"]
         )
     
+    if payload.gallery_images is not None:
+        raw = [(g.get("image_url") if isinstance(g, dict) else g) or "" for g in payload.gallery_images]
+        urls = [u.strip() for u in raw if u.strip().startswith(("https://", "/images/"))][:40]
+        trip.gallery_images.all().delete()
+        TripImage.objects.bulk_create([
+            TripImage(trip=trip, image_url=u[:500], caption=trip.title[:200], ordering=i)
+            for i, u in enumerate(urls)
+        ])
+
     # Update itinerary days if provided
     if payload.itinerary_days:
         trip.itinerary_days.all().delete()
@@ -776,7 +875,7 @@ def save_owner_package(request, payload: SavePackageIn):
     }
 
 # ----------------- Owner: Cron Jobs Engine -----------------
-@api.get("/owner/crons/", response=ApiResponse, tags=["Owner Cron Engine"])
+@api.get("/owner/crons/", auth=owner_auth, response=ApiResponse, tags=["Owner Cron Engine"])
 def get_owner_crons(request):
     """List all scheduled background cron jobs with live state and logs"""
     jobs_list = list(CRON_JOB_REGISTRY.values())
@@ -791,7 +890,7 @@ def get_owner_crons(request):
         "message": "Cron job registry retrieved successfully"
     }
 
-@api.post("/owner/crons/trigger/", response=ApiResponse, tags=["Owner Cron Engine"])
+@api.post("/owner/crons/trigger/", auth=owner_auth, response=ApiResponse, tags=["Owner Cron Engine"])
 def trigger_owner_cron(request, payload: TriggerCronIn):
     """Manually trigger an automated background cron job on demand"""
     result = execute_cron_job(payload.job_id)
@@ -807,7 +906,7 @@ def trigger_owner_cron(request, payload: TriggerCronIn):
         "message": f"Cron job '{payload.job_id}' executed successfully"
     }
 
-@api.post("/owner/crons/toggle/", response=ApiResponse, tags=["Owner Cron Engine"])
+@api.post("/owner/crons/toggle/", auth=owner_auth, response=ApiResponse, tags=["Owner Cron Engine"])
 def toggle_owner_cron(request, payload: ToggleCronIn):
     """Enable or pause an automated cron job"""
     if payload.job_id not in CRON_JOB_REGISTRY:
@@ -825,7 +924,7 @@ def toggle_owner_cron(request, payload: ToggleCronIn):
     }
 
 # ----------------- Owner: Rate Limiting Stats -----------------
-@api.get("/owner/ratelimit-stats/", response=ApiResponse, tags=["Owner Security"])
+@api.get("/owner/ratelimit-stats/", auth=owner_auth, response=ApiResponse, tags=["Owner Security"])
 def get_ratelimit_stats(request):
     """Get active sliding-window rate limiting metrics and security status"""
     stats = limiter.get_stats()
@@ -836,3 +935,21 @@ def get_ratelimit_stats(request):
     }
 
 
+
+
+# ----------------- Owner media uploads + gallery manager: /api/v1/owner/... -----------------
+from .media import router as owner_media_router  # noqa: E402
+
+api.add_router("/owner", owner_media_router)
+
+
+# ----------------- Built-in sales CRM: /api/v1/crm/... -----------------
+from crm.accounts.api import router as crm_accounts_router  # noqa: E402
+from crm.enquiries.api import router as crm_enquiries_router  # noqa: E402
+from crm.targets.api import router as crm_targets_router  # noqa: E402
+
+crm_router = Router(tags=["CRM"])
+crm_router.add_router("", crm_accounts_router)
+crm_router.add_router("", crm_enquiries_router)
+crm_router.add_router("", crm_targets_router)
+api.add_router("/crm", crm_router)

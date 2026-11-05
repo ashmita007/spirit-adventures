@@ -5,6 +5,17 @@ import type { NextRequest } from 'next/server';
 const ipRequestTimestamps = new Map<string, number[]>();
 
 export function middleware(request: NextRequest) {
+  // Owner portal + CRM gate: no Django session cookie -> team login page.
+  // (Django still checks the session, staff flag and CRM role on every API call.)
+  const { pathname } = request.nextUrl;
+  const isPortal = pathname.startsWith('/owner') || pathname === '/crm' || pathname.startsWith('/crm/');
+  if (isPortal && pathname !== '/owner/login' && !request.cookies.get('sessionid')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/owner/login';
+    url.search = `?next=${encodeURIComponent(pathname)}`;
+    return NextResponse.redirect(url);
+  }
+
   const response = NextResponse.next();
 
   // 1. Security Headers

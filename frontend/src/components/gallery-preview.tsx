@@ -161,19 +161,19 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
   return (
     <section className="py-20 sm:py-28 bg-slate-900 text-white relative overflow-hidden select-none">
       {/* Ambient background glows */}
-      <div className="absolute top-0 right-1/3 w-96 h-96 bg-brand-ocean/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/3 w-96 h-96 bg-brand-ocean/15 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Top Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div>
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-brand-sky text-xs font-bold uppercase tracking-[0.2em] mb-3 border border-white/15 shadow-2xs">
+            <div data-anim="fade-up" className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 text-brand-sky text-xs font-bold uppercase tracking-[0.2em] mb-3 border border-white/15 shadow-2xs">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Live Client Photo Feed</span>
             </div>
 
-            <h2 className="font-display font-black text-3xl sm:text-5xl text-white uppercase tracking-tight">
+            <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl text-white uppercase tracking-tight">
               Moments from the Wild
             </h2>
             <p className="mt-2 text-slate-300 text-sm sm:text-base max-w-xl font-light">
@@ -220,16 +220,15 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
 
         {/* 1. Spotlight Changing Showcase (Auto-Cycling with Crossfade) */}
         {currentImage && (
-          <div className="relative w-full rounded-3xl overflow-hidden bg-slate-950 border border-white/15 shadow-2xl mb-12 aspect-[16/9] sm:aspect-[21/9] max-h-[520px]">
+          <div data-anim="clip" className="relative w-full rounded-3xl overflow-hidden bg-slate-950 border border-white/15 shadow-2xl mb-12 aspect-[16/9] sm:aspect-[21/9] max-h-[520px]">
             {/* Background Image with smooth transition */}
             <Image
               key={currentImage.id}
               src={currentImage.image_url}
               alt={currentImage.title}
               fill
-              priority
               sizes="100vw"
-              className="object-cover object-center animate-cinematic-zoom transition-opacity duration-1000"
+              className="object-cover object-center transition-opacity duration-1000"
             />
 
             {/* Dark Vignette Overlay */}
@@ -238,10 +237,10 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
             {/* Top Bar on Spotlight */}
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-brand-sky border border-white/15 shadow-md">
+                <span className="px-3 py-1 rounded-full bg-black/60 text-[11px] font-bold uppercase tracking-wider text-brand-sky border border-white/15 shadow-md">
                   {currentImage.category || "Adventure"}
                 </span>
-                <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md text-[11px] font-bold text-emerald-300 border border-emerald-500/30">
+                <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-500/20 text-[11px] font-bold text-emerald-300 border border-emerald-500/30">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                   <span>Real Client Photo</span>
                 </span>
@@ -252,7 +251,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
                   aria-label={isPlaying ? "Pause automatic slideshow" : "Play automatic slideshow"}
-                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
+                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
                 >
                   {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-white" />}
                 </button>
@@ -260,7 +259,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                 <button
                   onClick={() => openInLightbox(currentImage.image_url)}
                   aria-label="View photo in full screen"
-                  className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
+                  className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
                 >
                   <Maximize2 className="w-4 h-4" />
                 </button>
@@ -296,14 +295,14 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                   <button
                     onClick={handlePrev}
                     aria-label="Previous photo"
-                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={handleNext}
                     aria-label="Next photo"
-                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 flex items-center justify-center transition-transform active:scale-90"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -351,7 +350,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                     className="object-cover object-center group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-                    <span className="self-start text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/60 text-brand-sky backdrop-blur-xs border border-white/10">
+                    <span className="self-start text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/60 text-brand-sky border border-white/10">
                       {img.category}
                     </span>
                     <div>
@@ -385,7 +384,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                     className="object-cover object-center group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-                    <span className="self-start text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/60 text-emerald-300 backdrop-blur-xs border border-white/10">
+                    <span className="self-start text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/60 text-emerald-300 border border-white/10">
                       {img.location?.split(",")[0] || "Wilderness"}
                     </span>
                     <div>

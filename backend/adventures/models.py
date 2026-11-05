@@ -189,11 +189,16 @@ class Enquiry(models.Model):
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='MEDIUM')
     follow_up_date = models.CharField(max_length=100, blank=True)
     admin_notes = models.TextField(blank=True)
+    # CRM sync state (filled by adventures/crm.py)
+    crm_lead_id = models.PositiveIntegerField(null=True, blank=True, help_text="Lead id in Spirit Adventures CRM")
+    crm_synced_at = models.DateTimeField(null=True, blank=True)
+    crm_sync_error = models.CharField(max_length=300, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "Enquiries"
+        verbose_name = "Website enquiry"
+        verbose_name_plural = "Website enquiries"
         ordering = ['-created_at']
 
     def __str__(self):

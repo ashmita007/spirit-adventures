@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Heart, Phone, Compass, Mountain, MapPin, Image as ImageIcon, BookOpen, MessageCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isPortalPath } from "@/lib/utils";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -12,11 +12,8 @@ export default function Navbar() {
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-
-  // Do not render consumer website navbar on the owner operations portal
-  if (pathname?.startsWith("/owner")) {
-    return null;
-  }
+  // Pages that open with a full-bleed photo hero: navbar starts transparent
+  const hasHero = isHomePage || ["/trips", "/destinations", "/about", "/contact", "/gallery", "/blog"].includes(pathname);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,7 +23,7 @@ export default function Navbar() {
         setIsScrolled(false);
       }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -34,6 +31,11 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  // Do not render the public navbar inside the owner portal or CRM (after all hooks)
+  if (isPortalPath(pathname)) {
+    return null;
+  }
 
   const navLinks = [
     { name: "Explore Packages", href: "/trips", icon: Mountain },
@@ -44,11 +46,11 @@ export default function Navbar() {
   ];
 
   // Dynamic header styles based on scroll state and page
-  const headerBgClass = isHomePage
+  const headerBgClass = hasHero
     ? isScrolled
-      ? "bg-brand-navy/95 backdrop-blur-md shadow-md text-white py-3.5 border-b border-white/10"
+      ? "bg-brand-navy/[0.97] shadow-md text-white py-3.5 border-b border-white/10"
       : "bg-gradient-to-b from-black/80 via-black/30 to-transparent text-white py-4"
-    : "bg-brand-navy/95 backdrop-blur-md shadow-md text-white py-3.5 border-b border-white/10";
+    : "bg-brand-navy/[0.97] shadow-md text-white py-3.5 border-b border-white/10";
 
   const isLightText = true;
 
@@ -72,11 +74,14 @@ export default function Navbar() {
                 <Menu className="w-6 h-6" />
               </button>
 
-              <NextLink href="/" className="flex items-center group">
-                <div className="bg-white px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-xl shadow-xs border border-white/30 flex items-center justify-center transition-transform group-hover:scale-105">
+              <NextLink href="/" aria-label="Spirit Adventures home" className="flex items-center group">
+                <div className="bg-white px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-xl shadow-xs border border-white/30 flex items-center justify-center transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-2">
                   <img
                     src="/images/logo.png"
                     alt="Spirit Adventures"
+                    width={564}
+                    height={149}
+                    fetchPriority="high"
                     className="h-7 sm:h-8 w-auto object-contain"
                   />
                 </div>

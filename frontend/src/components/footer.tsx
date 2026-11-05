@@ -1,4 +1,5 @@
 "use client";
+import { isPortalPath } from "@/lib/utils";
 
 import React from "react";
 import Link from "next/link";
@@ -9,7 +10,7 @@ export default function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
-  if (pathname?.startsWith("/owner")) {
+  if (isPortalPath(pathname)) {
     return null;
   }
 
@@ -21,7 +22,7 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center group">
               <div className="bg-white px-4 py-2 rounded-xl shadow-xs border border-white/20 flex items-center justify-center transition-transform group-hover:scale-105">
-                <img src="/images/logo.png" alt="Spirit Adventures Logo" className="h-8 w-auto object-contain" />
+                <img src="/images/logo.png" alt="Spirit Adventures" width={564} height={149} loading="lazy" className="h-8 w-auto object-contain" />
               </div>
             </Link>
 

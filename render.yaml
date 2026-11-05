@@ -14,8 +14,16 @@ services:
         value: "False"
       - key: SECRET_KEY
         generateValue: true
+      - key: CLOUDINARY_URL
+        sync: false  # set in the Render dashboard: cloudinary://<api_key>:<api_secret>@<cloud_name>
       - key: ALLOWED_HOSTS
         value: "*"
+      - key: SEED_DEMO_DATA
+        value: "1"
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
       - key: WHATSAPP_NUMBER
         value: "+919666567551"
       - key: SUPPORT_EMAIL

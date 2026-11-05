@@ -4,29 +4,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShieldCheck, Compass, Heart, Mountain, Users, Trees, ArrowRight } from "lucide-react";
 import WhyUs from "@/components/why-us";
+import PageHero from "@/components/page-hero";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About Us & Ethos | Spirit Adventures",
   description: "Learn about the philosophy, certified guides, and leave-no-trace ethics behind Spirit Adventures.",
 };
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white pt-24 pb-20">
-      {/* Hero Header */}
-      <div className="relative py-16 sm:py-24 bg-brand-navy text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-sky block mb-3">
-            Our Wilderness Ethos
-          </span>
-          <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight max-w-3xl mx-auto leading-tight">
-            Rooted in Nature. Driven by Spirit.
-          </h1>
-          <p className="mt-4 text-slate-300 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
-            We believe outdoor travel is an inward journey. Small groups, slow steps, and deep respect for the wild landscapes we traverse.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white pb-20">
+      <PageHero
+        eyebrow="Our Wilderness Ethos"
+        title="Rooted in Nature. Driven by Spirit."
+        subtitle={<>We believe outdoor travel is an inward journey. Small groups, slow steps, and deep respect for the wild landscapes we traverse.</>}
+        image="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1600&q=80"
+        crumbs={[{ label: "About" }]}
+        align="center"
+      />
 
       {/* Story Section */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

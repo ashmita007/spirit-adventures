@@ -8,13 +8,16 @@ import {
   Calendar, ShieldCheck, Backpack, HelpCircle, MessageCircle, Play, 
   ChevronDown, Heart, Share2, Compass
 } from "lucide-react";
-import { Trip } from "@/lib/types";
+import { Review, Trip } from "@/lib/types";
+import TripCard from "@/components/trip-card";
 import { formatCurrency, cn } from "@/lib/utils";
 import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
 
 interface TripDetailClientProps {
   trip: Trip;
+  similar?: Trip[];
+  reviews?: Review[];
 }
 
 const LOCAL_VIDEO_MAP: Record<string, string> = {
@@ -32,7 +35,9 @@ const LOCAL_VIDEO_MAP: Record<string, string> = {
   "sandhan-valley-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4",
 };
 
-export default function TripDetailClient({ trip }: TripDetailClientProps) {
+const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").replace(/\D/g, "");
+
+export default function TripDetailClient({ trip, similar = [], reviews = [] }: TripDetailClientProps) {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
@@ -127,7 +132,7 @@ export default function TripDetailClient({ trip }: TripDetailClientProps) {
               </div>
             </div>
 
-            <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-tight max-w-4xl text-balance">
+            <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-tight max-w-4xl text-balance">
               {trip.title}
             </h1>
           </div>
@@ -391,7 +396,7 @@ export default function TripDetailClient({ trip }: TripDetailClientProps) {
                 </button>
 
                 <a
-                  href={`https://wa.me/919876543210?text=${whatsappMessage}`}
+                  href={`https://wa.me/${WHATSAPP}?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs uppercase tracking-wider transition"
@@ -420,32 +425,113 @@ export default function TripDetailClient({ trip }: TripDetailClientProps) {
         </div>
       </div>
 
-      {/* Mobile Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 p-4 shadow-lg flex items-center justify-between">
-        <div>
-          <span className="text-[10px] uppercase font-bold text-slate-600 block">Total Price</span>
-          <span className="font-display font-black text-lg text-brand-navy">
-            {formatCurrency(trip.price)}
-          </span>
-        </div>
+      {/* Traveller stories */}
+      {reviews.length > 0 && (
+        <section className="relative overflow-hidden bg-brand-navy text-white py-16 sm:py-20 mt-8">
+          <div aria-hidden className="absolute -top-32 -right-24 h-80 w-80 rounded-full bg-brand-sky/20 blur-3xl" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-sky-300">Traveller stories</span>
+                <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-black text-3xl sm:text-4xl uppercase tracking-tight">
+                  Heard from the trail
+                </h2>
+              </div>
+              {trip.rating ? (
+                <div className="flex items-center gap-3">
+                  <span className="font-display font-black text-4xl">{trip.rating}</span>
+                  <div>
+                    <div className="flex gap-0.5 text-amber-400" aria-label={`${trip.rating} out of 5`}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-amber-400" />
+                      ))}
+                    </div>
+                    {trip.reviews_count ? <p className="text-xs text-sky-100/70 mt-1">{trip.reviews_count} reviews</p> : null}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+            <div data-anim="stagger" className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {reviews.map((r) => (
+                <figure key={r.id} className="flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.06] p-6">
+                  <div>
+                    <div className="flex gap-0.5 text-amber-400 mb-4" aria-label={`${r.rating} out of 5`}>
+                      {Array.from({ length: r.rating }).map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                      ))}
+                    </div>
+                    <blockquote className="text-sm leading-relaxed text-sky-50/90">&ldquo;{r.review_text}&rdquo;</blockquote>
+                  </div>
+                  <figcaption className="mt-6 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-sky to-brand-ocean font-bold text-sm">
+                      {r.traveler_name.charAt(0)}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-bold truncate">{r.traveler_name}</span>
+                      <span className="block text-[11px] text-sky-100/60 truncate">
+                        {[r.trip_title, r.travel_date].filter(Boolean).join(" · ") || r.traveler_location}
+                      </span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-        <div className="flex items-center space-x-2">
-          <a
-            href={`https://wa.me/919876543210?text=${whatsappMessage}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="WhatsApp"
-            className="p-3 rounded-xl bg-emerald-600 text-white"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </a>
+      {/* Similar adventures */}
+      {similar.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="flex items-end justify-between gap-4 mb-8">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-ocean">Keep exploring</span>
+              <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-black text-3xl sm:text-4xl uppercase tracking-tight text-brand-navy">
+                Similar adventures
+              </h2>
+            </div>
+            <Link href="/trips" className="hidden sm:inline-flex items-center gap-1 text-sm font-bold text-brand-ocean hover:text-brand-navy transition">
+              View all trips →
+            </Link>
+          </div>
+          <div data-anim="stagger" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {similar.map((t) => (
+              <TripCard key={t.id} trip={t} />
+            ))}
+          </div>
+        </section>
+      )}
 
-          <button
-            onClick={() => setEnquiryOpen(true)}
-            className="px-6 py-3 rounded-xl bg-brand-ocean text-white font-bold text-xs uppercase tracking-wider shadow-md"
-          >
-            Book Adventure
-          </button>
+      {/* Mobile Sticky Booking Bar (replaces the bottom nav on trip pages) */}
+      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pointer-events-none">
+        <div className="pointer-events-auto max-w-md mx-auto flex items-center justify-between gap-3 rounded-2xl bg-brand-navy/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-brand-navy/40 pl-4 pr-2 py-2">
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-display font-black text-lg text-white">{formatCurrency(trip.price)}</span>
+              {trip.original_price && (
+                <span className="text-[11px] text-slate-400 line-through">{formatCurrency(trip.original_price)}</span>
+              )}
+            </div>
+            <span className="text-[10px] font-medium text-sky-200">per person · {trip.duration_label}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={`https://wa.me/${WHATSAPP}?text=${whatsappMessage}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ask on WhatsApp"
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#25D366] text-white active:scale-95 transition"
+            >
+              <MessageCircle className="w-5 h-5" />
+            </a>
+            <button
+              onClick={() => setEnquiryOpen(true)}
+              className="h-11 px-5 rounded-xl bg-brand-ocean text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-brand-ocean/30 active:scale-95 transition"
+            >
+              Book Now
+            </button>
+          </div>
         </div>
       </div>
 

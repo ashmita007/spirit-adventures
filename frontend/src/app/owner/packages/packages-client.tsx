@@ -1,6 +1,8 @@
 "use client";
 
+import { ownerFetch } from "@/lib/owner-fetch";
 import React, { useState } from "react";
+import MediaUploadButton from "@/components/owner/media-upload-button";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -54,7 +56,8 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
   const paginatedTrips = filteredTrips.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const handleOpenEditTrip = (summary: TripSummary) => {
+  // Placeholder content, only used if the real trip can't be loaded
+  const buildTemplateTrip = (summary: TripSummary): Trip => {
     const isSouthIndia = ["Dandeli", "Gokarna", "Coorg", "Chikmagalur", "Ooty", "Wayanad"].some(r => summary.destination_name.includes(r));
     
     const fullTrip: Trip = {
@@ -131,22 +134,70 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
         }
       ]
     };
-    setEditingTrip(fullTrip);
-    setEditorTab("itinerary");
+    return fullTrip;
   };
+
+  const [loadingTripId, setLoadingTripId] = useState<number | null>(null);
+
+  // Load the trip's real content so saving never overwrites it with placeholders
+  const handleOpenEditTrip = async (summary: TripSummary) => {
+    setLoadingTripId(summary.id);
+    try {
+      const res = await fetch(`/api/v1/trips/${summary.slug}/`);
+      const json = res.ok ? await res.json() : null;
+      const t = json?.data;
+      if (!t) throw new Error("not found");
+      setEditingTrip({
+        ...t,
+        destination_name: t.destination?.name ?? summary.destination_name,
+        destination_slug: t.destination?.slug ?? "",
+        category_name: t.category?.name ?? summary.category_name,
+        itinerary_days: t.itinerary_days ?? [],
+        inclusions: t.inclusions ?? [],
+        exclusions: t.exclusions ?? [],
+        things_to_carry: t.things_to_carry ?? [],
+      } as Trip);
+    } catch {
+      showToast("Couldn't load full trip details, editing with a template instead.");
+      setEditingTrip(buildTemplateTrip(summary));
+    } finally {
+      setLoadingTripId(null);
+      setEditorTab("itinerary");
+    }
+  };
+
+  const destinationOptions = Array.from(new Set(data.trips.map((t) => t.destination_name).filter(Boolean))).sort();
+  const categoryOptions = Array.from(new Set(data.trips.map((t) => t.category_name).filter(Boolean))).sort();
 
   const handleSaveTripForm = async () => {
     if (!editingTrip) return;
-    const currentTrip = { ...editingTrip };
-    
+    const isNew = !data.trips.some((t) => t.id === editingTrip.id);
+    if (!editingTrip.title.trim() || !editingTrip.price || editingTrip.price <= 0) {
+      showToast("Add a package title and a price above ₹0 before saving.");
+      return;
+    }
+    let currentTrip = { ...editingTrip };
+
     try {
-      await fetch("/api/v1/owner/packages/save/", {
+      const res = await ownerFetch("/api/v1/owner/packages/save/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(currentTrip)
+        // New packages: let the server pick the id and a unique slug from the title
+        body: JSON.stringify({
+          ...(isNew ? { ...currentTrip, id: null, slug: null } : currentTrip),
+          // Only send photos when they were loaded, so a failed detail load never wipes them
+          gallery_images: currentTrip.gallery_images ? currentTrip.gallery_images.map((g) => g.image_url) : undefined,
+        }),
       });
-    } catch (e) {
-      console.warn("API sync offline, updated in local state:", e);
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.success) {
+        showToast(json?.message || "Save failed. Nothing was changed.");
+        return;
+      }
+      currentTrip = { ...currentTrip, id: json.data.id, slug: json.data.slug };
+    } catch {
+      showToast("Can't reach the server. Package was not saved.");
+      return;
     }
 
     setData((prev) => {
@@ -193,7 +244,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
       return { ...prev, trips: updatedTrips };
     });
     setEditingTrip(null);
-    showToast(`Package "${currentTrip.title}" saved and seeded into database!`);
+    showToast(`Package "${currentTrip.title}" saved. It is live on the website.`);
   };
 
   const handleAddItineraryDay = () => {
@@ -298,7 +349,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
           className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-md cursor-pointer hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Add Package Row</span>
+          <span>Add package</span>
         </button>
       </div>
 
@@ -315,7 +366,51 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
           <span className="text-xs text-slate-500 font-semibold">{filteredTrips.length} Active Packages</span>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Phones: one card per package */}
+        <ul className="md:hidden divide-y divide-slate-100">
+          {paginatedTrips.map((trip) => (
+            <li key={trip.id} className="flex gap-3 p-4">
+              <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                <Image
+                  src={trip.cover_image || "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg"}
+                  alt={trip.title}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-sm text-brand-navy leading-snug line-clamp-2">{trip.title}</p>
+                <p className="mt-0.5 text-[11px] text-slate-500">
+                  {trip.destination_name} · {trip.duration_days}D / {trip.duration_nights}N
+                </p>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <span className="font-display font-black text-brand-ocean">{formatCurrency(trip.price)}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      href={`/trips/${trip.slug}`}
+                      target="_blank"
+                      aria-label={`View ${trip.title} on the website`}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-600"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Link>
+                    <button
+                      onClick={() => handleOpenEditTrip(trip)}
+                      disabled={loadingTripId === trip.id}
+                      className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-ocean px-3 text-xs font-bold text-white disabled:opacity-60"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" />
+                      {loadingTripId === trip.id ? "Loading…" : "Edit"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
               <tr>
@@ -338,23 +433,12 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                 >
                   <td className="py-3 px-4">
                     <div className="relative w-14 h-10 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-2xs flex-shrink-0">
-                      {trip.hero_video_url ? (
-                        <video
-                          src={trip.hero_video_url}
-                          poster={trip.cover_image}
-                          muted
-                          loop
-                          playsInline
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
                         <Image
                           src={trip.cover_image || "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg"}
                           alt={trip.title}
                           fill
                           className="object-cover"
                         />
-                      )}
                       <div className="absolute inset-0 bg-black/10" />
                     </div>
                   </td>
@@ -369,12 +453,12 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </td>
 
                   <td className="py-3 px-4">
-                    <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200">
+                    <span className="inline-flex whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200">
                       📍 {trip.destination_name}
                     </span>
                   </td>
 
-                  <td className="py-3 px-4 font-semibold text-slate-700">
+                  <td className="py-3 px-4 font-semibold text-slate-700 whitespace-nowrap">
                     {trip.duration_label || `${trip.duration_days}D / ${trip.duration_nights}N`}
                   </td>
 
@@ -384,7 +468,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     </span>
                   </td>
 
-                  <td className="py-3 px-4 font-display font-black text-brand-ocean text-sm">
+                  <td className="py-3 px-4 font-display font-black text-brand-ocean text-sm whitespace-nowrap">
                     {formatCurrency(trip.price)}
                   </td>
 
@@ -401,7 +485,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                         }
                       }}
                       className={cn(
-                        "px-2.5 py-1 rounded-full text-[10px] font-black uppercase transition cursor-pointer border",
+                        "whitespace-nowrap px-2.5 py-1 rounded-full text-[10px] font-black uppercase transition cursor-pointer border",
                         trip.is_featured
                           ? "bg-amber-50 text-amber-700 border-amber-200"
                           : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
@@ -411,18 +495,19 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     </button>
                   </td>
 
-                  <td className="py-3 px-4 font-bold text-slate-800">
+                  <td className="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">
                     {trip.leads_count || 0} Inquiries
                   </td>
 
-                  <td className="py-3 px-4 text-right">
+                  <td className="py-3 px-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end space-x-2">
                       <button
                         onClick={() => handleOpenEditTrip(trip)}
-                        className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-2xs cursor-pointer"
+                        disabled={loadingTripId === trip.id}
+                        className="disabled:opacity-60 inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-2xs cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        <span>Edit Day-wise Plan</span>
+                        <span>{loadingTripId === trip.id ? "Loading…" : "Edit plan"}</span>
                       </button>
 
                       <Link
@@ -663,21 +748,32 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                       Destination Region
                     </label>
-                    <select
-                      value={editingTrip.destination_name || "Gokarna, Karnataka"}
+                    <input
+                      list="owner-destination-options"
+                      value={editingTrip.destination_name || ""}
+                      placeholder="e.g. Dandeli"
                       onChange={(e) => setEditingTrip({ ...editingTrip, destination_name: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-brand-ocean cursor-pointer"
-                    >
-                      <option value="Hampi & Gokarna, Karnataka">Hampi & Gokarna, Karnataka</option>
-                      <option value="Dandeli, Karnataka">Dandeli, Karnataka (Rafting)</option>
-                      <option value="Coorg, Karnataka">Coorg, Karnataka (Misty Coffee Hills)</option>
-                      <option value="Goa Coast, India">Goa Coast, India (Water Sports & Forts)</option>
-                      <option value="Chikmagalur, Karnataka">Chikmagalur, Karnataka (Mullayanagiri)</option>
-                      <option value="Ooty, Tamil Nadu">Ooty, Tamil Nadu (Nilgiri Pine Forests)</option>
-                      <option value="Wayanad, Kerala">Wayanad, Kerala (Chembra Heart Lake)</option>
-                      <option value="Ladakh, Himalayas">Ladakh, Himalayas (Motorcycle Odyssey)</option>
-                      <option value="Uttarakhand, Himalayas">Uttarakhand, Himalayas (Kedarkantha)</option>
-                    </select>
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-brand-ocean"
+                    />
+                    <datalist id="owner-destination-options">
+                      {destinationOptions.map((d) => <option key={d} value={d} />)}
+                    </datalist>
+                    <p className="mt-1 text-[10px] text-slate-400">Pick an existing destination so trips group together. A new name creates a new destination.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                      Category
+                    </label>
+                    <input
+                      list="owner-category-options"
+                      value={editingTrip.category_name || ""}
+                      placeholder="e.g. Treks"
+                      onChange={(e) => setEditingTrip({ ...editingTrip, category_name: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-brand-ocean"
+                    />
+                    <datalist id="owner-category-options">
+                      {categoryOptions.map((c) => <option key={c} value={c} />)}
+                    </datalist>
                   </div>
 
                   <div>
@@ -748,6 +844,32 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               {editorTab === "media" && (
                 <div className="space-y-6">
                   <div>
+                    <label htmlFor="owner-cover-image" className="block text-xs font-bold uppercase text-slate-600 mb-1.5">
+                      Cover Image URL (card & share image)
+                    </label>
+                    <input
+                      id="owner-cover-image"
+                      type="url"
+                      value={editingTrip.cover_image || ""}
+                      placeholder="https://res.cloudinary.com/.../photo.jpg"
+                      onChange={(e) => setEditingTrip({ ...editingTrip, cover_image: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:border-brand-ocean"
+                    />
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <MediaUploadButton
+                        folder="trips"
+                        label="Upload cover photo"
+                        onUploaded={(r) => setEditingTrip((t) => (t ? { ...t, cover_image: r.url } : t))}
+                        onError={showToast}
+                      />
+                      {editingTrip.cover_image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={editingTrip.cover_image} alt="Cover preview" className="h-12 w-20 rounded-lg object-cover border border-slate-200" />
+                      )}
+                    </div>
+                    <p className="mt-1 text-[10px] text-slate-400">Upload goes straight to Cloudinary, or paste any https link. Landscape, at least 1200px wide.</p>
+                  </div>
+                  <div>
                     <label className="block text-xs font-bold uppercase text-brand-ocean mb-1.5">
                       Select Local Looping Video (Card & Banner Background)
                     </label>
@@ -763,12 +885,84 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                       }}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-brand-ocean cursor-pointer"
                     >
+                      <option value="">No video (photo only)</option>
+                      {editingTrip.hero_video_url && !AVAILABLE_LOCAL_VIDEOS.some((v) => v.value === editingTrip.hero_video_url) && (
+                        <option value={editingTrip.hero_video_url}>⬆️ Uploaded video &mdash; {editingTrip.hero_video_url}</option>
+                      )}
                       {AVAILABLE_LOCAL_VIDEOS.map((vid) => (
                         <option key={vid.value} value={vid.value}>
                           🎬 {vid.label} [{vid.region}] &mdash; {vid.value}
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <MediaUploadButton
+                      folder="videos"
+                      accept="video"
+                      label="Upload your own video"
+                      onUploaded={(r) =>
+                        setEditingTrip((t) =>
+                          t ? { ...t, hero_video_url: r.url, cover_image: t.cover_image || r.posterUrl || "" } : t
+                        )
+                      }
+                      onError={showToast}
+                    />
+                    <span className="text-[10px] text-slate-400">MP4 / MOV, up to 100 MB. Short 10-20 second loops play best.</span>
+                  </div>
+
+                  {/* Trip photo gallery */}
+                  <div className="rounded-2xl border border-slate-200 p-4 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <span className="block text-xs font-bold uppercase text-slate-700">Trip photos</span>
+                        <span className="text-[10px] text-slate-400">Shown in &ldquo;View Photos&rdquo; on the trip page. Save the package after adding.</span>
+                      </div>
+                      <MediaUploadButton
+                        folder="trips"
+                        multiple
+                        label="Add trip photos"
+                        onUploaded={(r) =>
+                          setEditingTrip((t) =>
+                            t
+                              ? {
+                                  ...t,
+                                  gallery_images: [
+                                    ...(t.gallery_images || []),
+                                    { id: -Date.now() - Math.random(), image_url: r.url, caption: t.title, ordering: (t.gallery_images || []).length, is_cover: false },
+                                  ],
+                                }
+                              : t
+                          )
+                        }
+                        onError={showToast}
+                      />
+                    </div>
+                    {(editingTrip.gallery_images || []).length > 0 ? (
+                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                        {(editingTrip.gallery_images || []).map((g, i) => (
+                          <div key={`${g.id}-${i}`} className="relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={g.image_url} alt="" className="h-full w-full object-cover" />
+                            <button
+                              type="button"
+                              aria-label="Remove photo"
+                              onClick={() =>
+                                setEditingTrip((t) =>
+                                  t ? { ...t, gallery_images: (t.gallery_images || []).filter((_, j) => j !== i) } : t
+                                )
+                              }
+                              className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 text-xs font-bold text-white hover:bg-rose-600"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-slate-400">No trip photos yet. The cover photo is used instead.</p>
+                    )}
                   </div>
 
                   {editingTrip.hero_video_url && (

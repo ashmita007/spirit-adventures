@@ -6,11 +6,29 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Local secrets live in backend/.env (never committed); on Render use env vars
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass
+
 SECRET_KEY = os.getenv('SECRET_KEY', 'spirit-adventures-dev-secret-key-nature-2025-cinematic')
 
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+# Public domain of the site, e.g. spiritadventures.in (used for hosts, CSRF and CORS)
+SITE_DOMAIN = os.getenv('SITE_DOMAIN', '').strip().lower()
+
+ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '*').split(',') if h.strip()]
+if SITE_DOMAIN and '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS += [SITE_DOMAIN, f'www.{SITE_DOMAIN}']
+# Containers talk to each other by service name (frontend -> backend:8000)
+if '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS += ['backend', 'localhost', '127.0.0.1']
+
+if not DEBUG and SECRET_KEY == 'spirit-adventures-dev-secret-key-nature-2025-cinematic':
+    raise RuntimeError('Set a real SECRET_KEY before running with DEBUG=False.')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,7 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'adventures.apps.AdventuresConfig',
+    # Built-in sales CRM (team accounts, leads, targets)
+    'crm.accounts.apps.AccountsConfig',
+    'crm.enquiries.apps.EnquiriesConfig',
+    'crm.targets.apps.TargetsConfig',
 ]
+
+# One login for the owner portal, the CRM and Django admin: team members sign in with email
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -108,7 +133,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -119,15 +147,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = True
 
 # CORS
-CORS_ALLOW_ALL_ORIGINS = True
+# The browser only ever calls the API through the same domain (Next.js / Caddy proxy),
+# so cross-origin access stays limited to known hosts. Never allow-all with credentials.
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https:\/\/.*\.onrender\.com$",
+    r"^https:\/\/.*\.render\.com$",
     r"^http:\/\/localhost:[0-9]+$",
     r"^http:\/\/127\.0\.0\.1:[0-9]+$",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
+    "https://*.render.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:8000",
@@ -138,3 +170,43 @@ CSRF_TRUSTED_ORIGINS = [
 WHATSAPP_NUMBER = os.getenv('WHATSAPP_NUMBER', '+919876543210')
 SUPPORT_EMAIL = os.getenv('SUPPORT_EMAIL', 'hello@spiritadventures.in')
 SUPPORT_PHONE = os.getenv('SUPPORT_PHONE', '+91 98765 43210')
+
+# Website enquiries become CRM leads automatically (adventures/crm.py -> crm/enquiries/services.py).
+
+# Owner portal session cookies (HTTP-only session; CSRF token readable by the portal JS)
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+# HTTPS-only cookies in production. COOKIE_SECURE=False only for testing over plain http.
+COOKIE_SECURE = os.getenv('COOKIE_SECURE', str(not DEBUG)).lower() in ('true', '1', 'yes')
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = COOKIE_SECURE
+SESSION_COOKIE_AGE = 60 * 60 * 12  # 12h
+_env_csrf = os.getenv('CSRF_TRUSTED_ORIGINS', '') or os.getenv('CSRF_TRUSTED_ORIGINS_EXTRA', '')
+_extra_origins = [o.strip() for o in _env_csrf.split(',') if o.strip()]
+CSRF_TRUSTED_ORIGINS += _extra_origins
+if SITE_DOMAIN:
+    CSRF_TRUSTED_ORIGINS += [f'https://{SITE_DOMAIN}', f'https://www.{SITE_DOMAIN}']
+    import re as _re
+    CORS_ALLOWED_ORIGIN_REGEXES.append(r"^https://(www\.)?" + _re.escape(SITE_DOMAIN) + "$")
+
+# Behind Caddy / Render the TLS ends at the proxy; trust its X-Forwarded-Proto header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+if not DEBUG:
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    X_FRAME_OPTIONS = 'DENY'
+
+
+# ----------------- Cloudinary (photo + video uploads from the owner portal) -----------------
+# Either CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+# or the three separate variables below. Files go straight from the browser to
+# Cloudinary with a short-lived signature, so big videos never pass through Django.
+from urllib.parse import urlparse as _urlparse  # noqa: E402
+
+_cld = _urlparse(os.getenv('CLOUDINARY_URL', '')) if os.getenv('CLOUDINARY_URL') else None
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME') or (_cld.hostname if _cld else '')
+CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY') or (_cld.username if _cld else '')
+CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET') or (_cld.password if _cld else '')
+CLOUDINARY_FOLDER = os.getenv('CLOUDINARY_FOLDER', 'spirit_adventures')

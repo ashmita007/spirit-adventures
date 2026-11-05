@@ -1,4 +1,5 @@
 "use client";
+import { isPortalPath } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
@@ -9,15 +10,18 @@ export default function WhatsAppButton() {
   const [showTooltip, setShowTooltip] = useState(true);
   const [isPopped, setIsPopped] = useState(false);
 
-  // Trigger bounce / pop on load
+  // Tooltip pops in shortly after load, then tucks away so it never sits on top of content
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPopped(true);
-    }, 1200);
-    return () => clearTimeout(timer);
+    const show = setTimeout(() => setIsPopped(true), 1500);
+    const hide = setTimeout(() => setShowTooltip(false), 8000);
+    return () => {
+      clearTimeout(show);
+      clearTimeout(hide);
+    };
   }, []);
 
-  if (pathname?.startsWith("/owner")) {
+  const onTripPage = /^\/trips\/[^/]+/.test(pathname || "");
+  if (isPortalPath(pathname)) {
     return null;
   }
 
@@ -29,10 +33,10 @@ export default function WhatsAppButton() {
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${defaultMessage}`;
 
   return (
-    <div className="fixed bottom-20 right-4 sm:bottom-7 sm:right-7 z-40 flex flex-col items-end pointer-events-none select-none">
+    <div className={`${onTripPage ? "hidden lg:flex" : "hidden md:flex"} fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-4 sm:bottom-7 sm:right-7 z-40 flex-col items-end pointer-events-none select-none`}>
       {/* Interactive Popping Tooltip / Badge */}
-      {showTooltip && (
-        <div className="pointer-events-auto mb-2 flex items-center space-x-2 bg-white/95 backdrop-blur-md text-slate-800 px-3.5 py-2 rounded-2xl shadow-xl border border-emerald-100 text-xs font-semibold animate-bounce-subtle duration-1000">
+      {showTooltip && isPopped && (
+        <div className="pointer-events-auto mb-2 hidden sm:flex items-center space-x-2 bg-white/95 backdrop-blur-md text-slate-800 px-3.5 py-2 rounded-2xl shadow-xl border border-emerald-100 text-xs font-semibold animate-bounce-subtle duration-1000">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           <a
             href={whatsappUrl}
@@ -55,15 +59,14 @@ export default function WhatsAppButton() {
       {/* Main Popping Floating Button */}
       <div className="relative pointer-events-auto">
         {/* Pulsating Glowing Rings */}
-        <span className="absolute -inset-1 rounded-full bg-[#25D366]/40 animate-ping duration-1000 pointer-events-none" />
-        <span className="absolute -inset-2 rounded-full bg-[#25D366]/20 animate-pulse pointer-events-none" />
+        <span aria-hidden className="absolute -inset-1 rounded-full bg-[#25D366]/30 animate-ping [animation-duration:2.4s] pointer-events-none motion-reduce:hidden" />
 
         <a
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with Spirit Adventures on WhatsApp"
-          className="group relative flex items-center justify-center w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-gradient-to-tr from-[#1EBE5D] via-[#25D366] to-[#45E87D] text-white shadow-2xl hover:shadow-[#25D366]/60 transition-all duration-300 hover:scale-110 active:scale-95 border-2 border-white/80"
+          className="group relative flex items-center justify-center w-13 h-13 sm:w-15 sm:h-15 rounded-full bg-gradient-to-tr from-[#1EBE5D] via-[#25D366] to-[#45E87D] text-white shadow-2xl hover:shadow-[#25D366]/60 transition-all duration-300 hover:scale-110 active:scale-95 border-2 border-white/80"
         >
           {/* Authentic WhatsApp SVG Logo */}
           <svg

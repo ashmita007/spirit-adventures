@@ -8,6 +8,17 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      spacing: {
+        13: "3.25rem",
+        15: "3.75rem",
+      },
+      // Tailwind v4 names used across the codebase; v3 has no such defaults
+      boxShadow: {
+        "2xs": "0 1px rgb(0 0 0 / 0.05)",
+        xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      },
+      blur: { xs: "4px" },
+      backdropBlur: { xs: "4px" },
       colors: {
         brand: {
           navy: "#062B49",

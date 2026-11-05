@@ -69,7 +69,7 @@ export function TablePagination({
               onPageSizeChange(Number(e.target.value));
               onPageChange(1);
             }}
-            className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-800 focus:border-brand-forest focus:outline-none focus:ring-1 focus:ring-brand-forest"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-800 focus:border-brand-ocean focus:outline-none focus:ring-1 focus:ring-brand-ocean"
           >
             {pageSizeOptions.map((opt) => (
               <option key={opt} value={opt}>
@@ -119,7 +119,7 @@ export function TablePagination({
                 onClick={() => onPageChange(p as number)}
                 className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold transition-all ${
                   isCurrent
-                    ? "bg-brand-forest text-white shadow-sm ring-1 ring-brand-forest"
+                    ? "bg-brand-ocean text-white shadow-sm ring-1 ring-brand-ocean"
                     : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >

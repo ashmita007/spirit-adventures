@@ -1,5 +1,6 @@
 "use client";
 
+import { ownerFetch } from "@/lib/owner-fetch";
 import React, { useState, useEffect } from "react";
 import { 
   Settings, Save, CheckCircle2, MessageCircle, Mail, MapPin, 
@@ -95,7 +96,7 @@ export default function OwnerSettingsPage() {
   useEffect(() => {
     async function loadCrons() {
       try {
-        const res = await fetch("/api/v1/owner/crons/");
+        const res = await ownerFetch("/api/v1/owner/crons/");
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data?.jobs) {
@@ -109,7 +110,7 @@ export default function OwnerSettingsPage() {
 
     async function loadRateLimitStats() {
       try {
-        const res = await fetch("/api/v1/owner/ratelimit-stats/");
+        const res = await ownerFetch("/api/v1/owner/ratelimit-stats/");
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {
@@ -128,7 +129,7 @@ export default function OwnerSettingsPage() {
   const handleTriggerCron = async (jobId: string) => {
     setTriggeringJobId(jobId);
     try {
-      const res = await fetch("/api/v1/owner/crons/trigger/", {
+      const res = await ownerFetch("/api/v1/owner/crons/trigger/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_id: jobId })
@@ -153,7 +154,7 @@ export default function OwnerSettingsPage() {
   const handleToggleCron = async (jobId: string, currentStatus: "ACTIVE" | "PAUSED") => {
     const newStatus = currentStatus === "ACTIVE" ? "PAUSED" : "ACTIVE";
     try {
-      await fetch("/api/v1/owner/crons/toggle/", {
+      await ownerFetch("/api/v1/owner/crons/toggle/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_id: jobId, active: newStatus === "ACTIVE" })

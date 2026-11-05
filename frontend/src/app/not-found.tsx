@@ -14,7 +14,7 @@ export default function NotFound() {
           <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-ocean">
             Lost on the Trail &bull; 404
           </span>
-          <h1 className="font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
+          <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
             Off The Map
           </h1>
           <p className="text-slate-600 text-sm leading-relaxed">

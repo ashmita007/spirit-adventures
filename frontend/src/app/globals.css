@@ -14,7 +14,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -111,4 +110,34 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* ---------- GSAP motion system (components/motion) ---------- */
+html { scroll-behavior: smooth; }
+
+.sa-word, .sa-char { display: inline-block; will-change: transform, opacity; }
+
+
+/* Hero pieces wait for the intro timeline; shown anyway after 4s if JS never runs it */
+@keyframes sa-fallback-show { to { opacity: 1; } }
+.sa-js [data-hero-item] { opacity: 0; animation: sa-fallback-show 0.6s 4s forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .sa-js [data-hero-item] { opacity: 1; animation: none; }
+  .animate-cinematic-zoom, .animate-marquee-left, .animate-marquee-right { animation: none; }
+}
+
+/* Card shimmer while media loads */
+@keyframes sa-shimmer { 100% { transform: translateX(100%); } }
+.sa-shimmer { position: relative; overflow: hidden; background: #0b2238; }
+.sa-shimmer::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  animation: sa-shimmer 1.4s infinite;
+}
+
+@keyframes sa-scroll-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+
+/* Tailwind v4 name used by the CRM screens */
+@layer utilities {
+  .outline-hidden { outline: 2px solid transparent; outline-offset: 2px; }
 }

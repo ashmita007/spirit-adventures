@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, BookOpen, ArrowRight, User } from "lucide-react";
 import { getBlogs } from "@/lib/api";
+import PageHero from "@/components/page-hero";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/blog" },
   title: "Wilderness Stories & Trekking Guides | Spirit Adventures",
   description: "Read expert packing guides, mountain philosophies, trail reflections, and outdoor knowledge from certified trek leaders.",
 };
@@ -14,20 +16,14 @@ export default async function BlogPage() {
   const blogs = await getBlogs();
 
   return (
-    <div className="min-h-screen bg-white pt-24 pb-20">
-      <div className="bg-brand-light border-b border-slate-100 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-ocean block mb-2">
-            Outdoor Journal
-          </span>
-          <h1 className="font-display font-black text-3xl sm:text-5xl text-brand-navy uppercase tracking-tight">
-            Stories & Trail Guides
-          </h1>
-          <p className="mt-3 text-slate-600 text-sm sm:text-base max-w-2xl">
-            In-depth advice on gear prep, mountain weather, acclimatization, and stories from the high trails.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white pb-20">
+      <PageHero
+        eyebrow="Outdoor Journal"
+        title="Stories & Trail Guides"
+        subtitle={<>In-depth advice on gear prep, mountain weather, acclimatization, and stories from the high trails.</>}
+        image="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80"
+        crumbs={[{ label: "Journal" }]}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

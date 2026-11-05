@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useTilt } from "@/components/motion/use-tilt";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, Star, Clock, MapPin, ArrowRight, Sparkles } from "lucide-react";
@@ -11,6 +12,9 @@ interface TripCardProps {
   trip: Trip;
   priority?: boolean;
 }
+
+const FALLBACK_COVER =
+  "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg";
 
 const LOCAL_VIDEO_MAP: Record<string, string> = {
   "dandeli-river-rafting-jungle-expedition": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4",
@@ -27,9 +31,24 @@ const LOCAL_VIDEO_MAP: Record<string, string> = {
   "sandhan-valley-trek": "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341162/spirit_adventures/nature/waterfall.mp4",
 };
 
+const SAVED_KEY = "spirit_saved_trips";
+
+function readSaved(): number[] {
+  try {
+    return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
 export default function TripCard({ trip, priority = false }: TripCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useTilt(cardRef);
 
   const difficultyColors = {
     EASY: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
@@ -40,47 +59,80 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
 
   const difficultyClass = difficultyColors[trip.difficulty] || difficultyColors.MODERATE;
   const videoSrc = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug];
+  const cover = trip.cover_image || FALLBACK_COVER;
 
-  React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay was prevented by browser policy
-        });
-      }
-    }
+  useEffect(() => {
+    setIsLiked(readSaved().includes(trip.id));
+  }, [trip.id]);
+
+  // Video preview only while a mouse hovers the card: one video decoding at a
+  // time keeps scrolling smooth. Touch devices just show the photo.
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || !videoSrc) return;
+    const canHover =
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canHover) return;
+    const enter = () => setHovering(true);
+    const leave = () => {
+      setHovering(false);
+      setVideoReady(false);
+    };
+    el.addEventListener("pointerenter", enter);
+    el.addEventListener("pointerleave", leave);
+    return () => {
+      el.removeEventListener("pointerenter", enter);
+      el.removeEventListener("pointerleave", leave);
+    };
   }, [videoSrc]);
 
+  const toggleSaved = () => {
+    const saved = new Set(readSaved());
+    if (saved.has(trip.id)) saved.delete(trip.id);
+    else saved.add(trip.id);
+    localStorage.setItem(SAVED_KEY, JSON.stringify([...saved]));
+    setIsLiked(saved.has(trip.id));
+  };
+
   return (
-    <Link
-      href={`/trips/${trip.slug}`}
-      className="group relative bg-white rounded-3xl overflow-hidden border border-slate-200/70 shadow-xs hover:shadow-xl hover:border-brand-sky/40 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full cursor-pointer"
+    <article
+      ref={cardRef}
+      className="group relative bg-white rounded-3xl overflow-hidden border border-slate-200/70 shadow-xs hover:shadow-2xl hover:shadow-brand-navy/10 hover:border-brand-sky/40 transition-[box-shadow,border-color] duration-300 flex flex-col h-full"
     >
+      {/* Moving light glare (driven by useTilt) */}
+      <div data-tilt-glare aria-hidden className="pointer-events-none absolute inset-0 z-30 opacity-0 rounded-3xl" />
+
       {/* Top Media Container */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-950">
-        {videoSrc ? (
+      <div className={cn("relative aspect-[16/10] w-full overflow-hidden bg-slate-900", !imgLoaded && "sa-shimmer")}>
+        <Image
+          src={cover}
+          alt={trip.title}
+          fill
+          priority={priority}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          onLoad={() => setImgLoaded(true)}
+          className={cn(
+            "object-cover object-center transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.08]",
+            imgLoaded ? "opacity-100" : "opacity-0"
+          )}
+        />
+
+        {videoSrc && hovering && (
           <video
             ref={videoRef}
             src={videoSrc}
-            poster={trip.cover_image}
-            autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
-            className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
-          />
-        ) : (
-          <Image
-            src={trip.cover_image}
-            alt={trip.title}
-            fill
-            priority={priority}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+            autoPlay
+            preload="auto"
+            aria-hidden="true"
+            onPlaying={() => setVideoReady(true)}
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover object-center transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.08]",
+              videoReady ? "opacity-100" : "opacity-0"
+            )}
           />
         )}
 
@@ -88,37 +140,36 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30 pointer-events-none" />
 
         {/* Badges on Top */}
-        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
+        <div className="absolute top-3.5 left-3.5 right-14 flex items-center z-10 pointer-events-none">
           <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
             {trip.is_bestseller && (
-              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-brand-ocean text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md backdrop-blur-md">
-                <Sparkles className="w-2.5 h-2.5" />
+              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-brand-ocean text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
+                <Sparkles className="w-2.5 h-2.5" aria-hidden />
                 <span>Bestseller</span>
               </span>
             )}
             {trip.category_name && (
-              <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-brand-navy text-[10px] font-bold uppercase tracking-wider shadow-sm">
+              <span className="px-2.5 py-1 rounded-full bg-white text-brand-navy text-[10px] font-bold uppercase tracking-wider shadow-sm">
                 {trip.category_name}
               </span>
             )}
           </div>
-
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsLiked(!isLiked);
-            }}
-            aria-label="Save adventure"
-            className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-white hover:text-rose-500 flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm"
-          >
-            <Heart className={cn("w-4 h-4 transition-transform", isLiked && "fill-rose-500 text-rose-500 scale-110")} />
-          </button>
         </div>
 
+        {/* Save button sits above the card link (a button can't live inside a link) */}
+        <button
+          type="button"
+          onClick={toggleSaved}
+          aria-pressed={isLiked}
+          aria-label={isLiked ? `Remove ${trip.title} from saved` : `Save ${trip.title}`}
+          className="absolute top-3.5 right-3.5 z-40 w-8 h-8 rounded-full bg-black/40 text-white hover:bg-white hover:text-rose-500 flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm cursor-pointer"
+        >
+          <Heart className={cn("w-4 h-4 transition-transform", isLiked && "fill-rose-500 text-rose-500 scale-110")} />
+        </button>
+
         {/* Destination Chip on Bottom Left of Image */}
-        <div className="absolute bottom-3 left-3 flex items-center space-x-1.5 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-xs font-semibold shadow-xs">
-          <MapPin className="w-3.5 h-3.5 text-brand-sky" />
+        <div className="absolute bottom-3 left-3 flex items-center space-x-1.5 bg-black/50 px-2.5 py-1 rounded-full text-white text-xs font-semibold shadow-xs pointer-events-none">
+          <MapPin className="w-3.5 h-3.5 text-brand-sky" aria-hidden />
           <span>{trip.destination_name || "Wilderness"}</span>
         </div>
       </div>
@@ -147,7 +198,12 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
 
           {/* Title */}
           <h3 className="font-display font-extrabold text-base sm:text-lg text-brand-navy leading-snug line-clamp-2 group-hover:text-brand-ocean transition-colors duration-200">
-            {trip.title}
+            <Link
+              href={`/trips/${trip.slug}`}
+              className="after:absolute after:inset-0 after:z-20 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-brand-ocean focus-visible:after:rounded-3xl"
+            >
+              {trip.title}
+            </Link>
           </h3>
 
           {/* Short Description */}
@@ -176,10 +232,10 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
             className="inline-flex items-center space-x-1 px-4 py-2 rounded-full bg-brand-light group-hover:bg-brand-ocean group-hover:text-white text-brand-ocean font-bold text-xs tracking-wider transition-all duration-200 shadow-2xs group-hover:shadow-md"
           >
             <span>Explore</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" aria-hidden />
           </div>
         </div>
       </div>
-    </Link>
+    </article>
   );
 }

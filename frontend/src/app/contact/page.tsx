@@ -2,8 +2,10 @@ import React from "react";
 import { Metadata } from "next";
 import { Phone, Mail, MapPin, MessageCircle, Instagram, Youtube, Clock, ShieldCheck } from "lucide-react";
 import ContactForm from "./contact-form";
+import PageHero from "@/components/page-hero";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact & Plan Your Trip | Spirit Adventures",
   description: "Connect directly with our adventure desk via WhatsApp, phone, or email to discuss custom itineraries and upcoming batches.",
 };
@@ -14,20 +16,14 @@ export default function ContactPage() {
   const email = process.env.NEXT_PUBLIC_EMAIL || "info@spiritadventures.in";
 
   return (
-    <div className="min-h-screen bg-white pt-24 pb-20">
-      <div className="bg-brand-light border-b border-slate-100 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-ocean block mb-2">
-            Get in Touch
-          </span>
-          <h1 className="font-display font-black text-3xl sm:text-5xl text-brand-navy uppercase tracking-tight">
-            Connect With Our Team
-          </h1>
-          <p className="mt-3 text-slate-600 text-sm sm:text-base max-w-2xl">
-            Have questions about upcoming weekend getaways, combo packages, or customized group departures? We&apos;re here to guide you.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white pb-20">
+      <PageHero
+        eyebrow="Get in Touch"
+        title="Connect With Our Team"
+        subtitle={<>Have questions about upcoming weekend getaways, combo packages, or customized group departures? We&apos;re here to guide you.</>}
+        image="https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg"
+        crumbs={[{ label: "Contact" }]}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

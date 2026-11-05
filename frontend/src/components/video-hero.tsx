@@ -68,12 +68,11 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
   };
 
   return (
-    <div className="relative min-h-[92vh] sm:min-h-screen w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
+    <section data-anim="hero" aria-label="Spirit Adventures" className="relative min-h-[92vh] sm:min-h-screen w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
       {/* 1. Full-Screen Clean Video Background with Instant Poster & Smooth Playback */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <div data-hero-bg className="absolute inset-0 z-0 overflow-hidden pointer-events-none will-change-transform">
         {HERO_SCENES.map((scene, idx) => {
           const isActive = idx === currentSceneIndex;
-          const isNext = idx === (currentSceneIndex + 1) % HERO_SCENES.length;
 
           return (
             <div
@@ -86,13 +85,15 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
               {/* Instant High-Res Poster Image Background */}
               <img
                 src={scene.posterUrl}
-                alt="Adventure Scene"
+                alt=""
+                aria-hidden="true"
+                fetchPriority={idx === 0 ? "high" : "low"}
                 className="absolute inset-0 w-full h-full object-cover object-center scale-105"
                 loading={idx === 0 ? "eager" : "lazy"}
               />
 
               {/* Ultra-Fast Web Stream Video (loaded only for active & next scene) */}
-              {(isActive || isNext) && (
+              {isActive && (
                 <video
                   poster={scene.posterUrl}
                   autoPlay
@@ -103,7 +104,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                   onCanPlay={() => {
                     if (isActive) setIsLoaded(true);
                   }}
-                  className="absolute inset-0 w-full h-full object-cover object-center animate-cinematic-zoom scale-105 transition-opacity duration-700"
+                  className="absolute inset-0 w-full h-full object-cover object-center scale-105"
                 >
                   <source src={scene.videoUrl} type="video/mp4" />
                 </video>
@@ -118,15 +119,15 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
       <div className="absolute inset-0 z-10 bg-radial-vignette opacity-75 pointer-events-none" />
 
       {/* 3. Mobile-First Hero Content */}
-      <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-16 sm:py-32 flex flex-col items-center">
+      <div data-hero-content className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-16 sm:py-32 flex flex-col items-center [perspective:900px]">
         {/* Sleek Pill Badge */}
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 text-white text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] shadow-2xl animate-fade-in mb-4 sm:mb-6">
+        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-white/20 text-white text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] shadow-2xl mb-4 sm:mb-6" data-hero-item>
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>Himalayas & South India Expeditions</span>
         </div>
 
         {/* Impactful Heading */}
-        <h1 className="font-display font-black text-3xl sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-[1.08] drop-shadow-2xl text-balance">
+        <h1 data-hero-item="title" className="font-display font-black text-[2.6rem] sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-[1.08] drop-shadow-2xl text-balance">
           FIND YOUR NEXT <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-sky-300 to-white">
             ADVENTURE
@@ -134,15 +135,15 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </h1>
 
         {/* Concise Subtitle */}
-        <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200/90 max-w-xl font-normal leading-relaxed text-balance drop-shadow">
+        <p data-hero-item className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200/90 max-w-xl font-normal leading-relaxed text-balance drop-shadow">
           High-altitude Himalayan passes, South Indian river rafting, and Western Ghats jungle treks with certified expedition leaders.
         </p>
 
         {/* 4. Responsive Search Bar for Mobile & Desktop */}
-        <div className="w-full max-w-xl mt-6 sm:mt-8">
+        <div data-hero-item className="w-full max-w-xl mt-6 sm:mt-8">
           <form
             onSubmit={handleSearchSubmit}
-            className="relative flex items-center bg-white/95 backdrop-blur-xl rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition-all duration-300"
+            className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition-all duration-300"
           >
             <div className="pl-3 sm:pl-4 text-slate-400">
               <Search className="w-5 h-5 text-brand-ocean" />
@@ -152,7 +153,8 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search destination, trek name, rafting, snow..."
+              placeholder="Search treks, places, rafting…"
+              aria-label="Search adventures"
               className="w-full bg-transparent px-3 py-2 text-xs sm:text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none font-medium"
             />
 
@@ -177,14 +179,14 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           </form>
 
           {/* Quick Trending Tags */}
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-            <span className="text-[11px] text-slate-300 font-medium mr-1">Trending:</span>
+          <div className="mt-3 -mx-4 px-4 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center">
+            <span className="shrink-0 text-[11px] text-slate-300 font-medium mr-1">Trending:</span>
             {POPULAR_TAGS.map((tag) => (
               <button
                 key={tag}
                 type="button"
                 onClick={() => handleQuickTagClick(tag)}
-                className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-200 border border-white/15 transition backdrop-blur-xs hover:text-white"
+                className="shrink-0 text-xs sm:text-[11px] px-3.5 py-2 sm:px-2.5 sm:py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-200 border border-white/15 transition hover:text-white"
               >
                 {tag}
               </button>
@@ -193,8 +195,9 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </div>
 
         {/* Mobile-First Action Buttons */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md sm:max-w-none sm:w-auto">
+        <div data-hero-item className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md sm:max-w-none sm:w-auto">
           <Link
+            data-magnetic
             href="/trips"
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 active:scale-[0.98]"
           >
@@ -203,8 +206,9 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           </Link>
 
           <Link
+            data-magnetic
             href="/contact"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/25 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all duration-300 active:scale-[0.98]"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all duration-300 active:scale-[0.98]"
           >
             <Compass className="w-4 h-4 text-brand-sky" />
             <span>Plan My Custom Trip</span>
@@ -212,7 +216,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </div>
 
         {/* Minimalist Scene Indicators */}
-        <div className="mt-8 sm:mt-10 flex items-center justify-center space-x-2 sm:space-x-3">
+        <div data-hero-item className="mt-8 sm:mt-10 flex items-center justify-center space-x-2 sm:space-x-3">
           {HERO_SCENES.map((_, idx) => {
             const isActive = idx === currentSceneIndex;
             return (
@@ -231,6 +235,13 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           })}
         </div>
       </div>
-    </div>
+      {/* Scroll cue */}
+      <div aria-hidden className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 hidden sm:flex flex-col items-center gap-2 text-white/60 text-[10px] font-semibold tracking-[0.35em] uppercase">
+        <span>Scroll</span>
+        <span className="relative h-10 w-px overflow-hidden bg-white/25">
+          <span className="absolute inset-x-0 top-0 h-1/2 bg-brand-sky animate-[sa-scroll-cue_1.8s_ease-in-out_infinite]" />
+        </span>
+      </div>
+    </section>
   );
 }

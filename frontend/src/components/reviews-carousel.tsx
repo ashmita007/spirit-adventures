@@ -25,11 +25,11 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   return (
     <section className="py-12 sm:py-16 bg-slate-50/70 border-y border-slate-200/70 relative overflow-hidden">
       {/* Background ambient lighting */}
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-brand-ocean/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
+      <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-brand-ocean/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div data-anim="stagger" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* Left Column: Compact Trust & Google Rating Bento Card */}
           <div className="lg:col-span-4 flex flex-col justify-between bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
@@ -43,7 +43,7 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
               </div>
 
               <h2 className="font-display font-black text-2xl sm:text-3xl text-brand-navy uppercase tracking-tight leading-tight">
-                Loved by 500+ Adventurers
+                Loved by <span data-count="500" data-count-suffix="+">500+</span> Adventurers
               </h2>
               
               <p className="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
@@ -62,14 +62,14 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-display font-black text-lg text-brand-navy">5.0 / 5.0</span>
+                    <span className="font-display font-black text-lg text-brand-navy"><span data-count="5" data-count-decimals="1">5.0</span> / 5.0</span>
                     <div className="flex text-amber-400">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       ))}
                     </div>
                   </div>
-                  <p className="text-[11px] font-medium text-slate-500">120+ Verified Ratings on Google</p>
+                  <p className="text-[11px] font-medium text-slate-500"><span data-count="120" data-count-suffix="+">120+</span> Verified Ratings on Google</p>
                 </div>
               </div>
             </div>

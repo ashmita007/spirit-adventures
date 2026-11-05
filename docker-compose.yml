@@ -1,70 +1,111 @@
+# Spirit Adventures - full production stack for one VPS
+#
+#   caddy     :80/:443  automatic HTTPS (Let's Encrypt), routes /api /admin /static to Django
+#   frontend  Next.js website, owner portal and sales CRM
+#   backend   Django API + admin (gunicorn)
+#   db        PostgreSQL 16 (not exposed to the internet)
+#   backup    nightly pg_dump into ./backups, old dumps pruned
+#
+# First run:  cp .env.production.example .env  &&  edit .env  &&  docker compose up -d --build
+name: spirit-adventures
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "5" }
+
 services:
   db:
     image: postgres:16-alpine
-    container_name: spirit_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: spirit_adventures
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: ${POSTGRES_DB:-spirit_adventures}
+      POSTGRES_USER: ${POSTGRES_USER:-spirit}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+    logging: *logging
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: spirit_backend
+    build: ./backend
     restart: unless-stopped
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py seed_data &&
-             python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
+    env_file: .env
     environment:
-      - DEBUG=True
-      - SECRET_KEY=spirit-adventures-dev-secret-key-nature-2025-cinematic
-      - POSTGRES_DB=spirit_adventures
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespassword
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - WHATSAPP_NUMBER=+919876543210
-      - SUPPORT_EMAIL=hello@spiritadventures.in
-      - SUPPORT_PHONE=+91 98765 43210
+      DEBUG: "False"
+      DATABASE_URL: postgres://${POSTGRES_USER:-spirit}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-spirit_adventures}
+      SITE_DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+      ALLOWED_HOSTS: ${DOMAIN},www.${DOMAIN}
+    volumes:
+      - media:/app/media
     depends_on:
       db:
         condition: service_healthy
+    logging: *logging
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    container_name: spirit_frontend
+      args:
+        BACKEND_URL: http://backend:8000
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+        NEXT_PUBLIC_WHATSAPP_NUMBER: ${NEXT_PUBLIC_WHATSAPP_NUMBER:-+919666567551}
+        NEXT_PUBLIC_PHONE_NUMBER: ${NEXT_PUBLIC_PHONE_NUMBER:-+91 96665 67551}
+        NEXT_PUBLIC_EMAIL: ${NEXT_PUBLIC_EMAIL:-info@spiritadventures.in}
+        NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:-}
     restart: unless-stopped
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-    ports:
-      - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-      - NEXT_PUBLIC_WHATSAPP_NUMBER=+919876543210
-      - NEXT_PUBLIC_PHONE_NUMBER=+91 98765 43210
-      - NEXT_PUBLIC_EMAIL=hello@spiritadventures.in
+      # Server-side data fetching goes container-to-container
+      BACKEND_URL: http://backend:8000
+      DJANGO_API_URL: http://backend:8000/api/v1
+      INTERNAL_API_URL: http://backend:8000/api/v1
     depends_on:
+      backend:
+        condition: service_healthy
+    logging: *logging
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@spiritadventures.in}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
       - backend
+    logging: *logging
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-spirit}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB:-spirit_adventures}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - ./backups:/backups
+      - ./scripts/docker/backup.sh:/backup.sh:ro
+    entrypoint: ["sh", "/backup.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
 
 volumes:
   postgres_data:
+  media:
+  caddy_data:
+  caddy_config:

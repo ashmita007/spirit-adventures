@@ -20,10 +20,11 @@ export async function generateMetadata({ params }: DestinationPageProps): Promis
   return {
     title: `${destination.name} Adventures & Treks | Spirit Adventures`,
     description: destination.description,
+    alternates: { canonical: `/destinations/${destination.slug}` },
     openGraph: {
       title: `${destination.name} - Spirit Adventures`,
       description: destination.description,
-      images: [{ url: destination.cover_image }],
+      images: destination.cover_image ? [{ url: destination.cover_image }] : undefined,
     },
   };
 }
@@ -92,7 +93,7 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
             <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-sky block mb-2">
               Region Spotlight
             </span>
-            <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight">
+            <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight">
               {destination.name}
             </h1>
             {destination.subtitle && (
@@ -127,7 +128,7 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
           </div>
 
           {trips.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div data-anim="stagger" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {trips.map((trip) => (
                 <TripCard key={trip.id} trip={trip} />
               ))}

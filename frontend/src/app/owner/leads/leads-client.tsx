@@ -1,5 +1,6 @@
 "use client";
 
+import { ownerFetch } from "@/lib/owner-fetch";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { 
@@ -29,13 +30,13 @@ const WHATSAPP_TEMPLATES = [
     id: "itinerary",
     title: "📋 Full Itinerary & Quote",
     generateText: (lead: OwnerEnquiry) => 
-      `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
+      `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n${lead.trip_price ? `• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)` : "• *Package Price*: we'll share your exact quote shortly"}\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
   },
   {
     id: "payment",
     title: "💳 Payment & Booking Link",
     generateText: (lead: OwnerEnquiry) => 
-      `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\nTotal Booking Amount: *₹${((lead.travelers_count || 1) * lead.trip_price).toLocaleString("en-IN")}*\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
+      `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\n${lead.trip_price ? `Total Booking Amount: *₹${((lead.travelers_count || 1) * lead.trip_price).toLocaleString("en-IN")}*` : "We'll confirm your total booking amount shortly."}\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
   },
   {
     id: "checklist",
@@ -147,7 +148,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
 
   const handleStatusChange = async (id: number, newStatus: OwnerEnquiry["status"]) => {
     try {
-      await fetch(`/api/v1/owner/enquiries/${id}/status/`, {
+      await ownerFetch(`/api/v1/owner/enquiries/${id}/status/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -172,11 +173,11 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
     }
 
     const matchedTrip = data.trips.find(t => t.title === newLeadForm.trip_title);
-    const price = matchedTrip ? matchedTrip.price : 7999;
+    const price = matchedTrip ? matchedTrip.price : 0;
 
     const payload = {
       full_name: newLeadForm.full_name.trim(),
-      email: newLeadForm.email.trim() || `${newLeadForm.full_name.toLowerCase().replace(/\s+/g, "")}@customer.in`,
+      email: newLeadForm.email.trim(),
       phone: newLeadForm.phone.trim(),
       travel_date: newLeadForm.travel_date,
       travelers_count: Number(newLeadForm.travelers_count) || 1,
@@ -190,18 +191,23 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
       message: "Lead manually ingested via Owner CRM Desk."
     };
 
-    let createdId = Date.now();
+    let createdId: number;
     try {
-      const res = await fetch("/api/v1/owner/enquiries/create/", {
+      const res = await ownerFetch("/api/v1/owner/leads/create/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const resJson = await res.json();
-      if (resJson.success && resJson.data?.id) {
-        createdId = resJson.data.id;
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok || !resJson.success || !resJson.data?.id) {
+        showToast(resJson.message || "Couldn't save the lead. Please try again.");
+        return;
       }
-    } catch (err) {}
+      createdId = resJson.data.id;
+    } catch {
+      showToast("Can't reach the server. The lead was not saved.");
+      return;
+    }
 
     const createdLead: OwnerEnquiry = {
       id: createdId,
@@ -217,7 +223,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
       follow_up_date: payload.follow_up_date,
       admin_notes: payload.admin_notes,
       trip_title: payload.trip_title,
-      trip_slug: matchedTrip ? matchedTrip.slug : "hampi-gokarna-dandeli-grand-combo",
+      trip_slug: matchedTrip ? matchedTrip.slug : "",
       trip_price: price,
       created_at: "Just now"
     };
@@ -366,15 +372,15 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500 whitespace-nowrap">
               <tr>
-                <th className="py-4 px-4 w-12 text-center">#</th>
-                <th className="py-4 px-4 min-w-[200px]">Customer Details</th>
-                <th className="py-4 px-4 min-w-[220px]">Adventure Package</th>
-                <th className="py-4 px-4">Group Size</th>
+                <th className="py-4 px-3 w-10 text-center hidden xl:table-cell">#</th>
+                <th className="py-4 px-4 min-w-[180px]">Customer</th>
+                <th className="py-4 px-4 min-w-[170px]">Package</th>
+                <th className="py-4 px-4">Group</th>
                 <th className="py-4 px-4">Deal Value</th>
-                <th className="py-4 px-4 min-w-[150px]">Pipeline Stage</th>
+                <th className="py-4 px-4 min-w-[150px]">Stage</th>
                 <th className="py-4 px-4">Priority</th>
-                <th className="py-4 px-4 min-w-[120px]">Follow-Up Due</th>
-                <th className="py-4 px-4 text-right min-w-[130px]">Quick Actions</th>
+                <th className="py-4 px-4 min-w-[110px] pr-6">Follow-up</th>
+                <th className="py-4 px-4 text-right sticky right-0 bg-slate-50 shadow-[-8px_0_12px_-10px_rgba(15,23,42,0.25)]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -384,7 +390,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                   onClick={() => setSelectedLead(lead)}
                   className="hover:bg-slate-50/90 transition cursor-pointer group"
                 >
-                  <td className="py-3.5 px-4 font-mono text-slate-400 text-[11px] text-center whitespace-nowrap">
+                  <td className="py-3.5 px-3 font-mono text-slate-400 text-[11px] text-center whitespace-nowrap hidden xl:table-cell">
                     #{(currentPage - 1) * pageSize + idx + 1}
                   </td>
                   <td className="py-3.5 px-4">
@@ -407,7 +413,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                     </span>
                   </td>
                   <td className="py-3.5 px-4 font-display font-black text-brand-ocean text-sm whitespace-nowrap">
-                    {formatCurrency(lead.trip_price * (lead.travelers_count || 1))}
+                    {lead.trip_price ? formatCurrency(lead.trip_price * (lead.travelers_count || 1)) : <span className="text-slate-400 font-medium">Not priced</span>}
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                     <select
@@ -442,7 +448,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                   <td className="py-3.5 px-4 text-amber-700 font-semibold whitespace-nowrap">
                     {lead.follow_up_date || "-"}
                   </td>
-                  <td className="py-3.5 px-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                  <td className="py-3.5 px-4 text-right whitespace-nowrap sticky right-0 bg-white group-hover:bg-slate-50 shadow-[-8px_0_12px_-10px_rgba(15,23,42,0.25)]" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end space-x-1.5">
                       <button
                         onClick={() => openWhatsAppLead(lead, "itinerary")}
@@ -718,7 +724,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 <div className="flex justify-between">
                   <span className="text-slate-500 font-semibold">Quoted Total Value</span>
                   <span className="font-display font-black text-brand-ocean text-sm">
-                    {formatCurrency(selectedLead.trip_price * (selectedLead.travelers_count || 1))}
+                    {selectedLead.trip_price ? formatCurrency(selectedLead.trip_price * (selectedLead.travelers_count || 1)) : "Not priced yet"}
                   </span>
                 </div>
               </div>

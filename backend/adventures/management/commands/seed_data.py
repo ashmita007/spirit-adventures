@@ -11,7 +11,17 @@ User = get_user_model()
 class Command(BaseCommand):
     help = 'Seeds complete adventure data including South India and Himalayas with local video clips'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--force", action="store_true",
+            help="Wipe existing trips/destinations/categories and reseed (destroys owner-made packages).",
+        )
+
     def handle(self, *args, **options):
+        # Safety: never wipe a live database by accident (this runs from start scripts)
+        if Trip.objects.exists() and not options.get("force"):
+            self.stdout.write(self.style.SUCCESS("Database already has trips; skipping demo seed (use --force to reseed)."))
+            return
         self.stdout.write(self.style.WARNING("Flushing old data..."))
         Trip.objects.all().delete()
         Destination.objects.all().delete()

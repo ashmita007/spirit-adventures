@@ -1,0 +1,36 @@
+{
+	email {$ACME_EMAIL}
+}
+
+# Main site: HTTPS certificate is issued and renewed automatically
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Django handles the API, admin and its static files directly
+	@django path /api/* /admin /admin/* /static/*
+	handle @django {
+		reverse_proxy backend:8000
+	}
+
+	# Everything else is the Next.js app (website, /owner portal, /crm)
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	# Uploads go to Cloudinary, but cap request bodies anyway
+	request_body {
+		max_size 20MB
+	}
+}
+
+# www -> bare domain
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}

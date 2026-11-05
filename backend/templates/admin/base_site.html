@@ -1,0 +1,91 @@
+{% extends "admin/base.html" %}
+{% comment %}Spirit Adventures theme for Django admin (navy / ocean / sky brand).{% endcomment %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Spirit Adventures Admin{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="icon" href="/images/favicon.png">
+<style>
+  :root, html[data-theme="light"] {
+    --primary: #0A6FAE;
+    --secondary: #062B49;
+    --accent: #38BDF8;
+    --primary-fg: #fff;
+    --body-fg: #0f172a;
+    --body-bg: #f6f9fc;
+    --body-quiet-color: #64748b;
+    --body-loud-color: #062B49;
+    --header-color: #e0f2fe;
+    --header-branding-color: #fff;
+    --header-bg: #062B49;
+    --header-link-color: #fff;
+    --breadcrumbs-fg: #bae6fd;
+    --breadcrumbs-link-fg: #fff;
+    --breadcrumbs-bg: #0A6FAE;
+    --link-fg: #0A6FAE;
+    --link-hover-color: #062B49;
+    --link-selected-fg: #062B49;
+    --hairline-color: #e2e8f0;
+    --border-color: #e2e8f0;
+    --selected-bg: #e0f2fe;
+    --selected-row: #f0f9ff;
+    --button-fg: #fff;
+    --button-bg: #0A6FAE;
+    --button-hover-bg: #062B49;
+    --default-button-bg: #062B49;
+    --default-button-hover-bg: #0A6FAE;
+    --close-button-bg: #94a3b8;
+    --close-button-hover-bg: #64748b;
+    --object-tools-bg: #0A6FAE;
+    --object-tools-hover-bg: #062B49;
+    --darkened-bg: #f1f5f9;
+    --font-family-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --header-bg: #031a2e; --breadcrumbs-bg: #062B49; --primary: #38BDF8; --link-fg: #7dd3fc; --button-bg: #0A6FAE; }
+  }
+  html[data-theme="dark"] { --header-bg: #031a2e; --breadcrumbs-bg: #062B49; --primary: #38BDF8; --link-fg: #7dd3fc; --button-bg: #0A6FAE; --selected-row: #0b2a44; }
+
+  #header { padding: 12px 32px; box-shadow: 0 2px 12px rgba(6, 43, 73, .25); }
+  #site-name a { display: inline-flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.01em; }
+  .sa-logo { background: #fff; border-radius: 10px; padding: 5px 10px; display: inline-flex; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+  .sa-logo img { height: 22px; width: auto; display: block; }
+  .sa-sub { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .16em; color: #7dd3fc; }
+  div.breadcrumbs { padding: 10px 32px; font-weight: 500; }
+  #content { padding: 24px 32px; }
+  .module, #changelist .changelist-form-container, .inline-group { border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(15, 23, 42, .06); border: 1px solid var(--hairline-color); }
+  .module h2, .module caption, .inline-group h2 { background: var(--secondary); font-weight: 700; letter-spacing: .06em; padding: 10px 14px; }
+  #content-related .module h2 { background: var(--primary); }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button { border-radius: 10px !important; font-weight: 600; padding: 9px 16px; }
+  .object-tools a { border-radius: 999px; padding: 6px 14px; font-weight: 600; }
+  input[type=text], input[type=email], input[type=number], input[type=url], input[type=password], input[type=date], textarea, select, .vTextField {
+    border-radius: 10px; border: 1px solid #cbd5e1; padding: 7px 10px;
+  }
+  input:focus, textarea:focus, select:focus { outline: 2px solid #38BDF8; outline-offset: 0; border-color: #0A6FAE; }
+  .aligned .vTextField, .aligned input[type=url], .aligned .vURLField, .aligned input[type=text] { width: 100%; max-width: 760px; box-sizing: border-box; }
+  .aligned textarea { width: 100%; max-width: 760px; box-sizing: border-box; }
+  .inline-group .tabular .vTextField, .inline-group .tabular input[type=url] { width: 100%; max-width: none; }
+  #changelist-filter { border-radius: 14px; overflow: hidden; border: 1px solid var(--hairline-color); }
+  #changelist-filter h2 { background: var(--secondary); }
+  #result_list thead th { background: #f1f5f9; text-transform: uppercase; font-size: 11px; letter-spacing: .05em; }
+  .sa-quick { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 22px; }
+  .sa-quick a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; background: #fff; border: 1px solid var(--hairline-color); color: var(--secondary); font-weight: 700; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+  .sa-quick a:hover { border-color: #38BDF8; color: #0A6FAE; text-decoration: none; }
+  .sa-quick a.primary { background: #0A6FAE; color: #fff; border-color: #0A6FAE; }
+  @media (max-width: 767px) {
+    #header { padding: 10px 14px; } #content { padding: 14px; } div.breadcrumbs { padding: 8px 14px; } .sa-sub { display: none; }
+  }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}">
+    <span class="sa-logo"><img src="/images/logo.png" alt="Spirit Adventures"></span>
+    <span>Admin <span class="sa-sub">Website · CRM · Team</span></span>
+  </a>
+</div>
+{% if user.is_anonymous %}{% include "admin/color_theme_toggle.html" %}{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

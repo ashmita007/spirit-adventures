@@ -1,3 +1,4 @@
+import { ownerFetch } from "./owner-fetch";
 import { 
   Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload 
 } from "./types";
@@ -1288,7 +1289,7 @@ export async function getOwnerOverview(): Promise<OwnerOverviewData | null> {
 
 export async function updateEnquiryStatus(id: number, status: string, notes?: string): Promise<boolean> {
   try {
-    const res = await fetch(`${getApiBaseUrl()}/owner/enquiries/${id}/status/`, {
+    const res = await ownerFetch(`${getApiBaseUrl()}/owner/enquiries/${id}/status/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, admin_notes: notes }),
@@ -1301,7 +1302,7 @@ export async function updateEnquiryStatus(id: number, status: string, notes?: st
 
 export async function updateTripConfig(id: number, config: { price?: number; is_featured?: boolean; is_bestseller?: boolean }): Promise<boolean> {
   try {
-    const res = await fetch(`${getApiBaseUrl()}/owner/trips/${id}/quick-update/`, {
+    const res = await ownerFetch(`${getApiBaseUrl()}/owner/trips/${id}/quick-update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(config),

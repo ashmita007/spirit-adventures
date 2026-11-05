@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useTransition, useCallback } from "react";
+import React, { useState, useEffect, useTransition, useCallback, useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
   Search, X, Compass, Filter, 
@@ -143,10 +145,25 @@ export default function TripsExplorer({
     return 0; // default featured / backend ordering
   });
 
+  // Re-animate the result cards whenever filters/sort change the list
+  const gridRef = useRef<HTMLDivElement>(null);
+  const resultKey = sortedTrips.map((t) => t.id).join(",");
+  useGSAP(
+    () => {
+      if (!gridRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      gsap.fromTo(
+        gridRef.current.querySelectorAll("[data-explorer-card]"),
+        { opacity: 0, y: 40, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "expo.out", stagger: 0.07, clearProps: "transform" }
+      );
+    },
+    { dependencies: [resultKey, sortBy], scope: gridRef }
+  );
+
   const hasActiveFilters = Boolean(category || destination || difficulty || search);
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-5 sm:space-y-8">
       {/* 1. Universal Search Bar (Mobile & Desktop) */}
       <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200/80">
         <form onSubmit={handleSearchSubmit} className="relative flex items-center">
@@ -158,7 +175,9 @@ export default function TripsExplorer({
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by package name, destination (e.g. Gokarna, Kedarkantha, Dandeli)..."
+            placeholder="Search Gokarna, Dandeli, Kedarkantha…"
+            aria-label="Search adventures"
+            enterKeyHint="search"
             className="w-full bg-transparent px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none font-medium"
           />
 
@@ -187,18 +206,19 @@ export default function TripsExplorer({
         </form>
 
         {/* 2. Dropdown Filters: Destination, Difficulty, Sort By */}
-        <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="mt-3 pt-3 sm:mt-5 sm:pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 sm:gap-3">
           {/* Destination Dropdown */}
           <div className="relative">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="f-dest" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
               Destination
             </label>
             <select
+              id="f-dest"
               value={destination}
               onChange={handleDestinationChange}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:bg-white transition"
+              className="w-full min-h-[44px] sm:min-h-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 sm:px-3.5 py-2 text-xs font-semibold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:bg-white transition"
             >
-              <option value="">All Destinations</option>
+              <option value="">All places</option>
               {destinations.map((d) => (
                 <option key={d.id} value={d.slug}>
                   {d.name}
@@ -209,15 +229,16 @@ export default function TripsExplorer({
 
           {/* Difficulty Dropdown */}
           <div className="relative">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="f-diff" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
               Difficulty
             </label>
             <select
+              id="f-diff"
               value={difficulty}
               onChange={handleDifficultyChange}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:bg-white transition"
+              className="w-full min-h-[44px] sm:min-h-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 sm:px-3.5 py-2 text-xs font-semibold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:bg-white transition"
             >
-              <option value="">All Difficulty Levels</option>
+              <option value="">Any level</option>
               <option value="easy">Easy / Beginners</option>
               <option value="moderate">Moderate</option>
               <option value="challenging">Challenging / High Altitude</option>
@@ -226,15 +247,16 @@ export default function TripsExplorer({
 
           {/* Sort By Dropdown */}
           <div className="relative">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="f-sort" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
               Sort By
             </label>
             <select
+              id="f-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:bg-white transition"
+              className="w-full min-h-[44px] sm:min-h-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 sm:px-3.5 py-2 text-xs font-semibold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:bg-white transition"
             >
-              <option value="featured">Featured / Recommended</option>
+              <option value="featured">Featured</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
               <option value="duration_asc">Duration: Shortest First</option>
@@ -334,18 +356,27 @@ export default function TripsExplorer({
 
       {/* 5. Trips Grid / Loading Shimmer / Empty State */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-6" aria-busy="true" aria-label="Loading adventures">
           {[1, 2, 3, 4, 5, 6].map((idx) => (
-            <div
-              key={idx}
-              className="h-96 rounded-3xl bg-slate-100 animate-pulse border border-slate-200/60"
-            />
+            <div key={idx} className="rounded-3xl overflow-hidden border border-slate-200/70 bg-white">
+              <div className="aspect-[16/10] sa-shimmer" />
+              <div className="p-5 sm:p-6 space-y-3 animate-pulse">
+                <div className="h-3 w-1/3 rounded-full bg-slate-100" />
+                <div className="h-5 w-4/5 rounded-full bg-slate-200" />
+                <div className="h-3 w-full rounded-full bg-slate-100" />
+                <div className="h-3 w-2/3 rounded-full bg-slate-100" />
+                <div className="pt-4 mt-2 border-t border-slate-100 flex justify-between">
+                  <div className="h-6 w-24 rounded-full bg-slate-200" />
+                  <div className="h-8 w-20 rounded-full bg-slate-100" />
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       ) : sortedTrips.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedTrips.map((trip, idx) => (
-            <div key={trip.id} className="w-full">
+            <div key={trip.id} className="w-full" data-explorer-card>
               <TripCard trip={trip} priority={idx < 3} />
             </div>
           ))}

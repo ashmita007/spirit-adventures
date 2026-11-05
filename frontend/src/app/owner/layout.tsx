@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, Users, Mountain, BarChart3, Settings, 
   Compass, Eye, ExternalLink, Menu, X, CheckCircle2, ChevronRight,
-  ShieldCheck, PhoneCall, Sparkles
+  ShieldCheck, PhoneCall, Sparkles, LogOut, BookOpen, Briefcase, Image as ImageIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ownerFetch } from "@/lib/owner-fetch";
 
 export default function OwnerLayout({
   children,
@@ -17,6 +18,15 @@ export default function OwnerLayout({
 }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const crmUrl = "/crm";
+
+  // The login screen renders on its own, without the portal chrome
+  if (pathname === "/owner/login") return <>{children}</>;
+
+  const signOut = async () => {
+    await ownerFetch("/api/v1/auth/logout/", { method: "POST", body: "{}" }).catch(() => null);
+    window.location.href = "/owner/login";
+  };
 
   const navigation = [
     {
@@ -31,14 +41,18 @@ export default function OwnerLayout({
       href: "/owner/leads",
       icon: Users,
       exact: false,
-      badge: "10+",
     },
     {
       name: "Day-Wise Itinerary Studio",
       href: "/owner/packages",
       icon: Mountain,
       exact: false,
-      badge: "8 Trips",
+    },
+    {
+      name: "Photo Gallery",
+      href: "/owner/gallery",
+      icon: ImageIcon,
+      exact: false,
     },
     {
       name: "Destination Breakdown",
@@ -50,6 +64,12 @@ export default function OwnerLayout({
       name: "Google Reviews & Settings",
       href: "/owner/settings",
       icon: Settings,
+      exact: false,
+    },
+    {
+      name: "How-To Guide",
+      href: "/owner/help",
+      icon: BookOpen,
       exact: false,
     },
   ];
@@ -132,7 +152,18 @@ export default function OwnerLayout({
           </Link>
 
           <a
-            href="http://localhost:8000/admin/"
+            href={crmUrl}
+            className="flex items-center justify-between px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-xs font-semibold transition border border-slate-200 shadow-2xs"
+          >
+            <div className="flex items-center space-x-2">
+              <Briefcase className="w-3.5 h-3.5 text-brand-ocean" />
+              <span>Sales CRM</span>
+            </div>
+            <ExternalLink className="w-3 h-3 text-slate-400" />
+          </a>
+
+          <a
+            href="/admin/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-between px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-xs font-semibold transition border border-slate-200 shadow-2xs"
@@ -143,6 +174,15 @@ export default function OwnerLayout({
             </div>
             <ExternalLink className="w-3 h-3 text-slate-400" />
           </a>
+
+          <button
+            type="button"
+            onClick={signOut}
+            className="w-full flex items-center space-x-2 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-semibold transition cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign out</span>
+          </button>
         </div>
       </aside>
 
@@ -158,7 +198,7 @@ export default function OwnerLayout({
                     <img src="/images/logo.png" alt="Spirit Adventures Logo" className="h-7 w-auto object-contain" />
                   </div>
                 </Link>
-                <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700">
+                <button onClick={() => setSidebarOpen(false)} aria-label="Close menu" className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -197,6 +237,14 @@ export default function OwnerLayout({
                 <span>View Public Site</span>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
               </Link>
+              <a href={crmUrl} className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 text-xs font-semibold text-slate-700 border border-slate-200">
+                <span>Sales CRM</span>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              </a>
+              <button type="button" onClick={signOut} className="w-full flex items-center space-x-2 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-semibold cursor-pointer">
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign out</span>
+              </button>
             </div>
           </div>
         </div>
@@ -209,6 +257,7 @@ export default function OwnerLayout({
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
               className="lg:hidden p-2 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 cursor-pointer"
             >
               <Menu className="w-5 h-5" />

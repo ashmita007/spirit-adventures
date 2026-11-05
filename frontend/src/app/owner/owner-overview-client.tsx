@@ -1,4 +1,5 @@
 "use client";
+import { ownerFetch } from "@/lib/owner-fetch";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -32,13 +33,13 @@ const WHATSAPP_TEMPLATES = [
     id: "itinerary",
     title: "📋 Full Itinerary & Quote",
     generateText: (lead: OwnerEnquiry) => 
-      `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n• *Package Price*: ₹${(lead.trip_price || 3999).toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
+      `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n${lead.trip_price ? `• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)` : "• *Package Price*: we'll share your exact quote shortly"}\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
   },
   {
     id: "payment",
     title: "💳 Payment & Booking Link",
     generateText: (lead: OwnerEnquiry) => 
-      `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\nTotal Booking Amount: *₹${((lead.travelers_count || 1) * (lead.trip_price || 3999)).toLocaleString("en-IN")}*\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
+      `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\n${lead.trip_price ? `Total Booking Amount: *₹${((lead.travelers_count || 1) * lead.trip_price).toLocaleString("en-IN")}*` : "We'll confirm your total booking amount shortly."}\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
   },
   {
     id: "checklist",
@@ -98,20 +99,56 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
     showToast(`Status updated to ${nextStatus.replace("_", " ")}!`);
   };
 
-  const handleCreateLead = (e: React.FormEvent) => {
+  const handleCreateLead = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newLeadForm.full_name.trim() || !newLeadForm.phone.trim()) {
+      showToast("Please add the customer's name and phone number");
+      return;
+    }
     const matchedTrip = data.trips.find(t => t.title === newLeadForm.trip_title);
-    const newEntry: OwnerEnquiry = {
-      id: Date.now(),
-      full_name: newLeadForm.full_name,
-      phone: newLeadForm.phone,
-      email: newLeadForm.email,
+    const payload = {
+      full_name: newLeadForm.full_name.trim(),
+      phone: newLeadForm.phone.trim(),
+      email: newLeadForm.email.trim(),
       trip_title: newLeadForm.trip_title,
-      trip_slug: matchedTrip?.slug || "dandeli-river-rafting",
-      trip_price: matchedTrip?.price || 3999,
       travelers_count: Number(newLeadForm.travelers_count) || 1,
       travel_date: newLeadForm.travel_date,
       departure_city: newLeadForm.departure_city,
+      status: "NEW",
+      priority: newLeadForm.priority,
+      follow_up_date: newLeadForm.follow_up_date,
+      admin_notes: newLeadForm.admin_notes,
+    };
+
+    let createdId: number;
+    try {
+      const res = await ownerFetch("/api/v1/owner/leads/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.success || !json.data?.id) {
+        showToast(json.message || "Couldn't save the inquiry. Please try again.");
+        return;
+      }
+      createdId = json.data.id;
+    } catch {
+      showToast("Can't reach the server. The inquiry was not saved.");
+      return;
+    }
+
+    const newEntry: OwnerEnquiry = {
+      id: createdId,
+      full_name: payload.full_name,
+      phone: payload.phone,
+      email: payload.email,
+      trip_title: payload.trip_title,
+      trip_slug: matchedTrip?.slug || "",
+      trip_price: matchedTrip?.price || 0,
+      travelers_count: payload.travelers_count,
+      travel_date: payload.travel_date,
+      departure_city: payload.departure_city,
       status: "NEW",
       priority: newLeadForm.priority,
       follow_up_date: newLeadForm.follow_up_date,
@@ -131,7 +168,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
     }));
 
     setIsAddLeadOpen(false);
-    showToast(`New inquiry for ${newLeadForm.full_name} added!`);
+    showToast(`Inquiry for ${payload.full_name} saved and sent to the CRM.`);
   };
 
   const openWhatsAppLead = (lead: OwnerEnquiry, templateId: string) => {
@@ -478,7 +515,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                     </td>
 
                     <td className="py-4 px-4 font-display font-black text-brand-ocean text-sm whitespace-nowrap">
-                      {formatCurrency((lead.trip_price || 3999) * (lead.travelers_count || 1))}
+                      {lead.trip_price ? formatCurrency(lead.trip_price * (lead.travelers_count || 1)) : <span className="text-slate-400 font-medium">Not priced</span>}
                     </td>
 
                     <td className="py-4 px-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
@@ -657,7 +694,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                 <div className="text-right">
                   <div className="text-xs text-slate-400">Total Quote</div>
                   <div className="text-base font-display font-black text-brand-ocean">
-                    {formatCurrency((selectedLead.trip_price || 3999) * (selectedLead.travelers_count || 1))}
+                    {selectedLead.trip_price ? formatCurrency(selectedLead.trip_price * (selectedLead.travelers_count || 1)) : "Not priced yet"}
                   </div>
                 </div>
               </div>

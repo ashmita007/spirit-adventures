@@ -65,7 +65,7 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-sm space-y-6">
+    <div className="bg-white rounded-3xl p-5 sm:p-10 border border-slate-200 shadow-sm space-y-6">
       <div>
         <h3 className="font-display font-bold text-2xl text-brand-navy uppercase tracking-tight">
           Send Us A Message
@@ -90,11 +90,12 @@ export default function ContactForm() {
             <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
+              autoComplete="name"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Vikram Singhania"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
             />
           </div>
         </div>
@@ -108,11 +109,13 @@ export default function ContactForm() {
               <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="tel"
+                autoComplete="tel"
+                inputMode="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+91 98765 43210"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
               />
             </div>
           </div>
@@ -125,11 +128,12 @@ export default function ContactForm() {
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="email"
+                autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="vikram@example.com"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
               />
             </div>
           </div>
@@ -145,7 +149,7 @@ export default function ContactForm() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Tell us what you're dreaming of — a winter summit, a corporate wilderness retreat, or a quiet beach trek..."
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition resize-none"
             />
           </div>
         </div>

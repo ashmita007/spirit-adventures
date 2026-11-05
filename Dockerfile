@@ -21,6 +21,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PORT=3000
 ENV NODE_ENV=production
+ENV PYTHONPATH=/app/backend
+ENV DJANGO_SETTINGS_MODULE=spirit_backend.settings
 
 # Install Node.js runtime & essentials
 RUN apt-get update && apt-get install -y --no-install-recommends \

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Send, CheckCircle2, Phone, Calendar, Users, Mail, User, Sparkles } from "lucide-react";
 import { Trip } from "@/lib/types";
 import { submitEnquiry } from "@/lib/api";
@@ -22,6 +22,19 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Lock page scroll while open (also pauses smooth scroll) and close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -66,14 +79,16 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="enquiry-title">
       {/* Backdrop */}
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onClick={handleReset} />
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden z-10 animate-fade-in border border-slate-100">
+      <div className="relative w-full max-w-lg max-h-[92dvh] flex flex-col bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 animate-fade-in border border-slate-100">
+        {/* Grab handle (phones) */}
+        <div aria-hidden className="sm:hidden absolute top-2 left-1/2 -translate-x-1/2 z-20 h-1 w-10 rounded-full bg-white/40" />
         {/* Header with Navy accent */}
-        <div className="bg-brand-navy p-6 text-white relative">
+        <div className="bg-brand-navy p-5 pt-6 sm:p-6 text-white relative shrink-0">
           <button
             onClick={handleReset}
             className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -87,7 +102,7 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
             <span>Direct Adventure Desk</span>
           </div>
 
-          <h3 className="font-display font-black text-xl sm:text-2xl uppercase tracking-tight">
+          <h3 id="enquiry-title" className="font-display font-black text-lg sm:text-2xl uppercase tracking-tight pr-10">
             {selectedTrip ? `Enquire: ${selectedTrip.title}` : "Plan Your Next Adventure"}
           </h3>
           {selectedTrip && (
@@ -97,8 +112,8 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
           )}
         </div>
 
-        {/* Form Body */}
-        <div className="p-6 sm:p-8">
+        {/* Form Body (scrolls on short phones so Submit is always reachable) */}
+        <div data-lenis-prevent className="p-5 sm:p-8 overflow-y-auto overscroll-contain pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           {submitted ? (
             <div className="text-center py-6 space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
@@ -138,7 +153,8 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Aditi Sharma"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                    autoComplete="name"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
                   />
                 </div>
               </div>
@@ -156,8 +172,10 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 98765 43210"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                      placeholder="10-digit mobile number"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
                     />
                   </div>
                 </div>
@@ -174,7 +192,9 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="aditi@example.com"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                      autoComplete="email"
+                      inputMode="email"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
                     />
                   </div>
                 </div>
@@ -189,11 +209,12 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                   <div className="relative">
                     <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
-                      type="text"
+                      type="date"
+                      min={new Date().toISOString().slice(0, 10)}
                       value={travelDate}
                       onChange={(e) => setTravelDate(e.target.value)}
-                      placeholder="e.g. Dec 25 or Next Month"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                      aria-label="Preferred travel date"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
                     />
                   </div>
                 </div>
@@ -210,7 +231,7 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                       max={30}
                       value={travelersCount}
                       onChange={(e) => setTravelersCount(parseInt(e.target.value) || 1)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
                     />
                   </div>
                 </div>
@@ -226,7 +247,7 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Tell us about your fitness level, group composition, or gear queries..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition resize-none"
                 />
               </div>
 

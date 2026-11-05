@@ -168,8 +168,8 @@ export default function AdventureReelsSection() {
   return (
     <section className="py-12 sm:py-20 bg-slate-950 text-white relative overflow-hidden border-t border-b border-white/5">
       {/* Background ambient lighting */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-ocean/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-ocean/10 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
@@ -266,7 +266,7 @@ export default function AdventureReelsSection() {
 
                 {/* Top Badge & Views */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-                  <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white border border-white/15">
+                  <span className="px-2.5 py-1 rounded-full bg-black/60 text-[10px] font-bold text-white border border-white/15">
                     {item.badge}
                   </span>
                   <span className="text-[11px] font-semibold text-white/90 drop-shadow flex items-center space-x-1">
@@ -308,7 +308,7 @@ export default function AdventureReelsSection() {
                 </div>
 
                 {/* Center Play Icon on Hover */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 backdrop-blur-[1px]">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
                   <div className="w-12 h-12 rounded-full bg-brand-ocean/90 text-white flex items-center justify-center shadow-xl scale-90 group-hover:scale-100 transition-transform">
                     <Play className="w-5 h-5 fill-current ml-0.5" />
                   </div>
@@ -321,11 +321,11 @@ export default function AdventureReelsSection() {
 
       {/* 3. Immersive Full-Screen Shorts Modal */}
       {activeShort && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-0 sm:p-4 animate-fade-in">
           {/* Close Button */}
           <button
             onClick={handleCloseReel}
-            className="absolute top-4 right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center backdrop-blur-md border border-white/20"
+            className="absolute top-4 right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/20"
             aria-label="Close modal"
           >
             <X className="w-6 h-6" />
@@ -334,7 +334,7 @@ export default function AdventureReelsSection() {
           {/* Desktop Next/Prev Arrow Controls */}
           <button
             onClick={handlePrevReel}
-            className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110"
+            className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center border border-white/20 transition-all hover:scale-110"
             aria-label="Previous reel"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -342,7 +342,7 @@ export default function AdventureReelsSection() {
 
           <button
             onClick={handleNextReel}
-            className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110"
+            className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center border border-white/20 transition-all hover:scale-110"
             aria-label="Next reel"
           >
             <ChevronRight className="w-6 h-6" />
@@ -379,7 +379,7 @@ export default function AdventureReelsSection() {
             {/* Top Reel Bar */}
             <div className="relative z-20 p-4 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-bold text-white border border-white/10">
+                <span className="px-3 py-1 rounded-full bg-white/15 text-xs font-bold text-white border border-white/10">
                   {activeShort.badge}
                 </span>
                 <span className="text-xs text-slate-200 font-medium">📍 {activeShort.location}</span>
@@ -388,7 +388,7 @@ export default function AdventureReelsSection() {
               {/* Sound Toggle */}
               <button
                 onClick={() => setIsMuted(!isMuted)}
-                className="w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white border border-white/20 flex items-center justify-center"
+                className="w-9 h-9 rounded-full bg-black/50 text-white border border-white/20 flex items-center justify-center"
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
               </button>
@@ -400,7 +400,7 @@ export default function AdventureReelsSection() {
                 onClick={() => toggleLike(activeShort.id)}
                 className="flex flex-col items-center group"
               >
-                <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-black/50 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Heart
                     className={cn(
                       "w-6 h-6",
@@ -424,7 +424,7 @@ export default function AdventureReelsSection() {
                 }}
                 className="flex flex-col items-center group"
               >
-                <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-black/50 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Share2 className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xs font-bold text-white mt-1">Share</span>
@@ -452,7 +452,7 @@ export default function AdventureReelsSection() {
                 <Link
                   href="/contact"
                   onClick={handleCloseReel}
-                  className="py-3 px-4 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white font-bold text-sm text-center transition-all active:scale-95"
+                  className="py-3 px-4 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-bold text-sm text-center transition-all active:scale-95"
                 >
                   Inquire Now
                 </Link>

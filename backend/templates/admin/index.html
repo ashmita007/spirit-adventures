@@ -1,0 +1,13 @@
+{% extends "admin/index.html" %}
+{% block content %}
+<div class="sa-quick">
+  <a class="primary" href="/owner/packages">+ Add / edit packages</a>
+  <a href="/owner">Owner portal</a>
+  <a href="/crm">Sales CRM</a>
+  <a href="{% url 'admin:adventures_enquiry_changelist' %}">Website enquiries</a>
+  <a href="{% url 'admin:enquiries_enquiry_changelist' %}">CRM leads</a>
+  <a href="{% url 'admin:accounts_customuser_add' %}">+ Add team member</a>
+  <a href="/" target="_blank" rel="noopener">View site ↗</a>
+</div>
+{{ block.super }}
+{% endblock %}

@@ -21,3 +21,12 @@ if Review.objects.count() == 0:
     except Exception as e:
         print('Review seed error:', e)
 "
+
+# Owner account for the merged portal + CRM (set these env vars on the host once).
+# DJANGO_SUPERUSER_EMAIL, DJANGO_SUPERUSER_PASSWORD, DJANGO_SUPERUSER_FIRST_NAME, DJANGO_SUPERUSER_LAST_NAME
+if [ -n "${DJANGO_SUPERUSER_EMAIL:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then
+  python manage.py createsuperuser --noinput 2>/dev/null || echo "Owner account already exists"
+fi
+
+# Mirror website trips into the CRM package list
+python manage.py sync_crm || echo "CRM sync skipped"
