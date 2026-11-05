@@ -160,6 +160,26 @@ def main():
     dest_map = {}
     for d_name, d_info in destination_metadata.items():
         d_slug = slugify(d_name)
+        yt_v = {
+            "coorg": "https://www.youtube.com/watch?v=uLc1QR3ofYQ",
+            "gokarna": "https://www.youtube.com/watch?v=7DF3LBAPeJY",
+            "dandeli": "https://www.youtube.com/watch?v=Xxuc_i1-Ytc",
+            "chikmagalur": "https://www.youtube.com/watch?v=l4nYZTanUeE",
+            "munnar": "https://www.youtube.com/watch?v=ti39UJYgc5s",
+            "hampi": "https://www.youtube.com/watch?v=ne4xe-NWcNQ",
+            "ooty": "https://www.youtube.com/watch?v=DZQPhfKbWc0",
+            "wayanad": "https://www.youtube.com/watch?v=l4TelPR_Mzg",
+            "goa": "https://www.youtube.com/watch?v=cBbS8Pi0obo",
+            "manali": "https://www.youtube.com/watch?v=o4bsfOUxJKU",
+            "kashmir": "https://www.youtube.com/watch?v=MHZpkHqB-U0",
+            "ladakh": "https://www.youtube.com/watch?v=G7a_tPbcELY",
+            "meghalaya": "https://www.youtube.com/watch?v=CsBmy8oJiLM",
+            "darjeeling": "https://www.youtube.com/watch?v=XYwP-QndGG0",
+            "lonavala": "https://www.youtube.com/watch?v=dw0LwI3HHRA",
+            "pondicherry": "https://www.youtube.com/watch?v=c4Nx7hCxOv8",
+            "kerala": "https://www.youtube.com/watch?v=ti39UJYgc5s",
+            "south-india": "https://www.youtube.com/watch?v=7DF3LBAPeJY",
+        }.get(d_slug, "")
         dest, _ = Destination.objects.update_or_create(
             name=d_name,
             defaults={
@@ -168,6 +188,7 @@ def main():
                 "description": d_info["desc"],
                 "cover_image": d_info["cover"],
                 "hero_image": d_info["hero"],
+                "video_url": yt_v,
                 "is_featured": True,
                 "is_published": True
             }

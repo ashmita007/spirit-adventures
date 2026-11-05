@@ -3,9 +3,10 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Compass, Mountain, MapPin } from "lucide-react";
+import { ArrowLeft, Compass, Mountain, MapPin, Play, Sparkles, Film } from "lucide-react";
 import { getDestinationBySlug, getTrips } from "@/lib/api";
 import TripCard from "@/components/trip-card";
+import { VideoPlayer, WatchVideoButton, isYouTubeUrl } from "@/components/video-player";
 
 interface DestinationPageProps {
   params: Promise<{ slug: string }>;
@@ -74,9 +75,9 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
         })()}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/50 to-black/50 pointer-events-none" />
 
-        {/* Back Link */}
+        {/* Back Link & Quick Actions */}
         <div className="absolute top-20 left-0 right-0 z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <Link
               href="/destinations"
               className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wider transition"
@@ -84,22 +85,43 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
               <ArrowLeft className="w-4 h-4" />
               <span>All Destinations</span>
             </Link>
+
+            {destination.video_url && (
+              <WatchVideoButton
+                videoUrl={destination.video_url}
+                title={`${destination.name} 4K Cinematic Tour`}
+                destinationName={destination.name}
+                variant="glass"
+              />
+            )}
           </div>
         </div>
 
         {/* Bottom Title */}
         <div className="absolute bottom-8 left-0 right-0 z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-sky block mb-2">
-              Region Spotlight
-            </span>
-            <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight">
-              {destination.name}
-            </h1>
-            {destination.subtitle && (
-              <p className="text-slate-200 text-sm sm:text-base mt-1 max-w-xl">
-                {destination.subtitle}
-              </p>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-sky block mb-2">
+                Region Spotlight
+              </span>
+              <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight">
+                {destination.name}
+              </h1>
+              {destination.subtitle && (
+                <p className="text-slate-200 text-sm sm:text-base mt-1 max-w-xl">
+                  {destination.subtitle}
+                </p>
+              )}
+            </div>
+
+            {destination.video_url && (
+              <WatchVideoButton
+                videoUrl={destination.video_url}
+                title={`${destination.name} 4K Drone Tour`}
+                destinationName={destination.name}
+                variant="pill"
+                className="self-start md:self-auto"
+              />
             )}
           </div>
         </div>
@@ -115,6 +137,34 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
             {destination.description}
           </p>
         </div>
+
+        {/* 4K Cinematic Video Tour Section */}
+        {destination.video_url && (
+          <section className="mb-16 bg-slate-950 rounded-3xl p-6 sm:p-8 md:p-10 border border-slate-800 shadow-2xl overflow-hidden relative">
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
+              <div>
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold tracking-wider uppercase mb-3">
+                  <Film className="w-3.5 h-3.5" />
+                  <span>Ultra HD Video Tour</span>
+                </div>
+                <h3 className="font-display font-black text-2xl sm:text-3xl text-white uppercase tracking-tight">
+                  Experience {destination.name} in 4K
+                </h3>
+                <p className="text-slate-400 text-sm mt-1 max-w-xl">
+                  Immerse yourself in aerial drone sweeps, scenic trail vistas, and high-resolution vistas before embarking on your expedition.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative z-10">
+              <VideoPlayer
+                url={destination.video_url}
+                title={`${destination.name} 4K Ultra HD Tour`}
+                poster={destination.hero_image || destination.cover_image}
+              />
+            </div>
+          </section>
+        )}
 
         {/* Adventures in this region */}
         <div className="pt-8 border-t border-slate-100">

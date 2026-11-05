@@ -44,6 +44,7 @@ export default function TripsExplorer({
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const isInitialSearchMount = useRef(true);
 
   // Function to query backend API with active filter state
   const fetchFilteredTrips = useCallback(async (
@@ -97,6 +98,19 @@ export default function TripsExplorer({
     const newUrl = params.toString() ? `/trips?${params.toString()}` : "/trips";
     window.history.replaceState(null, "", newUrl);
   }, []);
+
+  // Debounced live search: auto-queries as the user types
+  useEffect(() => {
+    if (isInitialSearchMount.current) {
+      isInitialSearchMount.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      updateUrlParams(category, destination, difficulty, search.trim());
+      fetchFilteredTrips(category, destination, difficulty, search.trim());
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [search, category, destination, difficulty, updateUrlParams, fetchFilteredTrips]);
 
   // Handle Search Input submit / change
   const handleSearchSubmit = (e: React.FormEvent) => {

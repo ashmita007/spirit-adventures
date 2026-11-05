@@ -8,6 +8,7 @@ class Destination(models.Model):
     description = models.TextField()
     cover_image = models.CharField(max_length=500, help_text="Image URL or public path")
     hero_image = models.CharField(max_length=500, blank=True, help_text="Large banner image URL")
+    video_url = models.CharField(max_length=500, blank=True, help_text="YouTube 4K/HD video link or direct video URL")
     is_featured = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
     ordering = models.PositiveIntegerField(default=0)

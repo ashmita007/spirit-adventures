@@ -6,6 +6,7 @@ export interface Destination {
   description: string;
   cover_image: string;
   hero_image?: string;
+  video_url?: string;
   is_featured: boolean;
   trip_count?: number;
   trips?: Trip[];

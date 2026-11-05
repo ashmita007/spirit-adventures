@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Compass, Search, Sparkles, X } from "lucide-react";
+import { ArrowRight, Compass, Search, Sparkles, X, Play, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VideoModal } from "@/components/video-player";
 
 interface VideoHeroProps {
   onPlanTripClick?: () => void;
@@ -38,13 +39,31 @@ const HERO_SCENES: HeroScene[] = [
   },
 ];
 
-const POPULAR_TAGS = ["Gokarna", "Dandeli", "Kedarkantha", "Coorg", "Ladakh"];
+const POPULAR_DESTINATIONS = [
+  { name: "Coorg", slug: "coorg", count: "5 trips", state: "Karnataka" },
+  { name: "Gokarna", slug: "gokarna", count: "5 trips", state: "Karnataka" },
+  { name: "Dandeli", slug: "dandeli", count: "6 trips", state: "Karnataka" },
+  { name: "Munnar", slug: "munnar", count: "3 trips", state: "Kerala" },
+  { name: "Chikmagalur", slug: "chikmagalur", count: "3 trips", state: "Karnataka" },
+  { name: "Ooty", slug: "ooty", count: "8 trips", state: "Tamil Nadu" },
+  { name: "Hampi", slug: "hampi", count: "2 trips", state: "Karnataka" },
+  { name: "Wayanad", slug: "wayanad", count: "2 trips", state: "Kerala" },
+  { name: "Manali", slug: "manali", count: "3 trips", state: "Himachal" },
+  { name: "Kashmir", slug: "kashmir", count: "1 trip", state: "J&K" },
+  { name: "Goa", slug: "goa", count: "1 trip", state: "Goa" },
+  { name: "Meghalaya", slug: "meghalaya", count: "1 trip", state: "Northeast" },
+];
+
+const POPULAR_TAGS = ["Coorg", "Gokarna", "Dandeli", "Munnar", "Chikmagalur", "Ooty", "Manali"];
 
 export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [show4kModal, setShow4kModal] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-cycle through scenes every 10 seconds
   useEffect(() => {
@@ -54,8 +73,20 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
     return () => clearInterval(timer);
   }, []);
 
+  // Close suggestions if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsFocused(false);
     if (searchQuery.trim()) {
       router.push(`/trips?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
@@ -63,9 +94,23 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
     }
   };
 
+  const handleDestinationClick = (destSlug: string) => {
+    setIsFocused(false);
+    router.push(`/trips?destination=${destSlug}`);
+  };
+
   const handleQuickTagClick = (tag: string) => {
+    setIsFocused(false);
     router.push(`/trips?search=${encodeURIComponent(tag)}`);
   };
+
+  const matchingDestinations = searchQuery.trim()
+    ? POPULAR_DESTINATIONS.filter(
+        (d) =>
+          d.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          d.state.toLowerCase().includes(searchQuery.toLowerCase().trim())
+      )
+    : POPULAR_DESTINATIONS.slice(0, 6);
 
   return (
     <section data-anim="hero" aria-label="Spirit Adventures" className="relative min-h-[92vh] sm:min-h-screen w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
@@ -139,11 +184,11 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           High-altitude Himalayan passes, South Indian river rafting, and Western Ghats jungle treks with certified expedition leaders.
         </p>
 
-        {/* 4. Responsive Search Bar for Mobile & Desktop */}
-        <div data-hero-item className="w-full max-w-xl mt-6 sm:mt-8">
+        {/* 4. Responsive Search Bar for Mobile & Desktop with Destination Suggestions */}
+        <div data-hero-item ref={searchContainerRef} className="relative w-full max-w-xl mt-6 sm:mt-8">
           <form
             onSubmit={handleSearchSubmit}
-            className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition-all duration-300"
+            className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition-all duration-300 z-30"
           >
             <div className="pl-3 sm:pl-4 text-slate-400">
               <Search className="w-5 h-5 text-brand-ocean" />
@@ -152,8 +197,12 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search treks, places, rafting…"
+              onFocus={() => setIsFocused(true)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setIsFocused(true);
+              }}
+              placeholder="Search destination, treks, rafting…"
               aria-label="Search adventures"
               className="w-full bg-transparent px-3 py-2 text-xs sm:text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none font-medium"
             />
@@ -162,7 +211,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full mr-1 transition"
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full mr-1 transition cursor-pointer"
                 aria-label="Clear search"
               >
                 <X className="w-4 h-4" />
@@ -171,12 +220,60 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 
             <button
               type="submit"
-              className="flex-shrink-0 inline-flex items-center space-x-1.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-brand-ocean hover:bg-brand-navy text-white text-xs sm:text-sm font-bold tracking-wider transition-all duration-200 shadow-md active:scale-95"
+              className="flex-shrink-0 inline-flex items-center space-x-1.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-brand-ocean hover:bg-brand-navy text-white text-xs sm:text-sm font-bold tracking-wider transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
             >
               <span>Search</span>
               <ArrowRight className="w-3.5 h-3.5 hidden sm:inline" />
             </button>
           </form>
+
+          {/* Destination Autocomplete Suggestions Dropdown */}
+          {isFocused && matchingDestinations.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-slate-950/95 backdrop-blur-xl border border-white/15 rounded-3xl p-3 shadow-2xl z-40 text-left animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                <span>Destinations & Regions</span>
+                <span className="text-brand-sky">Direct Match</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-1">
+                {matchingDestinations.map((dest) => (
+                  <button
+                    key={dest.slug}
+                    type="button"
+                    onClick={() => handleDestinationClick(dest.slug)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-white/10 text-white transition text-left cursor-pointer group"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-7 h-7 rounded-xl bg-brand-ocean/30 text-brand-sky flex items-center justify-center">
+                        <MapPin className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <span className="font-display font-bold text-xs sm:text-sm text-white group-hover:text-brand-sky transition">
+                          {dest.name}
+                        </span>
+                        <span className="text-[10px] text-slate-400 block">
+                          {dest.state}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+                      {dest.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {searchQuery.trim() && (
+                <button
+                  type="button"
+                  onClick={handleSearchSubmit}
+                  className="w-full mt-2 pt-2 border-t border-white/10 text-center text-xs text-brand-sky font-semibold py-1.5 hover:text-white transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <span>Search all adventures for &ldquo;{searchQuery}&rdquo;</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Quick Trending Tags */}
           <div className="mt-3 -mx-4 px-4 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center">
@@ -186,7 +283,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                 key={tag}
                 type="button"
                 onClick={() => handleQuickTagClick(tag)}
-                className="shrink-0 text-xs sm:text-[11px] px-3.5 py-2 sm:px-2.5 sm:py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-200 border border-white/15 transition hover:text-white"
+                className="shrink-0 text-xs sm:text-[11px] px-3.5 py-2 sm:px-2.5 sm:py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-200 border border-white/15 transition hover:text-white cursor-pointer"
               >
                 {tag}
               </button>
@@ -205,13 +302,22 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
             <ArrowRight className="w-4 h-4" />
           </Link>
 
+          <button
+            type="button"
+            onClick={() => setShow4kModal(true)}
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-3.5 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xl hover:shadow-rose-600/25 transition-all duration-300 active:scale-[0.98] cursor-pointer"
+          >
+            <Play className="w-4 h-4 fill-white" />
+            <span>Watch 4K Trailer</span>
+          </button>
+
           <Link
             data-magnetic
             href="/contact"
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all duration-300 active:scale-[0.98]"
           >
             <Compass className="w-4 h-4 text-brand-sky" />
-            <span>Plan My Custom Trip</span>
+            <span>Custom Plan</span>
           </Link>
         </div>
 
@@ -242,6 +348,14 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           <span className="absolute inset-x-0 top-0 h-1/2 bg-brand-sky animate-[sa-scroll-cue_1.8s_ease-in-out_infinite]" />
         </span>
       </div>
+
+      <VideoModal
+        isOpen={show4kModal}
+        onClose={() => setShow4kModal(false)}
+        videoUrl="https://www.youtube.com/watch?v=uLc1QR3ofYQ"
+        title="Spirit Adventures 4K Cinematic Showcase"
+        destinationName="Western Ghats & Himalayas"
+      />
     </section>
   );
 }

@@ -9,6 +9,30 @@ from adventures.models import (
 
 User = get_user_model()
 
+DESTINATION_YOUTUBE_MAP = {
+    "coorg": "https://www.youtube.com/watch?v=uLc1QR3ofYQ",
+    "gokarna": "https://www.youtube.com/watch?v=7DF3LBAPeJY",
+    "dandeli": "https://www.youtube.com/watch?v=Xxuc_i1-Ytc",
+    "chikmagalur": "https://www.youtube.com/watch?v=l4nYZTanUeE",
+    "munnar": "https://www.youtube.com/watch?v=ti39UJYgc5s",
+    "hampi": "https://www.youtube.com/watch?v=ne4xe-NWcNQ",
+    "ooty": "https://www.youtube.com/watch?v=DZQPhfKbWc0",
+    "wayanad": "https://www.youtube.com/watch?v=l4TelPR_Mzg",
+    "goa": "https://www.youtube.com/watch?v=cBbS8Pi0obo",
+    "manali": "https://www.youtube.com/watch?v=o4bsfOUxJKU",
+    "kashmir": "https://www.youtube.com/watch?v=MHZpkHqB-U0",
+    "ladakh": "https://www.youtube.com/watch?v=G7a_tPbcELY",
+    "meghalaya": "https://www.youtube.com/watch?v=CsBmy8oJiLM",
+    "uttarakhand": "https://www.youtube.com/watch?v=xssNu8NOO1A",
+    "himachal": "https://www.youtube.com/watch?v=o4bsfOUxJKU",
+    "darjeeling": "https://www.youtube.com/watch?v=XYwP-QndGG0",
+    "lonavala": "https://www.youtube.com/watch?v=dw0LwI3HHRA",
+    "pondicherry": "https://www.youtube.com/watch?v=c4Nx7hCxOv8",
+    "kerala": "https://www.youtube.com/watch?v=ti39UJYgc5s",
+    "south-india": "https://www.youtube.com/watch?v=7DF3LBAPeJY",
+    "karnataka": "https://www.youtube.com/watch?v=uLc1QR3ofYQ",
+}
+
 class Command(BaseCommand):
     help = 'Seeds complete adventure data including South India and Himalayas with local video clips'
 
@@ -428,14 +452,16 @@ class Command(BaseCommand):
                     d_name = item["destination_name"]
                     
                     # Match or create destination
+                    d_slug_key = slugify(d_name)
                     dest, _ = Destination.objects.get_or_create(
-                        slug=slugify(d_name),
+                        slug=d_slug_key,
                         defaults={
                             "name": d_name,
                             "subtitle": f"Scenic {d_name} Trails & Wilderness",
                             "description": f"Explore breathtaking nature trails, waterfalls, and scenic viewpoints in {d_name} with Spirit Adventures.",
                             "cover_image": item.get("cover_image", "").replace("http://", "https://") or "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80",
                             "hero_image": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1920&q=80",
+                            "video_url": DESTINATION_YOUTUBE_MAP.get(d_slug_key, ""),
                             "is_featured": True,
                             "is_published": True,
                         }

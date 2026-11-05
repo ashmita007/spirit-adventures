@@ -32,6 +32,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Land of the Sacred High Himalayas",
     description: "From snow-capped peaks to sacred pine forests.",
     cover_image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=xssNu8NOO1A",
     is_featured: true,
     trip_count: 2,
   },
@@ -42,6 +43,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Valley of the Gods & Alpine Meadows",
     description: "Dramatic transition from lush cedar valleys to Spiti moonscapes.",
     cover_image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=o4bsfOUxJKU",
     is_featured: true,
     trip_count: 2,
   },
@@ -52,6 +54,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Paradise on Earth & Alpine Lakes",
     description: "Turquoise high-altitude alpine lakes and emerald meadows.",
     cover_image: "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=MHZpkHqB-U0",
     is_featured: true,
     trip_count: 1,
   },
@@ -62,6 +65,7 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "High Altitude Trans-Himalayas",
     description: "Cold desert kingdom of azure lakes and ancient monasteries.",
     cover_image: "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=G7a_tPbcELY",
     is_featured: true,
     trip_count: 1,
   },
@@ -72,8 +76,9 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Golden Cliffs & Arabian Sea Coastal Headlands",
     description: "Pristine golden beach coves, rocky cliff trails, and ocean stargazing.",
     cover_image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=7DF3LBAPeJY",
     is_featured: true,
-    trip_count: 1,
+    trip_count: 5,
   },
   {
     id: 6,
@@ -82,8 +87,9 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Kali River White Water Rafting & Dense Jungle",
     description: "Grade 3 white water rapids, jungle kayaking, and rainforest wildlife safaris.",
     cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg",
+    video_url: "https://www.youtube.com/watch?v=Xxuc_i1-Ytc",
     is_featured: true,
-    trip_count: 1,
+    trip_count: 5,
   },
   {
     id: 7,
@@ -92,8 +98,9 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Scotland of India, Misty Peaks & Coffee Trails",
     description: "Rolling emerald shola hills, coffee estates, and Tadiandamol summit.",
     cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg",
+    video_url: "https://www.youtube.com/watch?v=uLc1QR3ofYQ",
     is_featured: true,
-    trip_count: 1,
+    trip_count: 5,
   },
   {
     id: 8,
@@ -102,8 +109,9 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Mullayanagiri Peak & Sea of Clouds",
     description: "Karnataka's highest mountain peak, misty ridge walks, and waterfalls.",
     cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg",
+    video_url: "https://www.youtube.com/watch?v=l4nYZTanUeE",
     is_featured: true,
-    trip_count: 1,
+    trip_count: 3,
   },
   {
     id: 9,
@@ -112,8 +120,9 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Queen of Nilgiri Hills & Pine Sanctuaries",
     description: "Heritage toy trains, dense pine forests, and quiet alpine lake trails.",
     cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg",
+    video_url: "https://www.youtube.com/watch?v=DZQPhfKbWc0",
     is_featured: true,
-    trip_count: 1,
+    trip_count: 8,
   },
   {
     id: 10,
@@ -122,6 +131,62 @@ const FALLBACK_DESTINATIONS: Destination[] = [
     subtitle: "Chembra Heart Lake & Cascading Waterfalls",
     description: "Ancient caves, misty rainforest peaks, and heart-shaped alpine lakes.",
     cover_image: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg",
+    video_url: "https://www.youtube.com/watch?v=l4TelPR_Mzg",
+    is_featured: true,
+    trip_count: 2,
+  },
+  {
+    id: 11,
+    name: "Munnar",
+    slug: "munnar",
+    subtitle: "Emerald Tea Estates & Anamudi High Peaks",
+    description: "Endless rolling green tea carpets, misty cloud walks, and waterfalls in Kerala.",
+    cover_image: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=ti39UJYgc5s",
+    is_featured: true,
+    trip_count: 3,
+  },
+  {
+    id: 12,
+    name: "Hampi",
+    slug: "hampi",
+    subtitle: "UNESCO Bouldered Ruins & Tungabhadra Coracle Rides",
+    description: "Timeless boulder-strewn landscape, ancient temples, and cliff jumping across Sanapur Lake.",
+    cover_image: "https://images.unsplash.com/photo-1600100397608-f010f4439c2c?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=ne4xe-NWcNQ",
+    is_featured: true,
+    trip_count: 1,
+  },
+  {
+    id: 13,
+    name: "Goa",
+    slug: "goa",
+    subtitle: "Sun-Kissed Beaches, Coastal Treks & Old Latin Quarters",
+    description: "Vibrant Arabian coastline, Dudhsagar falls, cliff trails, and watersports adventures.",
+    cover_image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=cBbS8Pi0obo",
+    is_featured: true,
+    trip_count: 1,
+  },
+  {
+    id: 14,
+    name: "Manali",
+    slug: "manali",
+    subtitle: "Pir Panjal Alpine Summits, Solang & Rohtang Pass",
+    description: "Pine forests, high mountain passes, Beas river adventure sports, and snow summits.",
+    cover_image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=o4bsfOUxJKU",
+    is_featured: true,
+    trip_count: 3,
+  },
+  {
+    id: 15,
+    name: "Meghalaya",
+    slug: "meghalaya",
+    subtitle: "Abode of Clouds & Living Root Bridges",
+    description: "Dawki transparent river, Cherrapunji roaring waterfalls, and misty rainforest treks.",
+    cover_image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1200&q=80",
+    video_url: "https://www.youtube.com/watch?v=CsBmy8oJiLM",
     is_featured: true,
     trip_count: 1,
   },
@@ -865,8 +930,10 @@ export async function getTrips(params?: {
     if (params?.category && t.category_slug !== params.category) return false;
     if (params?.difficulty && t.difficulty !== params.difficulty.toUpperCase()) return false;
     if (params?.search) {
-      const s = params.search.toLowerCase();
-      return t.title.toLowerCase().includes(s) || t.short_description.toLowerCase().includes(s);
+      const tokens = params.search.toLowerCase().trim().split(/\s+/);
+      const searchable = `${t.title} ${t.short_description} ${t.destination_name} ${t.destination_slug} ${t.category_name || ""} ${t.category_slug || ""}`.toLowerCase();
+      const allMatch = tokens.every((tok) => searchable.includes(tok));
+      if (!allMatch) return false;
     }
     return true;
   });

@@ -120,11 +120,31 @@ def list_trips(
     if featured is not None:
         queryset = queryset.filter(is_featured=featured)
     if search:
-        queryset = queryset.filter(
-            Q(title__icontains=search) |
-            Q(short_description__icontains=search) |
-            Q(destination__name__icontains=search)
-        )
+        search_clean = search.strip()
+        tokens = search_clean.split()
+        if len(tokens) <= 1:
+            queryset = queryset.filter(
+                Q(title__icontains=search_clean) |
+                Q(short_description__icontains=search_clean) |
+                Q(full_description__icontains=search_clean) |
+                Q(destination__name__icontains=search_clean) |
+                Q(destination__slug__icontains=search_clean) |
+                Q(category__name__icontains=search_clean) |
+                Q(category__slug__icontains=search_clean)
+            )
+        else:
+            q_multi = Q()
+            for token in tokens:
+                q_multi &= (
+                    Q(title__icontains=token) |
+                    Q(short_description__icontains=token) |
+                    Q(full_description__icontains=token) |
+                    Q(destination__name__icontains=token) |
+                    Q(destination__slug__icontains=token) |
+                    Q(category__name__icontains=token) |
+                    Q(category__slug__icontains=token)
+                )
+            queryset = queryset.filter(q_multi)
     
     trips_data = []
     for t in queryset:
@@ -286,6 +306,7 @@ def list_destinations(request, featured: Optional[bool] = None):
             "description": d.description,
             "cover_image": d.cover_image,
             "hero_image": d.hero_image,
+            "video_url": d.video_url or "",
             "is_featured": d.is_featured,
             "trip_count": d.trip_count
         })
@@ -342,6 +363,7 @@ def get_destination(request, slug: str):
         "description": d.description,
         "cover_image": d.cover_image,
         "hero_image": d.hero_image,
+        "video_url": d.video_url or "",
         "is_featured": d.is_featured,
         "trip_count": d.trip_count,
         "trips": trips_data
