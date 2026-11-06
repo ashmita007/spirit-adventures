@@ -753,11 +753,11 @@ const FALLBACK_REVIEWS: Review[] = [
     traveler_location: "Hyderabad, Telangana",
     avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
     rating: 5,
-    review_text: "It's an amazing experience with Spirit Adventures. Sathwik is friendly and caring and very helpful throughout the trek. Will surely suggest for others too. 5/5 stars!",
+    review_text: "I recently went on an Ooty and Coonoor trip with Spirit Adventures, and it was a wonderful experience from start to finish. The trip was well-organized, and all the locations covered were beautiful and worth visiting. A special thanks to our tour guide, Aditya, who was extremely friendly, supportive, and approachable throughout the journey.",
     travel_date: "February 2025",
     is_verified: true,
     is_featured: true,
-    trip_title: "2D 1N Coorg & Tadiandamol Summit"
+    trip_title: "3D 2N Ooty & Coonoor"
   },
   {
     id: 2,
@@ -765,11 +765,11 @@ const FALLBACK_REVIEWS: Review[] = [
     traveler_location: "Hyderabad, Telangana",
     avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
     rating: 5,
-    review_text: "First experience with Spirit Adventures and it was a very memorable and wonderful experience. Aditya is very friendly, supportive, and punctual during the entire journey.",
+    review_text: "Ooty is one of the most peaceful hill stations in South India. Travelers usually love the cool weather, greenery, and calm vibe. It's a perfect break from city heat, especially in summer. And especially my guide Sathvik helped me a lot in this journey.",
     travel_date: "January 2025",
     is_verified: true,
     is_featured: true,
-    trip_title: "4D 3N Hampi, Gokarna & Dandeli"
+    trip_title: "4D 3N Isha, Ooty & Coonoor"
   },
   {
     id: 3,
@@ -777,11 +777,11 @@ const FALLBACK_REVIEWS: Review[] = [
     traveler_location: "Hyderabad, Telangana",
     avatar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
     rating: 5,
-    review_text: "Best travel agency for weekend adventures from Hyderabad. The Gokarna cliff trek and Dandeli rafting trip was flawlessly organized. Great food, great tents, great guides!",
+    review_text: "Had an amazing trip to Ooty and Coonoor with our guide Aditya! He was very friendly, well-organized, and made the entire journey smooth and enjoyable. He explained every place clearly, managed trip timings perfectly, and ensured everyone was comfortable. Highly recommended!",
     travel_date: "January 2025",
     is_verified: true,
     is_featured: true,
-    trip_title: "Dandeli River Rafting & Gokarna Trek"
+    trip_title: "3D 2N Ooty & Coonoor"
   },
   {
     id: 4,
@@ -789,11 +789,11 @@ const FALLBACK_REVIEWS: Review[] = [
     traveler_location: "Hyderabad, Telangana",
     avatar_url: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=200&q=80",
     rating: 5,
-    review_text: "Treks with Spirit Adventures are super safe, well planned, and budget friendly. Guide Sathwik made sure every solo traveler felt completely included and safe.",
+    review_text: "We had a wonderful Ooty and Coonoor trip, and special thanks to our guide Aditya for making it so memorable. He was very supportive, friendly, and managed everything professionally throughout the journey. The trip was well-planned, comfortable, and enjoyable.",
     travel_date: "December 2024",
     is_verified: true,
     is_featured: true,
-    trip_title: "Chikmagalur Mullayanagiri Ridge Trek"
+    trip_title: "4D 3N Ooty, Coonoor & Mysore"
   },
   {
     id: 5,
@@ -801,11 +801,11 @@ const FALLBACK_REVIEWS: Review[] = [
     traveler_location: "Secunderabad, Telangana",
     avatar_url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=200&q=80",
     rating: 5,
-    review_text: "Had an unforgettable 4-day trip to Hampi & Gokarna. Everything from tempo traveler transport to cliffside camping was top notch. 100% recommended for friend groups!",
+    review_text: "We had a good experience with Spirit Adventure club. Our Trip Guide was Sathwik and he covered all the locations mentioned. The stay and food was very good and also a very good experience at Gokarna beach beside stay.",
     travel_date: "November 2024",
     is_verified: true,
     is_featured: true,
-    trip_title: "4D 3N Hampi & Gokarna Adventure"
+    trip_title: "3D 2N Gokarna & Dandeli"
   },
   {
     id: 6,
@@ -813,11 +813,35 @@ const FALLBACK_REVIEWS: Review[] = [
     traveler_location: "Hyderabad, Telangana",
     avatar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
     rating: 5,
-    review_text: "I went to Coorg 2D/1N with Spirit Adventures. Amazing homestay in coffee estates, river rafting, and sunset viewpoints. Aditya led the group with utmost patience and passion.",
+    review_text: "It was great experience on Holiday tour with family. We selected package Ooty and Isha with personal cab budget friendly, on-time travel with good stay accommodation and safe journey under guidance of Mr. Sathwik.",
     travel_date: "October 2024",
     is_verified: true,
     is_featured: true,
-    trip_title: "2D 1N Coorg Scotland of India"
+    trip_title: "3D 2N Isha & Ooty"
+  },
+  {
+    id: 7,
+    traveler_name: "Avinash Bollaram",
+    traveler_location: "Hyderabad, Telangana",
+    avatar_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80",
+    rating: 5,
+    review_text: "Had a fun experience at Coorg and Chikmagalur. We went with our family and everything went smoothly with the help of Spirit Adventures. Our trip guide Sathvik took good care of us. Great hospitality and service. Thank you Spirit Adventures!",
+    travel_date: "October 2024",
+    is_verified: true,
+    is_featured: true,
+    trip_title: "3D 2N Coorg & Chikmagalur"
+  },
+  {
+    id: 8,
+    traveler_name: "Shahid Ali",
+    traveler_location: "Hyderabad, Telangana",
+    avatar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
+    rating: 5,
+    review_text: "We had traveled recently with Spirit Adventures for Gokarna and Dandeli. Our Trip Guide was Sathwik, he was very friendly and covered all the places. The stay and food was very good, we enjoyed a lot at Dandeli stay with swimming pool and games.",
+    travel_date: "September 2024",
+    is_verified: true,
+    is_featured: true,
+    trip_title: "4D 3N Hampi, Gokarna & Dandeli"
   }
 ];
 

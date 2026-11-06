@@ -19,16 +19,6 @@ import {
   ChevronLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { VideoModal } from "@/components/video-player";
-
-const SHORT_YOUTUBE_MAP: Record<string, string> = {
-  "dandeli-rafting": "https://www.youtube.com/watch?v=Xxuc_i1-Ytc",
-  "gokarna-beach": "https://www.youtube.com/watch?v=7DF3LBAPeJY",
-  "coorg-mist": "https://www.youtube.com/watch?v=uLc1QR3ofYQ",
-  "chikmagalur-peak": "https://www.youtube.com/watch?v=l4nYZTanUeE",
-  "wayanad-waterfall": "https://www.youtube.com/watch?v=l4TelPR_Mzg",
-  "ooty-toy-train": "https://www.youtube.com/watch?v=DZQPhfKbWc0",
-};
 
 export interface AdventureShort {
   id: string;
@@ -138,7 +128,6 @@ export default function AdventureReelsSection() {
   const [likedShorts, setLikedShorts] = useState<Record<string, boolean>>({});
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [full4kVideoOpen, setFull4kVideoOpen] = useState(false);
   const modalVideoRef = useRef<HTMLVideoElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -479,18 +468,6 @@ export default function AdventureReelsSection() {
                 Discover the raw beauty of {activeShort.location}. Certified guides, local stays, and safety gear included.
               </p>
 
-              {/* 4K YouTube Experience Trigger */}
-              {activeShort && SHORT_YOUTUBE_MAP[activeShort.id] && (
-                <button
-                  type="button"
-                  onClick={() => setFull4kVideoOpen(true)}
-                  className="w-full py-2 px-3 rounded-xl bg-rose-600/90 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 shadow-md transition active:scale-95 cursor-pointer"
-                >
-                  <Play className="w-3.5 h-3.5 fill-white" />
-                  <span>Watch Full 4K Drone Tour</span>
-                </button>
-              )}
-
               <div className="flex items-center space-x-3 pt-2">
                 <Link
                   href={`/trips/${activeShort.tripSlug}`}
@@ -511,16 +488,6 @@ export default function AdventureReelsSection() {
             </div>
           </div>
         </div>
-      )}
-
-      {activeShort && SHORT_YOUTUBE_MAP[activeShort.id] && (
-        <VideoModal
-          isOpen={full4kVideoOpen}
-          onClose={() => setFull4kVideoOpen(false)}
-          videoUrl={SHORT_YOUTUBE_MAP[activeShort.id]}
-          title={`${activeShort.title} (4K Drone Film)`}
-          destinationName={activeShort.location}
-        />
       )}
     </section>
   );

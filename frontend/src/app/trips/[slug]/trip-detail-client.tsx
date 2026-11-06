@@ -6,14 +6,13 @@ import Link from "next/link";
 import { 
   Star, Clock, MapPin, Mountain, ArrowLeft, Check, X as XIcon, 
   Calendar, ShieldCheck, Backpack, HelpCircle, MessageCircle, Play, 
-  ChevronDown, Heart, Share2, Compass, Film
+  ChevronDown, Heart, Share2, Compass
 } from "lucide-react";
 import { Review, Trip } from "@/lib/types";
 import TripCard from "@/components/trip-card";
 import { formatCurrency, cn } from "@/lib/utils";
 import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
-import { VideoModal, VideoPlayer, isYouTubeUrl, extractYouTubeId } from "@/components/video-player";
 
 interface TripDetailClientProps {
   trip: Trip;
@@ -47,51 +46,23 @@ const DESTINATION_VIDEO_MAP: Record<string, string> = {
   manali: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
 };
 
-const DESTINATION_YOUTUBE_VIDEOS: Record<string, string> = {
-  coorg: "https://www.youtube.com/watch?v=uLc1QR3ofYQ",
-  gokarna: "https://www.youtube.com/watch?v=7DF3LBAPeJY",
-  dandeli: "https://www.youtube.com/watch?v=Xxuc_i1-Ytc",
-  chikmagalur: "https://www.youtube.com/watch?v=l4nYZTanUeE",
-  munnar: "https://www.youtube.com/watch?v=ti39UJYgc5s",
-  hampi: "https://www.youtube.com/watch?v=ne4xe-NWcNQ",
-  ooty: "https://www.youtube.com/watch?v=DZQPhfKbWc0",
-  wayanad: "https://www.youtube.com/watch?v=l4TelPR_Mzg",
-  goa: "https://www.youtube.com/watch?v=cBbS8Pi0obo",
-  manali: "https://www.youtube.com/watch?v=o4bsfOUxJKU",
-  kashmir: "https://www.youtube.com/watch?v=MHZpkHqB-U0",
-  ladakh: "https://www.youtube.com/watch?v=G7a_tPbcELY",
-  meghalaya: "https://www.youtube.com/watch?v=CsBmy8oJiLM",
-  uttarakhand: "https://www.youtube.com/watch?v=xssNu8NOO1A",
-  darjeeling: "https://www.youtube.com/watch?v=XYwP-QndGG0",
-  lonavala: "https://www.youtube.com/watch?v=dw0LwI3HHRA",
-  pondicherry: "https://www.youtube.com/watch?v=c4Nx7hCxOv8",
-  kerala: "https://www.youtube.com/watch?v=ti39UJYgc5s",
-};
-
 const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").replace(/\D/g, "");
 
 export default function TripDetailClient({ trip, similar = [], reviews = [] }: TripDetailClientProps) {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
   const [openDay, setOpenDay] = useState<number | null>(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const destKey = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
-  
-  // Resolve HD YouTube Video
-  const youtubeVideoUrl =
-    (trip.hero_video_url && isYouTubeUrl(trip.hero_video_url) ? trip.hero_video_url : null) ||
-    DESTINATION_YOUTUBE_VIDEOS[destKey] ||
-    "https://www.youtube.com/watch?v=uLc1QR3ofYQ";
 
-  // Resolve background ambient loop (only MP4 direct files, never raw YouTube URLs)
-  const bgRawVideo = trip.hero_video_url && !isYouTubeUrl(trip.hero_video_url)
+  // Resolve background ambient loop (only MP4 direct files)
+  const bgRawVideo = trip.hero_video_url && trip.hero_video_url.endsWith(".mp4")
     ? trip.hero_video_url
     : LOCAL_VIDEO_MAP[trip.slug] || DESTINATION_VIDEO_MAP[destKey];
-  const bgVideoSrc = bgRawVideo && !isYouTubeUrl(bgRawVideo) ? bgRawVideo : null;
+  const bgVideoSrc = bgRawVideo && bgRawVideo.endsWith(".mp4") ? bgRawVideo : null;
 
   React.useEffect(() => {
     if (videoRef.current && bgVideoSrc) {
@@ -152,16 +123,6 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             </Link>
 
             <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => setVideoModalOpen(true)}
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-rose-600/90 hover:bg-rose-600 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider transition shadow-lg active:scale-95 cursor-pointer"
-              >
-                <Play className="w-3.5 h-3.5 fill-white" />
-                <span className="hidden sm:inline">Watch 4K Trailer</span>
-                <span className="sm:hidden">4K Video</span>
-              </button>
-
               <button
                 onClick={() => setLightboxIndex(0)}
                 className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wider transition cursor-pointer"
@@ -261,28 +222,6 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                   <p className="text-sm font-semibold text-brand-navy mt-1">{trip.drop_location || "Dehradun / Base Camp"}</p>
                 </div>
               </div>
-
-              {/* 4K Video Spotlight */}
-              {youtubeVideoUrl && (
-                <div className="mt-8 pt-6 border-t border-slate-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <Film className="w-5 h-5 text-rose-500" />
-                      <h3 className="font-display font-bold text-lg text-brand-navy uppercase tracking-wide">
-                        4K HD Video Preview
-                      </h3>
-                    </div>
-                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
-                      YouTube 1080p / 4K
-                    </span>
-                  </div>
-                  <VideoPlayer
-                    url={youtubeVideoUrl}
-                    title={`${trip.title} 4K Drone & Trail Film`}
-                    poster={trip.cover_image}
-                  />
-                </div>
-              )}
             </section>
 
             {/* Itinerary */}
@@ -632,16 +571,6 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
         onClose={() => setEnquiryOpen(false)}
         selectedTrip={trip}
       />
-
-      {youtubeVideoUrl && (
-        <VideoModal
-          isOpen={videoModalOpen}
-          onClose={() => setVideoModalOpen(false)}
-          videoUrl={youtubeVideoUrl}
-          title={`${trip.title} 4K Experience`}
-          destinationName={trip.destination_name}
-        />
-      )}
     </div>
   );
 }

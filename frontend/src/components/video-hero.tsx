@@ -3,9 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Compass, Search, Sparkles, X, Play, MapPin } from "lucide-react";
+import { ArrowRight, Compass, Search, Sparkles, X, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { VideoModal } from "@/components/video-player";
 
 interface VideoHeroProps {
   onPlanTripClick?: () => void;
@@ -60,7 +59,6 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [show4kModal, setShow4kModal] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -302,15 +300,6 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
             <ArrowRight className="w-4 h-4" />
           </Link>
 
-          <button
-            type="button"
-            onClick={() => setShow4kModal(true)}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 sm:py-3.5 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xl hover:shadow-rose-600/25 transition-all duration-300 active:scale-[0.98] cursor-pointer"
-          >
-            <Play className="w-4 h-4 fill-white" />
-            <span>Watch 4K Trailer</span>
-          </button>
-
           <Link
             data-magnetic
             href="/contact"
@@ -348,14 +337,6 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           <span className="absolute inset-x-0 top-0 h-1/2 bg-brand-sky animate-[sa-scroll-cue_1.8s_ease-in-out_infinite]" />
         </span>
       </div>
-
-      <VideoModal
-        isOpen={show4kModal}
-        onClose={() => setShow4kModal(false)}
-        videoUrl="https://www.youtube.com/watch?v=uLc1QR3ofYQ"
-        title="Spirit Adventures 4K Cinematic Showcase"
-        destinationName="Western Ghats & Himalayas"
-      />
     </section>
   );
 }

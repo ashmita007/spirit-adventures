@@ -398,37 +398,28 @@ class Command(BaseCommand):
             ordering=8
         )
 
-        self.stdout.write(self.style.SUCCESS("Creating reviews & enquiries..."))
-        Review.objects.create(
-            trip=t_dandeli,
-            traveler_name="Kavya Nair",
-            traveler_location="Bengaluru, Karnataka",
-            rating=5,
-            review_text="The Dandeli river rafting was beyond exhilarating! Our river guides were seasoned pros, and the lakeside camping at night was pure magic.",
-            travel_date="March 2026",
-            is_featured=True,
-            is_approved=True
-        )
-        Review.objects.create(
-            trip=t_gokarna,
-            traveler_name="Arjun Varma",
-            traveler_location="Hyderabad, Telangana",
-            rating=5,
-            review_text="Trekking along the Gokarna cliffs as the sun was setting into the Arabian Sea is a memory for life. Superbly organized by Spirit Adventures.",
-            travel_date="February 2026",
-            is_featured=True,
-            is_approved=True
-        )
-        Review.objects.create(
-            trip=t_coorg,
-            traveler_name="Pooja Hegde",
-            traveler_location="Chennai, Tamil Nadu",
-            rating=5,
-            review_text="Coorg misty hills and Tadiandamol summit walk was refreshingly peaceful. Authentic Kodava food and cozy homestay.",
-            travel_date="January 2026",
-            is_featured=True,
-            is_approved=True
-        )
+        self.stdout.write(self.style.SUCCESS("Creating authentic Google verified reviews from spiritadventures.in..."))
+        reviews_data = [
+            ("Kottana Mounika", "Hyderabad, Telangana", t_coorg, "I recently went on an Ooty and Coonoor trip with Spirit Adventures, and it was a wonderful experience from start to finish. The trip was well-organized, and all the locations covered were beautiful and worth visiting. A special thanks to our tour guide, Aditya, who was extremely friendly, supportive, and approachable throughout the journey. He ensured everyone in the group was comfortable and made the trip enjoyable."),
+            ("CH Sunil", "Hyderabad, Telangana", t_gokarna, "Ooty is one of the most peaceful hill stations in South India. Travelers usually love the cool weather, greenery, and calm vibe. It’s a perfect break from city heat, especially in summer. And especially my guide Sathvik helped me a lot in this journey."),
+            ("Gopi Reddy", "Hyderabad, Telangana", t_coorg, "Had an amazing trip to Ooty and Coonoor with our guide Aditya! He was very friendly, well-organized, and made the entire journey smooth and enjoyable. He explained every place clearly, managed trip timings perfectly, and ensured everyone was comfortable throughout the tour. Highly recommended!"),
+            ("Panduga Srikanth Reddy", "Hyderabad, Telangana", t_chikmagalur, "We had a wonderful Ooty and Coonoor trip, and special thanks to our guide Aditya for making it so memorable. He was very supportive, friendly, and managed everything professionally throughout the journey. The trip was well-planned, comfortable, and enjoyable because of his coordination and guidance."),
+            ("Charan Tej Begari", "Secunderabad, Telangana", t_gokarna, "We had a good experience with spirit adventure club. Our Trip Guide was Sathwik and he covered all the locations mentioned. The stay and food was very good and also a very good experience at Gokarna beach beside stay."),
+            ("Raparthi Srinivas", "Hyderabad, Telangana", t_ooty, "It was great experience on Holiday tour with family. We selected package Ooty and Isha with personal cab, budget friendly, on-time travel with good stay accommodation and safe journey on hill station ride under guidance of Mr. Sathwik."),
+            ("Avinash Bollaram", "Hyderabad, Telangana", t_chikmagalur, "Had a fun experience at Coorg and Chikmagalur. We went with our family and everything went smoothly with the help of Spirit Adventures. Our trip guide Sathvik took good care of us. Great Hospitality and service. Thank you Spirit Adventures."),
+            ("Shahid Ali", "Hyderabad, Telangana", t_dandeli, "We had traveled recently with Spirit Adventures for Gokarna and Dandeli. Our Trip Guide was Sathwik, he was very friendly with us and covered all the places. The stay and food was very good, we enjoyed a lot at Dandeli stay with swimming pool and games. Gokarna beach side stay was very good.")
+        ]
+        for name, loc, trip_obj, text in reviews_data:
+            Review.objects.create(
+                trip=trip_obj,
+                traveler_name=name,
+                traveler_location=loc,
+                rating=5,
+                review_text=text,
+                travel_date="2025",
+                is_featured=True,
+                is_approved=True
+            )
 
         # Load Scraped Trips from Spirit Adventures Live Site if fixture exists
         fixture_path = os.path.join(os.path.dirname(__file__), "..", "..", "fixtures", "scraped_trips.json")
