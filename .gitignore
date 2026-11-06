@@ -37,7 +37,10 @@ frontend/build/
 .npm
 .eslintcache
 
-# Environment
+# Testing artifacts
+test-screenshots/
+*.log
+
 .env
 .env.local
 .env.development.local
