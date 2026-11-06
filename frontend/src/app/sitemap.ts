@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
+import { FALLBACK_TRIPS } from "@/lib/fallback-trips";
+import { getDestinations } from "@/lib/api";
 
 export const revalidate = 3600;
 
@@ -7,16 +9,16 @@ const API = process.env.DJANGO_API_URL || process.env.INTERNAL_API_URL || "http:
 
 type Row = { slug: string; updated_at?: string; created_at?: string; published_at?: string };
 
-// Real slugs from the backend only; if it is down we just list the static pages
-async function slugs(endpoint: string): Promise<Row[]> {
+async function slugs(endpoint: string, fallbackRows: Row[]): Promise<Row[]> {
   try {
-    const res = await fetch(`${API}${endpoint}`, { next: { revalidate: 3600 }, signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return [];
+    const res = await fetch(`${API}${endpoint}`, { next: { revalidate: 3600 }, signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return fallbackRows;
     const json = await res.json();
     const data = json.data ?? json;
-    return Array.isArray(data) ? data.filter((r: Row) => r?.slug) : [];
+    const items = Array.isArray(data) ? data.filter((r: Row) => r?.slug) : [];
+    return items.length > 0 ? items : fallbackRows;
   } catch {
-    return [];
+    return fallbackRows;
   }
 }
 
@@ -32,7 +34,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/contact", priority: 0.7, freq: "monthly" as const },
   ].map((r) => ({ url: `${SITE_URL}${r.path}`, lastModified: now, changeFrequency: r.freq, priority: r.priority }));
 
-  const [trips, destinations, posts] = await Promise.all([slugs("/trips/"), slugs("/destinations/"), slugs("/blog/")]);
+  const defaultTrips: Row[] = FALLBACK_TRIPS.map(t => ({ slug: t.slug }));
+  const fallbackDests = await getDestinations();
+  const defaultDests: Row[] = fallbackDests.map(d => ({ slug: d.slug }));
+
+  const [trips, destinations, posts] = await Promise.all([
+    slugs("/trips/", defaultTrips),
+    slugs("/destinations/", defaultDests),
+    slugs("/blog/", [])
+  ]);
   const when = (r: Row) => new Date(r.updated_at || r.published_at || r.created_at || now);
 
   return [

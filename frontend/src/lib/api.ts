@@ -374,22 +374,18 @@ async function fetchFromApi<T>(endpoint: string, fallback: T): Promise<T> {
     return fallback;
   }
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second fast timeout
-
     const res = await fetch(`${baseUrl}${endpoint}`, {
       next: { revalidate: 60 },
-      signal: controller.signal,
+      signal: AbortSignal.timeout(6000),
       headers: { "Content-Type": "application/json" }
     });
-    clearTimeout(timeoutId);
 
     if (!res.ok) {
       return fallback;
     }
     const json = await res.json();
     return (json.data ?? json) as T;
-  } catch (error) {
+  } catch {
     return fallback;
   }
 }
