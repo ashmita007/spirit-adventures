@@ -16,7 +16,7 @@ interface HeroScene {
   video8kUrl: string;
   videoUrl: string;
   posterUrl: string;
-  /** Portrait (9:16) clip: full-bleed on phones, centred over a blurred backdrop on wide screens. */
+  /** Portrait (9:16) clip: fills every screen; on wide screens the top and bottom are cropped. */
   vertical?: boolean;
 }
 
@@ -163,8 +163,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                   fetchPriority={idx === 0 ? "high" : "low"}
                   className={cn(
                     "absolute inset-0 w-full h-full object-cover object-center scale-105",
-                    // Portrait clip on a wide screen: the poster becomes a soft backdrop behind the centred video
-                    scene.vertical && "sm:scale-125 sm:blur-2xl sm:brightness-75"
+                    scene.vertical && "object-[50%_68%]"
                   )}
                   loading={idx === 0 ? "eager" : "lazy"}
                 />
@@ -381,7 +380,8 @@ function HeroVideo({ url, poster, vertical, onReady }: { url: string; poster: st
       onCanPlay={onReady}
       className={cn(
         "absolute inset-0 w-full h-full object-center",
-        vertical ? "object-cover sm:object-contain" : "object-cover scale-105"
+        // Portrait clips also fill wide screens (cropped top and bottom), as the owner asked
+        vertical ? "object-cover object-[50%_68%]" : "object-cover scale-105"
       )}
     >
       <source src={src} type="video/mp4" />
