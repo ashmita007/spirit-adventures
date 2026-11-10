@@ -11,7 +11,7 @@ import { getTripBySlug, getTrips, getReviews } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import TripDetailClient from "./trip-detail-client";
 import JsonLd from "@/components/json-ld";
-import { tripJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { tripJsonLd, breadcrumbJsonLd, tripMetaTitle, tripMetaDescription, tripDisplayName } from "@/lib/seo";
 
 interface TripPageProps {
   params: Promise<{ slug: string }>;
@@ -23,9 +23,8 @@ export async function generateMetadata({ params }: TripPageProps): Promise<Metad
   if (!trip) {
     return { title: "Trip Not Found | Spirit Adventures" };
   }
-  const t = trip as typeof trip & { meta_title?: string; meta_description?: string };
-  const title = t.meta_title || `${trip.title} | ${trip.duration_label || "Trip"} from ₹${Math.round(Number(trip.price)).toLocaleString("en-IN")} | Spirit Adventures`;
-  const description = t.meta_description || trip.short_description;
+  const title = tripMetaTitle(trip);
+  const description = tripMetaDescription(trip);
   return {
     title,
     description,
@@ -69,7 +68,7 @@ export default async function TripDetailPage({ params }: TripPageProps) {
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
             { name: "Trips", path: "/trips" },
-            { name: trip.title, path: `/trips/${trip.slug}` },
+            { name: tripDisplayName(trip.title), path: `/trips/${trip.slug}` },
           ]),
         ]}
       />

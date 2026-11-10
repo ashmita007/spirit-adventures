@@ -159,13 +159,13 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
         <div className="absolute top-3.5 left-3.5 right-14 flex items-center z-10 pointer-events-none">
           <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
             {trip.is_bestseller && (
-              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-brand-ocean text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
+              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-brand-ocean text-white text-[10px] font-extrabold shadow-md">
                 <Sparkles className="w-2.5 h-2.5" aria-hidden />
                 <span>Bestseller</span>
               </span>
             )}
             {trip.category_name && (
-              <span className="px-2.5 py-1 rounded-full bg-white text-brand-navy text-[10px] font-bold uppercase tracking-wider shadow-sm">
+              <span className="px-2.5 py-1 rounded-full bg-white text-brand-navy text-[10px] font-bold shadow-sm">
                 {trip.category_name}
               </span>
             )}
@@ -185,7 +185,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
         onClick={toggleSaved}
         aria-pressed={isLiked}
         aria-label={isLiked ? `Remove ${trip.title} from saved` : `Save ${trip.title}`}
-        className="absolute top-3.5 right-3.5 z-40 w-8 h-8 rounded-full bg-black/40 text-white hover:bg-white hover:text-rose-500 flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm cursor-pointer"
+        className="absolute top-2.5 right-2.5 z-40 w-10 h-10 rounded-full bg-black/40 text-white hover:bg-white hover:text-rose-500 flex items-center justify-center transition duration-200 active:scale-90 shadow-sm cursor-pointer"
       >
         <Heart className={cn("w-4 h-4 transition-transform", isLiked && "fill-rose-500 text-rose-500 scale-110")} />
       </button>
@@ -201,15 +201,20 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
                 <span>{trip.duration_label}</span>
               </span>
               <span className="text-slate-300">•</span>
-              <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider", difficultyClass)}>
+              <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold border", difficultyClass)}>
                 {trip.difficulty}
               </span>
             </div>
 
-            <div className="flex items-center space-x-1 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60 text-amber-700 font-bold text-xs">
-              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-              <span>{trip.rating || 5.0}</span>
-            </div>
+            {trip.rating && trip.reviews_count ? (
+              <div
+                className="flex items-center space-x-1 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60 text-amber-700 font-bold text-xs"
+                aria-label={`Rated ${trip.rating} out of 5 from ${trip.reviews_count} reviews`}
+              >
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" aria-hidden="true" />
+                <span>{trip.rating}</span>
+              </div>
+            ) : null}
           </div>
 
           {/* Title */}
@@ -231,7 +236,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
         {/* Pricing & CTA Footer */}
         <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
           <div>
-            <span className="block text-[10px] uppercase font-bold tracking-wider text-slate-600">Starting from</span>
+            <span className="block text-[10px] font-bold text-slate-600">Starting from</span>
             <div className="flex items-baseline space-x-2">
               <span className="font-display font-black text-xl text-brand-navy">
                 {formatCurrency(trip.price)}
@@ -246,7 +251,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
 
           <Link
             href={`/trips/${trip.slug}`}
-            className="inline-flex items-center space-x-1 px-4 py-2 rounded-full bg-brand-light group-hover:bg-brand-ocean group-hover:text-white text-brand-ocean font-bold text-xs tracking-wider transition-all duration-200 shadow-2xs group-hover:shadow-md"
+            className="inline-flex items-center space-x-1 px-4 py-2 rounded-full bg-brand-light group-hover:bg-brand-ocean group-hover:text-white text-brand-ocean font-bold text-xs tracking-wide transition duration-200 shadow-2xs group-hover:shadow-md"
           >
             <span>Explore</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" aria-hidden />

@@ -17,7 +17,8 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     return { title: "Story Not Found | Spirit Adventures" };
   }
   return {
-    title: `${post.title} | Spirit Adventures`,
+    // Keep the brand suffix only when the full title still fits in ~60 chars
+    title: `${post.title} | Spirit Adventures`.length <= 60 ? `${post.title} | Spirit Adventures` : post.title,
     description: post.excerpt,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
@@ -38,19 +39,19 @@ export default async function BlogPostDetailPage({ params }: BlogPageProps) {
   }
 
   return (
-    <article className="min-h-screen bg-white pt-24 pb-20">
+    <article className="min-h-dvh bg-white pt-24 pb-20">
       {/* Article Header */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <Link
           href="/blog"
-          className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-brand-ocean hover:text-brand-navy transition mb-6"
+          className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wide text-brand-ocean hover:text-brand-navy transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to All Stories</span>
         </Link>
 
         <div className="space-y-4">
-          <span className="px-3 py-1 rounded-full bg-brand-light text-brand-ocean text-xs font-bold uppercase tracking-wider border border-brand-ocean/20 inline-block">
+          <span className="px-3 py-1 rounded-full bg-brand-light text-brand-ocean text-xs font-bold border border-brand-ocean/20 inline-block">
             {post.category}
           </span>
 
@@ -98,12 +99,12 @@ export default async function BlogPostDetailPage({ params }: BlogPageProps) {
             Ready to experience this firsthand?
           </h3>
           <p className="text-slate-600 text-sm max-w-md mx-auto">
-            Join a small, mindful group of adventurers on our upcoming Himalayan and Sahyadri departures.
+            Join a small group on our next Himalayan or Sahyadri departure.
           </p>
           <div className="pt-2 flex justify-center gap-4">
             <Link
               href="/trips"
-              className="px-6 py-3 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-md"
+              className="px-6 py-3 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-md"
             >
               Browse Upcoming Treks
             </Link>

@@ -117,7 +117,7 @@ export function TablePagination({
               <button
                 key={`page-${p}`}
                 onClick={() => onPageChange(p as number)}
-                className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold transition-all ${
+                className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold transition ${
                   isCurrent
                     ? "bg-brand-ocean text-white shadow-sm ring-1 ring-brand-ocean"
                     : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"

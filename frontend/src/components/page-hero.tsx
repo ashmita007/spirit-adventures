@@ -59,7 +59,7 @@ export default function PageHero({
 
         <span
           data-anim="fade-up"
-          className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.22em] text-sky-200"
+          className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold text-sky-200"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-brand-sky" aria-hidden />
           {eyebrow}

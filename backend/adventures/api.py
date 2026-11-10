@@ -1,10 +1,13 @@
+import re
 from ninja import NinjaAPI, Router, Schema
 from ninja.security import SessionAuth, SessionAuthIsStaff
 from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
 from typing import List, Optional, Union
 from django.shortcuts import get_object_or_404
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Avg
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
 from .models import (
     Destination, Category, Trip, TripImage, TripVideo, 
@@ -18,6 +21,26 @@ from .schemas import (
 )
 from .ratelimit import rate_limit, limiter
 from .cron import CRON_JOB_REGISTRY, execute_cron_job
+
+
+APPROVED_REVIEWS = Q(reviews__is_approved=True)
+
+
+def with_review_stats(queryset):
+    """Annotate trips with real approved-review stats (no invented ratings)."""
+    return queryset.annotate(
+        approved_reviews=Count("reviews", filter=APPROVED_REVIEWS, distinct=True),
+        avg_rating=Avg("reviews__rating", filter=APPROVED_REVIEWS),
+    )
+
+
+def rating_fields(avg, count):
+    """Rating payload: null rating and 0 count when a trip has no approved reviews."""
+    count = int(count or 0)
+    return {
+        "rating": round(float(avg), 1) if count and avg is not None else None,
+        "reviews_count": count,
+    }
 
 api = NinjaAPI(
     title="Spirit Adventures API",
@@ -147,7 +170,7 @@ def list_trips(
             queryset = queryset.filter(q_multi)
     
     trips_data = []
-    for t in queryset:
+    for t in with_review_stats(queryset):
         trips_data.append({
             "id": t.id,
             "title": t.title,
@@ -169,8 +192,7 @@ def list_trips(
             "trek_distance": t.trek_distance,
             "is_featured": t.is_featured,
             "is_bestseller": t.is_bestseller,
-            "rating": 4.9,
-            "reviews_count": t.reviews.filter(is_approved=True).count() or 18
+            **rating_fields(t.avg_rating, t.approved_reviews),
         })
     
     return {
@@ -281,8 +303,10 @@ def get_trip(request, slug: str):
         "itinerary_days": itinerary_days,
         "faqs": faqs,
         "reviews": reviews,
-        "rating": 4.9,
-        "reviews_count": len(reviews) if len(reviews) > 0 else 24
+        **rating_fields(
+            (sum(r["rating"] for r in reviews) / len(reviews)) if reviews else None,
+            len(reviews),
+        ),
     }
 
     return {"success": True, "data": data, "message": "Trip details retrieved successfully"}
@@ -327,7 +351,7 @@ def get_destination(request, slug: str):
         )
     
     # Get trips in this destination
-    trips = Trip.objects.filter(destination=d, is_published=True).select_related('category')
+    trips = with_review_stats(Trip.objects.filter(destination=d, is_published=True).select_related('category'))
     trips_data = [
         {
             "id": t.id,
@@ -349,8 +373,7 @@ def get_destination(request, slug: str):
             "trek_distance": t.trek_distance,
             "is_featured": t.is_featured,
             "is_bestseller": t.is_bestseller,
-            "rating": 4.9,
-            "reviews_count": 18
+            **rating_fields(t.avg_rating, t.approved_reviews),
         }
         for t in trips
     ]
@@ -397,26 +420,46 @@ def create_enquiry(request, payload: EnquiryIn):
     elif payload.trip_id:
         trip = Trip.objects.filter(id=payload.trip_id).first()
 
-    if not payload.full_name or not payload.phone or not payload.email:
+    full_name = (payload.full_name or "").strip()
+    email = (payload.email or "").strip().lower()
+    phone = (payload.phone or "").strip()
+    message = (payload.message or "").strip()
+    travel_date = (payload.travel_date or "").strip()
+
+    def bad_request(message_text, field):
         return api.create_response(
             request,
-            {
-                "success": False,
-                "data": None,
-                "message": "Please provide full name, phone number, and email address.",
-                "errors": {"fields": "Required fields missing"}
-            },
-            status=400
+            {"success": False, "data": None, "message": message_text, "errors": {field: message_text}},
+            status=400,
         )
+
+    if not full_name or not phone or not email:
+        return bad_request("Please provide full name, phone number, and email address.", "fields")
+    if len(full_name) > 150:
+        return bad_request("Please shorten your name to 150 characters.", "full_name")
+    try:
+        validate_email(email)
+    except DjangoValidationError:
+        return bad_request("Please enter a valid email address.", "email")
+    phone_digits = re.sub(r"\D", "", phone)
+    if len(phone) > 25 or not 10 <= len(phone_digits) <= 15 or not re.fullmatch(r"[\d\s+()\-]+", phone):
+        return bad_request("Please enter a valid phone number (10 digits, optionally with +91).", "phone")
+    if len(message) > 3000:
+        return bad_request("Please keep your message under 3000 characters.", "message")
+    if len(travel_date) > 50:
+        return bad_request("Please enter a shorter travel date.", "travel_date")
+    travelers = payload.travelers_count or 1
+    if not 1 <= travelers <= 100:
+        return bad_request("Number of travellers must be between 1 and 100.", "travelers_count")
 
     enquiry = Enquiry.objects.create(
         trip=trip,
-        full_name=payload.full_name.strip(),
-        email=payload.email.strip().lower(),
-        phone=payload.phone.strip(),
-        travel_date=payload.travel_date or "",
-        travelers_count=payload.travelers_count or 1,
-        message=payload.message or "",
+        full_name=full_name,
+        email=email,
+        phone=phone,
+        travel_date=travel_date,
+        travelers_count=travelers,
+        message=message,
         status='NEW'
     )
 

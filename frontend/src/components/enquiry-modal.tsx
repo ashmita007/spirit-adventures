@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { X, Send, CheckCircle2, Phone, Calendar, Users, Mail, User, Sparkles } from "lucide-react";
+import React, { useEffect, useId, useState } from "react";
+import { X, Send, CheckCircle2, Phone, Calendar, Users, Mail, User } from "lucide-react";
 import { Trip } from "@/lib/types";
 import { submitEnquiry } from "@/lib/api";
+import { tripDisplayName } from "@/lib/seo";
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -22,6 +23,8 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const uid = useId();
+  const fid = (name: string) => `${uid}-${name}`;
 
   // Lock page scroll while open (also pauses smooth scroll) and close on Escape
   useEffect(() => {
@@ -88,32 +91,32 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
         {/* Grab handle (phones) */}
         <div aria-hidden className="sm:hidden absolute top-2 left-1/2 -translate-x-1/2 z-20 h-1 w-10 rounded-full bg-white/40" />
         {/* Header with Navy accent */}
-        <div className="bg-brand-navy p-5 pt-6 sm:p-6 text-white relative shrink-0">
+        <div className="bg-brand-navy px-5 pt-6 pb-4 sm:p-6 text-white relative shrink-0">
           <button
             onClick={handleReset}
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-            aria-label="Close modal"
+            type="button"
+            className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            aria-label="Close enquiry form"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/10 text-brand-sky text-[11px] font-semibold uppercase tracking-wider mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Direct Adventure Desk</span>
-          </div>
+          <p className="hidden sm:block text-[11px] font-semibold text-brand-sky mb-2">
+            Enquiry
+          </p>
 
-          <h3 id="enquiry-title" className="font-display font-black text-lg sm:text-2xl uppercase tracking-tight pr-10">
-            {selectedTrip ? `Enquire: ${selectedTrip.title}` : "Plan Your Next Adventure"}
+          <h3 id="enquiry-title" className="font-display font-black text-lg sm:text-2xl tracking-tight leading-snug pr-12 line-clamp-2">
+            {selectedTrip ? tripDisplayName(selectedTrip.title) : "Plan your trip"}
           </h3>
           {selectedTrip && (
             <p className="text-xs text-sky-200 mt-1">
-              {selectedTrip.duration_label} • Starting from ₹{selectedTrip.price.toLocaleString("en-IN")}
+              {selectedTrip.duration_label} · from ₹{Number(selectedTrip.price).toLocaleString("en-IN")} per person
             </p>
           )}
         </div>
 
         {/* Form Body (scrolls on short phones so Submit is always reachable) */}
-        <div data-lenis-prevent className="p-5 sm:p-8 overflow-y-auto overscroll-contain pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+        <div data-lenis-prevent className="p-5 sm:p-8 overflow-y-auto min-h-0 overscroll-contain pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           {submitted ? (
             <div className="text-center py-6 space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
@@ -123,31 +126,33 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                 Thank you!
               </h4>
               <p className="text-slate-600 text-sm max-w-sm mx-auto leading-relaxed">
-                Our adventure team will contact you shortly with slot availability, preparation guide, and itinerary details.
+                We&apos;ll call or WhatsApp you within a few hours with dates, availability and the full itinerary.
               </p>
               <button
+                type="button"
                 onClick={handleReset}
-                className="mt-4 px-8 py-3 rounded-full bg-brand-navy hover:bg-brand-ocean text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-md"
+                className="mt-4 px-8 py-3 rounded-full bg-brand-navy hover:bg-brand-ocean text-white font-semibold text-xs uppercase tracking-wide transition-colors shadow-md"
               >
-                Close Window
+                Done
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {errorMessage && (
-                <div className="p-3 rounded-xl bg-rose-50 text-rose-700 text-xs font-medium border border-rose-200">
+                <div role="alert" className="p-3 rounded-xl bg-rose-50 text-rose-700 text-xs font-medium border border-rose-200">
                   {errorMessage}
                 </div>
               )}
 
               {/* Name */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Your Full Name *
+                <label htmlFor={fid("name")} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Full name *
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                   <input
+                    id={fid("name")}
                     type="text"
                     required
                     value={fullName}
@@ -162,12 +167,13 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
               {/* Phone & Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                  <label htmlFor={fid("phone")} className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Phone / WhatsApp *
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                     <input
+                      id={fid("phone")}
                       type="tel"
                       required
                       value={phone}
@@ -181,12 +187,13 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Email Address *
+                  <label htmlFor={fid("email")} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Email *
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                     <input
+                      id={fid("email")}
                       type="email"
                       required
                       value={email}
@@ -203,30 +210,32 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
               {/* Travel Date & Travelers */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Preferred Date / Month
+                  <label htmlFor={fid("date")} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Preferred date
                   </label>
                   <div className="relative">
-                    <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                     <input
+                      id={fid("date")}
                       type="date"
                       min={new Date().toISOString().slice(0, 10)}
                       value={travelDate}
                       onChange={(e) => setTravelDate(e.target.value)}
-                      aria-label="Preferred travel date"
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    No. of Travelers
+                  <label htmlFor={fid("travelers")} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Travellers
                   </label>
                   <div className="relative">
-                    <Users className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Users className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                     <input
+                      id={fid("travelers")}
                       type="number"
+                      inputMode="numeric"
                       min={1}
                       max={30}
                       value={travelersCount}
@@ -239,14 +248,15 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
 
               {/* Message */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Questions / Specific Requests
+                <label htmlFor={fid("message")} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Anything we should know?
                 </label>
                 <textarea
-                  rows={2}
+                  id={fid("message")}
+                  rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Tell us about your fitness level, group composition, or gear queries..."
+                  placeholder="Group size, fitness level, pickup city…"
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent transition resize-none"
                 />
               </div>
@@ -255,20 +265,20 @@ export default function EnquiryModal({ isOpen, onClose, selectedTrip }: EnquiryM
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-4 flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-cyan-500/20 disabled:opacity-60"
+                className="w-full mt-4 flex items-center justify-center gap-2 whitespace-nowrap min-h-12 py-3.5 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-semibold text-sm uppercase tracking-wide transition duration-300 shadow-lg hover:shadow-cyan-500/20 disabled:opacity-60"
               >
                 {loading ? (
-                  <span>Sending Enquiry...</span>
+                  <span>Sending…</span>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
-                    <span>Send Adventure Enquiry</span>
+                    <Send className="w-4 h-4" aria-hidden="true" />
+                    <span>Send Enquiry</span>
                   </>
                 )}
               </button>
 
               <p className="text-[11px] text-center text-slate-600 mt-2">
-                🔒 We respect your privacy. No spam, ever.
+                We only use your details to plan this trip. No spam.
               </p>
             </form>
           )}

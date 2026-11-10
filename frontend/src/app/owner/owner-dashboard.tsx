@@ -51,25 +51,25 @@ const AVAILABLE_LOCAL_VIDEOS = [
 const WHATSAPP_TEMPLATES = [
   {
     id: "itinerary",
-    title: "📋 Full Itinerary & Pricing",
+    title: "Full Itinerary & Pricing",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
   },
   {
     id: "payment",
-    title: "💳 Slot Booking & Payment Link",
+    title: "Slot Booking & Payment Link",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\nTotal Booking Amount: *₹${((lead.travelers_count || 1) * lead.trip_price).toLocaleString("en-IN")}*\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
   },
   {
     id: "checklist",
-    title: "🎒 Things to Carry & Gear Guide",
+    title: "Things to Carry & Gear Guide",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🏕️ Here is your essential packing list for *${lead.trip_title}*:\n\n1. Trekking / Trail shoes with good rubber grip\n2. Quick-dry synthetic t-shirts & track pants\n3. Warm fleece / windcheater for evenings\n4. Reusable 1L water bottle\n5. Personal medication, headlamp/torch & power bank\n\nOur team leader contact will be shared 24 hours prior to departure.`
   },
   {
     id: "pickup",
-    title: "📍 Pickup Hub & Timing Details",
+    title: "Pickup Hub & Timing Details",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🚌 Pickup logistics for *${lead.trip_title}*:\n\n• *Departure City*: ${lead.departure_city || "Bengaluru"}\n• *Pickup Point*: Main Hub (Exact GPS pin will be shared)\n• *Reporting Time*: Friday 10:00 PM\n• *Expedition Lead*: Spirit Adventures Ops Team\n\nSee you at the pickup point! Let us know if you have any questions.`
   }
@@ -223,7 +223,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
     }));
 
     setIsAddLeadOpen(false);
-    showToast(`🎉 Lead created for ${createdLead.full_name}!`);
+    showToast(`Lead created for ${createdLead.full_name}!`);
     setNewLeadForm({
       full_name: "",
       email: "",
@@ -443,7 +443,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-brand-ocean selection:text-white pb-24">
+    <div className="min-h-dvh bg-slate-900 text-slate-100 font-sans selection:bg-brand-ocean selection:text-white pb-24">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 bg-brand-navy text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 font-semibold text-xs border border-brand-ocean/40 animate-bounce">
@@ -464,8 +464,8 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 <span className="font-display font-black text-base text-white tracking-wide block leading-none">
                   SPIRIT ADVENTURES
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-sky block mt-0.5">
-                  Executive Suite &bull; Owner HQ
+                <span className="text-[10px] font-bold text-brand-sky block mt-0.5">
+                  Owner dashboard
                 </span>
               </div>
             </Link>
@@ -475,7 +475,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
           <div className="flex items-center space-x-2 sm:space-x-3">
             <button
               onClick={() => setIsAddLeadOpen(true)}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black uppercase tracking-wider transition shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black uppercase tracking-wide transition shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
               <span>+ Add Lead</span>
@@ -509,10 +509,10 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
               <div className="flex items-center space-x-2 mb-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-brand-sky/20 text-brand-sky text-[11px] font-bold uppercase tracking-wider border border-brand-sky/30">
+                <span className="px-2.5 py-0.5 rounded-full bg-brand-sky/20 text-brand-sky text-[11px] font-bold border border-brand-sky/30">
                   Real-time CRM & Fleet Operations
                 </span>
-                <span className="text-xs text-slate-400">&bull; Last updated live</span>
+                <span className="text-xs text-slate-400">Updates live</span>
               </div>
               <h1 className="font-display font-black text-2xl sm:text-4xl uppercase tracking-tight text-white">
                 Operations & Lead Dispatch Desk
@@ -525,12 +525,12 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             {/* Quick Action Summary Stats Pills */}
             <div className="flex items-center gap-2 flex-wrap">
               <div className="px-4 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block">VIP High Priority</span>
-                <span className="font-display font-black text-lg text-rose-400">🔥 {highPriorityCount} Leads</span>
+                <span className="text-[10px] font-bold text-slate-400 block">VIP High Priority</span>
+                <span className="font-display font-black text-lg text-rose-400">{highPriorityCount} Leads</span>
               </div>
               <div className="px-4 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block">Fresh Uncontacted</span>
-                <span className="font-display font-black text-lg text-sky-400">⚡ {freshLeadsCount} New</span>
+                <span className="text-[10px] font-bold text-slate-400 block">Fresh Uncontacted</span>
+                <span className="font-display font-black text-lg text-sky-400">{freshLeadsCount} New</span>
               </div>
             </div>
           </div>
@@ -540,7 +540,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             {/* Total Pipeline Revenue */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-5 border border-slate-700/80 shadow-lg hover:border-brand-ocean/50 transition">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Pipeline Deal Value</span>
+                <span className="text-xs font-bold text-slate-400">Pipeline Deal Value</span>
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold">
                   <DollarSign className="w-5 h-5" />
                 </div>
@@ -559,7 +559,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             {/* Total Leads Count */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-5 border border-slate-700/80 shadow-lg hover:border-brand-ocean/50 transition">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Active Pipeline Leads</span>
+                <span className="text-xs font-bold text-slate-400">Active Pipeline Leads</span>
                 <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-brand-sky border border-sky-500/20 flex items-center justify-center font-bold">
                   <Users className="w-5 h-5" />
                 </div>
@@ -569,8 +569,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   {data.enquiries.length} Travelers
                 </div>
                 <div className="flex items-center space-x-1.5 mt-1 text-xs text-brand-sky font-semibold">
-                  <span>{freshLeadsCount} Fresh Inquiries</span>
-                  <span>&bull;</span>
+                  <span>{freshLeadsCount} new enquiries,</span>
                   <span className="text-amber-400 font-bold">{data.enquiries.filter(e => e.status === "FOLLOW_UP").length} Follow-ups</span>
                 </div>
               </div>
@@ -579,7 +578,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             {/* Conversion Rate */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-5 border border-slate-700/80 shadow-lg hover:border-brand-ocean/50 transition">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Conversion Win Rate</span>
+                <span className="text-xs font-bold text-slate-400">Conversion Win Rate</span>
                 <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center font-bold">
                   <TrendingUp className="w-5 h-5" />
                 </div>
@@ -598,7 +597,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             {/* Active Expedition Packages */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-5 border border-slate-700/80 shadow-lg hover:border-brand-ocean/50 transition">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Adventure Inventory</span>
+                <span className="text-xs font-bold text-slate-400">Adventure Inventory</span>
                 <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold">
                   <Award className="w-5 h-5" />
                 </div>
@@ -625,7 +624,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <button
               onClick={() => setActiveTab("leads")}
               className={cn(
-                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer",
+                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide transition flex items-center space-x-2 whitespace-nowrap cursor-pointer",
                 activeTab === "leads"
                   ? "bg-brand-ocean text-white shadow-lg font-black scale-[1.02]"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -638,7 +637,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <button
               onClick={() => setActiveTab("packages")}
               className={cn(
-                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer",
+                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide transition flex items-center space-x-2 whitespace-nowrap cursor-pointer",
                 activeTab === "packages"
                   ? "bg-brand-ocean text-white shadow-lg font-black scale-[1.02]"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -651,7 +650,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <button
               onClick={() => setActiveTab("analytics")}
               className={cn(
-                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer",
+                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide transition flex items-center space-x-2 whitespace-nowrap cursor-pointer",
                 activeTab === "analytics"
                   ? "bg-brand-ocean text-white shadow-lg font-black scale-[1.02]"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -664,7 +663,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <button
               onClick={() => setActiveTab("config")}
               className={cn(
-                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer",
+                "px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide transition flex items-center space-x-2 whitespace-nowrap cursor-pointer",
                 activeTab === "config"
                   ? "bg-brand-ocean text-white shadow-lg font-black scale-[1.02]"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -747,9 +746,9 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200 focus:outline-none focus:border-brand-ocean cursor-pointer"
                 >
                   <option value="ALL">All Priorities</option>
-                  <option value="HIGH">🔥 High Priority (VIP)</option>
-                  <option value="MEDIUM">⚡ Medium</option>
-                  <option value="LOW">💤 Low</option>
+                  <option value="HIGH">High Priority (VIP)</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="LOW">Low</option>
                 </select>
 
                 <select
@@ -800,7 +799,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                       <div className="flex items-center justify-between px-1 py-1 border-b border-slate-700/50 pb-2">
                         <div className="flex items-center space-x-2">
                           <span className={cn("w-2.5 h-2.5 rounded-full ring-2 ring-white/10", stage.dotColor)} />
-                          <h3 className="font-bold text-xs text-white uppercase tracking-wider">
+                          <h3 className="font-bold text-xs text-white">
                             {stage.label}
                           </h3>
                         </div>
@@ -821,7 +820,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                           <div
                             key={lead.id}
                             onClick={() => setSelectedLead(lead)}
-                            className="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700/80 hover:border-brand-ocean shadow-md hover:shadow-cyan-500/10 transition-all cursor-pointer space-y-3 group relative"
+                            className="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700/80 hover:border-brand-ocean shadow-md hover:shadow-cyan-500/10 transition cursor-pointer space-y-3 group relative"
                           >
                             {/* Card Top: Priority & Name */}
                             <div className="flex items-start justify-between gap-1">
@@ -830,13 +829,13 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                                   {lead.full_name}
                                 </h4>
                                 <div className="text-[11px] font-medium text-slate-400">
-                                  👥 {lead.travelers_count} Pax &bull; {lead.departure_city || "Bengaluru"}
+                                  {lead.travelers_count} pax, {lead.departure_city || "Bengaluru"}
                                 </div>
                               </div>
 
                               {lead.priority === "HIGH" && (
                                 <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[9px] font-black border border-rose-500/30">
-                                  🔥 VIP
+                                  VIP
                                 </span>
                               )}
                             </div>
@@ -907,7 +906,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               <div className="bg-slate-800/90 rounded-2xl border border-slate-700 shadow-md overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs text-slate-300">
-                    <thead className="bg-slate-900/90 border-b border-slate-700 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    <thead className="bg-slate-900/90 border-b border-slate-700 text-[10px] font-black text-slate-400">
                       <tr>
                         <th className="py-3.5 px-4">Customer</th>
                         <th className="py-3.5 px-4">Trip Package</th>
@@ -945,7 +944,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                             <select
                               value={lead.status}
                               onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
-                              className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border border-slate-700 bg-slate-900 text-white focus:outline-none cursor-pointer"
+                              className="px-2.5 py-1 rounded-lg text-[10px] font-black border border-slate-700 bg-slate-900 text-white focus:outline-none cursor-pointer"
                             >
                               <option value="NEW">NEW</option>
                               <option value="CONTACTED">CONTACTED</option>
@@ -1001,7 +1000,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
           <div className="space-y-6">
             <div className="bg-slate-800/90 p-5 rounded-2xl border border-slate-700 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-brand-sky">
+                <span className="text-xs font-bold text-brand-sky">
                   Live Adventure Inventory
                 </span>
                 <h3 className="text-xl font-display font-black text-white">
@@ -1056,7 +1055,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   setEditingTrip(newTrip);
                   setEditorTab("itinerary");
                 }}
-                className="px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-lg flex items-center space-x-1.5 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-lg flex items-center space-x-1.5 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ Add New Adventure Package</span>
@@ -1068,7 +1067,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               {data.trips.map((trip) => (
                 <div
                   key={trip.id}
-                  className="bg-slate-800/80 rounded-2xl overflow-hidden border border-slate-700 shadow-lg hover:border-brand-ocean transition-all flex flex-col justify-between group"
+                  className="bg-slate-800/80 rounded-2xl overflow-hidden border border-slate-700 shadow-lg hover:border-brand-ocean transition flex flex-col justify-between group"
                 >
                   {/* Media Header (Local Video Player) */}
                   <div className="relative aspect-[16/10] w-full bg-slate-950 overflow-hidden">
@@ -1096,11 +1095,11 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                     {/* Destination Pill & Feature Badge */}
                     <div className="absolute top-3 left-3 flex items-center space-x-1.5">
-                      <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-bold uppercase border border-white/10">
-                        📍 {trip.destination_name}
+                      <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-bold border border-white/10">
+                        {trip.destination_name}
                       </span>
                       {trip.is_featured && (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black uppercase shadow">
+                        <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black shadow">
                           ★ Featured
                         </span>
                       )}
@@ -1108,9 +1107,9 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-bold">
                       <span className="px-2 py-0.5 rounded bg-black/60 backdrop-blur-md">
-                        ⏱ {trip.duration_label || `${trip.duration_days}D / ${trip.duration_nights}N`}
+                        {trip.duration_label || `${trip.duration_days}D / ${trip.duration_nights}N`}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-white/20 backdrop-blur-md uppercase text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-white/20 backdrop-blur-md text-[10px]">
                         {trip.difficulty}
                       </span>
                     </div>
@@ -1155,7 +1154,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                       <button
                         onClick={() => handleOpenEditTrip(trip)}
-                        className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-sm cursor-pointer"
+                        className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-sm cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>Edit Day-wise Plan</span>
@@ -1190,7 +1189,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   return (
                     <div key={dest} className="bg-slate-900/90 p-4 rounded-xl border border-slate-700/80 space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm text-white">📍 {dest}</span>
+                        <span className="font-bold text-sm text-white">{dest}</span>
                         <span className="text-xs px-2 py-0.5 rounded-full bg-brand-ocean/20 text-brand-sky font-bold">
                           {matchingLeads.length} Leads
                         </span>
@@ -1224,7 +1223,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
                   Official WhatsApp Contact Number
                 </label>
                 <input
@@ -1235,7 +1234,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
                   Customer Support Email
                 </label>
                 <input
@@ -1246,7 +1245,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
                   Operating Base Hubs
                 </label>
                 <input
@@ -1258,7 +1257,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
               <button
                 onClick={() => showToast("Business configuration updated successfully!")}
-                className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
+                className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-xs uppercase tracking-wide transition shadow-md cursor-pointer"
               >
                 Save Settings
               </button>
@@ -1272,11 +1271,11 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
       {/* ========================================================================= */}
       {isAddLeadOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900 w-full max-w-xl rounded-3xl border border-slate-700 shadow-2xl overflow-hidden text-slate-200">
+          <div className="bg-slate-900 w-full max-w-xl rounded-3xl border border-slate-700 shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain text-slate-200">
             {/* Modal Header */}
             <div className="bg-brand-navy p-5 flex items-center justify-between border-b border-white/10">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-sky">
+                <span className="text-[10px] font-bold text-brand-sky">
                   Rapid Lead Ingestion
                 </span>
                 <h3 className="font-display font-bold text-lg text-white">Add Customer Inquiry</h3>
@@ -1293,7 +1292,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <form onSubmit={handleCreateLead} className="p-6 space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Customer Full Name *</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Customer Full Name *</label>
                   <input
                     type="text"
                     required
@@ -1305,7 +1304,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">WhatsApp / Phone *</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">WhatsApp / Phone *</label>
                   <input
                     type="tel"
                     required
@@ -1317,7 +1316,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Email Address</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Email Address</label>
                   <input
                     type="email"
                     placeholder="rahul@example.com"
@@ -1328,7 +1327,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Departure City</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Departure City</label>
                   <input
                     type="text"
                     placeholder="Bengaluru / Mumbai / Pune"
@@ -1339,7 +1338,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Trip Package Interest</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Trip Package Interest</label>
                   <select
                     value={newLeadForm.trip_title}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, trip_title: e.target.value })}
@@ -1352,7 +1351,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Travelers Count (Pax)</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Travelers Count (Pax)</label>
                   <input
                     type="number"
                     min={1}
@@ -1363,20 +1362,20 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Priority Level</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Priority Level</label>
                   <select
                     value={newLeadForm.priority}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, priority: e.target.value as any })}
                     className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none cursor-pointer"
                   >
-                    <option value="HIGH">🔥 High Priority (VIP)</option>
-                    <option value="MEDIUM">⚡ Medium</option>
-                    <option value="LOW">💤 Low</option>
+                    <option value="HIGH">High Priority (VIP)</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Follow-Up Reminder</label>
+                  <label className="block font-bold text-[10px] text-slate-400 mb-1">Follow-Up Reminder</label>
                   <input
                     type="text"
                     placeholder="Tomorrow 11:00 AM"
@@ -1388,7 +1387,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               </div>
 
               <div>
-                <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">Initial Notes / Requirements</label>
+                <label className="block font-bold text-[10px] text-slate-400 mb-1">Initial Notes / Requirements</label>
                 <textarea
                   rows={2}
                   placeholder="Tentative dates, corporate requirements, tent preferences..."
@@ -1428,12 +1427,12 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <div className="p-6 bg-brand-navy text-white flex items-start justify-between border-b border-white/10">
               <div>
                 <div className="flex items-center space-x-2 mb-1.5">
-                  <span className="px-2.5 py-0.5 rounded-full bg-brand-ocean text-white text-[10px] font-bold uppercase">
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-ocean text-white text-[10px] font-bold">
                     {selectedLead.status}
                   </span>
                   {selectedLead.priority === "HIGH" && (
                     <span className="px-2 py-0.5 rounded bg-rose-500 text-white text-[10px] font-bold">
-                      🔥 VIP LEAD
+                      VIP LEAD
                     </span>
                   )}
                 </div>
@@ -1441,7 +1440,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   {selectedLead.full_name}
                 </h3>
                 <p className="text-xs text-brand-sky font-semibold mt-0.5">
-                  📍 {selectedLead.trip_title}
+                  {selectedLead.trip_title}
                 </p>
               </div>
 
@@ -1457,7 +1456,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
             <div className="p-6 space-y-6 flex-grow overflow-y-auto">
               {/* Direct WhatsApp & Call Action Bar */}
               <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase text-slate-400 block">
+                <span className="text-[10px] font-bold text-slate-400 block">
                   1-Click WhatsApp Dispatch (Choose Message Template)
                 </span>
                 
@@ -1511,7 +1510,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
               {/* Pipeline Stage Updater */}
               <div>
-                <label className="block font-bold uppercase text-[10px] text-slate-400 mb-2">
+                <label className="block font-bold text-[10px] text-slate-400 mb-2">
                   Update Lead Stage in Pipeline
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1535,7 +1534,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
               {/* Admin Notes & Activity Log */}
               <div>
-                <label className="block font-bold uppercase text-[10px] text-slate-400 mb-1">
+                <label className="block font-bold text-[10px] text-slate-400 mb-1">
                   Follow-Up Notes & Customer Requests
                 </label>
                 <textarea
@@ -1576,11 +1575,11 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
       {/* ========================================================================= */}
       {editingTrip && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto">
-          <div className="bg-slate-900 w-full max-w-4xl max-h-[92vh] rounded-3xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden text-slate-200">
+          <div className="bg-slate-900 w-full max-w-4xl max-h-[92dvh] rounded-3xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden text-slate-200">
             {/* Modal Header */}
             <div className="p-5 sm:p-6 border-b border-slate-700 flex items-center justify-between bg-brand-navy text-white">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-sky">
+                <span className="text-[10px] font-bold text-brand-sky">
                   Day-Wise Route Architect
                 </span>
                 <h3 className="text-lg sm:text-xl font-display font-black text-white mt-0.5">
@@ -1601,19 +1600,19 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               <button
                 onClick={() => setEditorTab("itinerary")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "itinerary"
                     ? "bg-slate-900 text-brand-sky border-t-2 border-brand-ocean"
                     : "text-slate-400 hover:text-white"
                 )}
               >
-                ✨ Day-Wise Plan ({(editingTrip.itinerary_days || []).length} Days)
+                Day-Wise Plan ({(editingTrip.itinerary_days || []).length} Days)
               </button>
 
               <button
                 onClick={() => setEditorTab("general")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "general"
                     ? "bg-slate-900 text-brand-sky border-t-2 border-brand-ocean"
                     : "text-slate-400 hover:text-white"
@@ -1625,19 +1624,19 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               <button
                 onClick={() => setEditorTab("media")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "media"
                     ? "bg-slate-900 text-brand-sky border-t-2 border-brand-ocean"
                     : "text-slate-400 hover:text-white"
                 )}
               >
-                🎬 Local Video Background
+                Local Video Background
               </button>
 
               <button
                 onClick={() => setEditorTab("inclusions")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "inclusions"
                     ? "bg-slate-900 text-brand-sky border-t-2 border-brand-ocean"
                     : "text-slate-400 hover:text-white"
@@ -1662,7 +1661,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                     <button
                       onClick={handleAddItineraryDay}
-                      className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow cursor-pointer"
+                      className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add Day {(editingTrip.itinerary_days || []).length + 1}</span>
@@ -1676,7 +1675,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                         className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-3 shadow-md"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="px-3 py-1 rounded-xl bg-brand-navy text-brand-sky font-mono font-bold text-xs uppercase tracking-wider border border-brand-sky/20">
+                          <span className="px-3 py-1 rounded-xl bg-brand-navy text-brand-sky font-mono font-bold text-xs border border-brand-sky/20">
                             Day {day.day_number} Milestone
                           </span>
 
@@ -1691,7 +1690,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                         {/* Title */}
                         <div>
-                          <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                          <label className="block text-[10px] font-bold text-slate-400 mb-1">
                             Day Goal & Trail Activity
                           </label>
                           <input
@@ -1704,7 +1703,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                         {/* Description */}
                         <div>
-                          <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                          <label className="block text-[10px] font-bold text-slate-400 mb-1">
                             Detailed Trail Description
                           </label>
                           <textarea
@@ -1718,7 +1717,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                         {/* Metadata Pills */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-400">Max Altitude</label>
+                            <label className="block text-[9px] font-bold text-slate-400">Max Altitude</label>
                             <input
                               type="text"
                               value={day.altitude || ""}
@@ -1729,7 +1728,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                           </div>
 
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-400">Trek Distance</label>
+                            <label className="block text-[9px] font-bold text-slate-400">Trek Distance</label>
                             <input
                               type="text"
                               value={day.distance || ""}
@@ -1740,7 +1739,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                           </div>
 
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-400">Meals Provided</label>
+                            <label className="block text-[9px] font-bold text-slate-400">Meals Provided</label>
                             <input
                               type="text"
                               value={day.meals || ""}
@@ -1751,7 +1750,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                           </div>
 
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-400">Stay Type</label>
+                            <label className="block text-[9px] font-bold text-slate-400">Stay Type</label>
                             <input
                               type="text"
                               value={day.stay_type || ""}
@@ -1771,7 +1770,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               {editorTab === "general" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
                       Package Title
                     </label>
                     <input
@@ -1783,7 +1782,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
                       Destination Region
                     </label>
                     <select
@@ -1803,7 +1802,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
                       Difficulty Level
                     </label>
                     <select
@@ -1819,7 +1818,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
                       Price per Person (₹ INR)
                     </label>
                     <input
@@ -1831,13 +1830,15 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
                       Duration (Days & Nights)
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         type="number"
                         placeholder="Days"
+                        aria-label="Duration in days"
+                        min={1}
                         value={editingTrip.duration_days}
                         onChange={(e) => setEditingTrip({ ...editingTrip, duration_days: Number(e.target.value) })}
                         className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white"
@@ -1845,6 +1846,8 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                       <input
                         type="number"
                         placeholder="Nights"
+                        aria-label="Duration in nights"
+                        min={0}
                         value={editingTrip.duration_nights}
                         onChange={(e) => setEditingTrip({ ...editingTrip, duration_nights: Number(e.target.value) })}
                         className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white"
@@ -1853,7 +1856,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">
                       Short Overview Summary
                     </label>
                     <textarea
@@ -1870,7 +1873,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               {editorTab === "media" && (
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-xs font-bold uppercase text-brand-sky mb-1.5">
+                    <label className="block text-xs font-bold text-brand-sky mb-1.5">
                       Select Local Looping Video (Card & Banner Background)
                     </label>
                     <select
@@ -1887,7 +1890,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                     >
                       {AVAILABLE_LOCAL_VIDEOS.map((vid) => (
                         <option key={vid.value} value={vid.value}>
-                          🎬 {vid.label} [{vid.region}] &mdash; {vid.value}
+                          {vid.label} [{vid.region}]: {vid.value}
                         </option>
                       ))}
                     </select>
@@ -1916,7 +1919,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
               {editorTab === "inclusions" && (
                 <div className="space-y-5 text-xs">
                   <div>
-                    <label className="block text-xs font-bold uppercase text-emerald-400 mb-1.5">
+                    <label className="block text-xs font-bold text-emerald-400 mb-1.5">
                       Included in Package (One item per line)
                     </label>
                     <textarea
@@ -1928,7 +1931,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-rose-400 mb-1.5">
+                    <label className="block text-xs font-bold text-rose-400 mb-1.5">
                       Exclusions (One item per line)
                     </label>
                     <textarea
@@ -1940,7 +1943,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-brand-sky mb-1.5">
+                    <label className="block text-xs font-bold text-brand-sky mb-1.5">
                       Things to Carry Checklist
                     </label>
                     <textarea
@@ -1965,7 +1968,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
               <button
                 onClick={handleSaveTripForm}
-                className="px-7 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-lg flex items-center space-x-1.5 cursor-pointer"
+                className="px-7 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-lg flex items-center space-x-1.5 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Day-wise Itinerary</span>

@@ -69,7 +69,7 @@ export const PaymentDuesWidget: React.FC<PaymentDuesWidgetProps> = ({
           </div>
         </div>
         <div className="text-right">
-          <span className="text-[10px] uppercase font-bold text-slate-500 block">Total Due</span>
+          <span className="text-[10px] font-bold text-slate-500 block">Total Due</span>
           <span className="font-bold text-rose-600 font-mono text-xs">
             ₹{totalPendingSum.toLocaleString('en-IN')}
           </span>
@@ -80,7 +80,7 @@ export const PaymentDuesWidget: React.FC<PaymentDuesWidgetProps> = ({
       <div className="p-4 flex-1">
         {paymentDues.length === 0 ? (
           <div className="py-12 text-center text-xs text-slate-400 italic">
-            🎉 All expedition balances are cleared! Zero payment dues.
+            All expedition balances are cleared! Zero payment dues.
           </div>
         ) : (
           <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
@@ -90,7 +90,7 @@ export const PaymentDuesWidget: React.FC<PaymentDuesWidgetProps> = ({
               return (
                 <div
                   key={enq.id}
-                  className="p-3 rounded-lg bg-slate-50 border border-slate-200 hover:border-rose-400/50 transition-all text-xs space-y-2 hover:bg-[#EFF8FD]/30"
+                  className="p-3 rounded-lg bg-slate-50 border border-slate-200 hover:border-rose-400/50 transition text-xs space-y-2 hover:bg-[#EFF8FD]/30"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -141,7 +141,7 @@ export const PaymentDuesWidget: React.FC<PaymentDuesWidgetProps> = ({
                           type="button"
                           disabled={loading || !amountReceived}
                           onClick={() => handleUpdatePayment(enq)}
-                          className="bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white px-3 py-1 rounded-md text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-1 cursor-pointer"
+                          className="bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white px-3 py-1 rounded-md text-xs font-bold transition disabled:opacity-50 flex items-center gap-1 cursor-pointer"
                         >
                           <CheckCircle2 className="h-3.5 w-3.5" />
                           Record

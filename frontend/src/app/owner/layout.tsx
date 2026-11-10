@@ -82,7 +82,7 @@ export default function OwnerLayout({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-brand-ocean selection:text-white flex">
+    <div className="min-h-dvh bg-slate-50 text-slate-900 font-sans selection:bg-brand-ocean selection:text-white flex">
       {/* 1. DESKTOP PERMANENT SIDEBAR (CLEAN WHITE) */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 flex-shrink-0 justify-between shadow-xs">
         <div>
@@ -93,14 +93,14 @@ export default function OwnerLayout({
                 <img src="/images/logo.png" alt="Spirit Adventures Logo" className="h-7 w-auto object-contain" />
               </div>
             </Link>
-            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[9px] font-bold uppercase tracking-wider text-slate-600 border border-slate-200">
+            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[9px] font-bold text-slate-600 border border-slate-200">
               HQ
             </span>
           </div>
 
           {/* Navigation Items */}
           <nav className="p-3 space-y-1.5">
-            <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <div className="px-3 py-2 text-[10px] font-bold text-slate-400">
               Management Modules
             </div>
 
@@ -112,7 +112,7 @@ export default function OwnerLayout({
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all group",
+                    "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition group",
                     active
                       ? "bg-brand-ocean text-white shadow-md shadow-brand-ocean/20 font-black"
                       : "text-slate-600 hover:text-brand-navy hover:bg-slate-100/80"

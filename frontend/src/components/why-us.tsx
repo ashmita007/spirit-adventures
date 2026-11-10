@@ -7,8 +7,8 @@ export default function WhyUs() {
       icon: Award,
       badge: "Expertise",
       title: "Certified Expedition Leaders",
-      description: "IMF certified guides and Wilderness First Responders (WFR) with deep high-altitude mountain experience.",
-      gradient: "from-blue-500/10 to-indigo-500/10",
+      description: "IMF certified guides and Wilderness First Responders (WFR) with high-altitude experience.",
+      gradient: "from-sky-500/10 to-sky-500/5",
       iconColor: "text-blue-600",
     },
     {
@@ -31,24 +31,24 @@ export default function WhyUs() {
       icon: Compass,
       badge: "Authenticity",
       title: "Local Native Knowledge",
-      description: "Native regional trail captains who reveal untouched secret waterfalls, stargazing ridges, and mountain culture.",
+      description: "Local trail captains who know the quieter waterfalls, stargazing ridges and village culture.",
       gradient: "from-sky-500/10 to-cyan-500/10",
       iconColor: "text-sky-600",
     },
     {
       icon: Mountain,
-      badge: "Curated Trails",
+      badge: "Routes",
       title: "Off-the-Beaten Path",
-      description: "Scouted routes designed for pristine silence and cinematic vistas away from commercial crowded tourist traps.",
-      gradient: "from-purple-500/10 to-violet-500/10",
-      iconColor: "text-purple-600",
+      description: "Routes we have walked ourselves, picked for quiet trails and views, away from the crowded tourist stops.",
+      gradient: "from-teal-500/10 to-teal-500/5",
+      iconColor: "text-teal-700",
     },
     {
       icon: HeartHandshake,
       badge: "Care",
       title: "1-on-1 Pre-Trip Support",
-      description: "Direct assistance with fitness prep, packing checklists, rental gear, and seamless round-trip transport pickup.",
-      gradient: "from-rose-500/10 to-pink-500/10",
+      description: "Help with fitness prep, packing lists, gear rental and round-trip pickup, one person to call for all of it.",
+      gradient: "from-rose-500/10 to-rose-500/5",
       iconColor: "text-rose-600",
     },
   ];
@@ -62,17 +62,13 @@ export default function WhyUs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
-          <div data-anim="fade-up" className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-light text-brand-ocean text-xs font-bold uppercase tracking-[0.2em] mb-4 border border-brand-sky/30 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>The Spirit Standard</span>
-          </div>
 
           <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl text-brand-navy uppercase tracking-tight">
             Why Travel With Us?
           </h2>
 
           <p data-anim="fade-up" className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
-            We don&apos;t run crowded tour buses. We craft mindful, small-group wilderness journeys built on safety, authentic camaraderie, and deep respect for the wild.
+            We don&apos;t run crowded tour buses. We run small groups, put safety first and respect the places we visit.
           </p>
         </div>
 
@@ -83,7 +79,7 @@ export default function WhyUs() {
             return (
               <div
                 key={idx}
-                className="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xs hover:shadow-xl border border-slate-200/70 hover:border-brand-ocean/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xs hover:shadow-xl border border-slate-200/70 hover:border-brand-ocean/40 transition duration-300 hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3 sm:mb-6">
@@ -91,7 +87,7 @@ export default function WhyUs() {
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2] transition-transform duration-500 group-hover:rotate-[-8deg]" aria-hidden />
                     </div>
 
-                    <span className="hidden sm:inline text-[10px] font-extrabold uppercase tracking-widest text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
+                    <span className="hidden sm:inline text-[10px] font-extrabold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
                       {pillar.badge}
                     </span>
                   </div>

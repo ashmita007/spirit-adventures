@@ -161,7 +161,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-slate-800 flex flex-col font-sans selection:bg-[#0A6FAE] selection:text-white">
+    <div className="min-h-dvh bg-[#f8f9fa] text-slate-800 flex flex-col font-sans selection:bg-[#0A6FAE] selection:text-white">
       {/* Top Navbar & Target Marquee */}
       <Navbar
         activeTab={activeTab}
@@ -190,13 +190,13 @@ export default function Home() {
           >
             <div className="flex items-center flex-wrap gap-2">
               <span
-                className={`px-2 py-0.5 rounded font-extrabold uppercase text-[10px] tracking-wider shadow-2xs ${
+                className={`px-2 py-0.5 rounded font-extrabold text-[10px] shadow-2xs ${
                   auth.isManager
                     ? 'bg-amber-400 text-slate-900'
                     : 'bg-emerald-600 text-white'
                 }`}
               >
-                {auth.isManager ? '👑 Admin / Manager Role' : '👤 Sales Representative Role'}
+                {auth.isManager ? 'Admin / Manager Role' : 'Sales Representative Role'}
               </span>
               <span className="font-semibold">
                 Active Session: <strong>{auth.user.display_name}</strong> ({auth.user.email})
@@ -216,7 +216,7 @@ export default function Home() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-500 bg-white rounded-xl border border-slate-200 shadow-sm">
             <div className="w-10 h-10 border-3 border-[#0A6FAE] border-t-transparent rounded-full animate-spin mb-3" />
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0A6FAE]">Loading Spirit Adventures CRM...</p>
+            <p className="text-xs font-bold text-[#0A6FAE]">Loading Spirit Adventures CRM...</p>
             
           </div>
         ) : (

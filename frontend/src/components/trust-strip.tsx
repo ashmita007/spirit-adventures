@@ -5,7 +5,7 @@ export default function TrustStrip({ tripCount, destinationCount }: { tripCount:
   const stats = [
     { icon: Users, value: 500, suffix: "+", decimals: 0, label: "Happy adventurers" },
     { icon: Star, value: 5, suffix: "", decimals: 1, label: "Google rating" },
-    { icon: Mountain, value: tripCount, suffix: "", decimals: 0, label: "Curated trips" },
+    { icon: Mountain, value: tripCount, suffix: "", decimals: 0, label: "Packages" },
     { icon: MapPin, value: destinationCount, suffix: "", decimals: 0, label: "Destinations" },
   ];
   return (

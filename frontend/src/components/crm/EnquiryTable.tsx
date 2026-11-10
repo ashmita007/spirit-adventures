@@ -254,7 +254,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
         <div className="flex items-center gap-2.5">
           <button
             onClick={onOpenNewModal}
-            className="flex items-center gap-2 bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition active:scale-95 cursor-pointer"
           >
             <PlusCircle className="h-4 w-4" />
             + Add New Enquiry
@@ -273,7 +273,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
               placeholder="Search by Traveler Name, Phone, PNR Up/Down, Tour City..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0A6FAE] focus:bg-white transition-all font-medium"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0A6FAE] focus:bg-white transition font-medium"
             />
           </div>
 
@@ -285,9 +285,9 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
               className="bg-slate-50 border border-slate-200 text-xs rounded-lg px-3 py-2 text-slate-700 font-medium focus:outline-none focus:border-[#0A6FAE]"
             >
               <option value="all">All Accommodations</option>
-              <option value="sharing">👥 Sharing Room</option>
-              <option value="private_room">🔒 Private Room</option>
-              <option value="tent">⛺ Tent / Camping</option>
+              <option value="sharing">Sharing Room</option>
+              <option value="private_room">Private Room</option>
+              <option value="tent">Tent / Camping</option>
             </select>
 
             {auth.isSalesPerson ? (
@@ -304,7 +304,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                 <option value="all">All Counsellors ({salespersons.length})</option>
                 {salespersons.map((sp) => (
                   <option key={sp.id} value={sp.id.toString()}>
-                    👤 {sp.display_name}
+                    {sp.display_name}
                   </option>
                 ))}
               </select>
@@ -320,7 +320,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
               <button
                 key={tab.key}
                 onClick={() => setStatusFilter(tab.key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-[#0A6FAE] text-white shadow-xs'
                     : 'text-slate-600 hover:text-[#0A6FAE] hover:bg-[#EFF8FD]'
@@ -369,13 +369,13 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                       </span>
                     </div>
                     <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
-                      <span>✈ {enq.date_of_travel}</span>
-                      <span>👥 {enq.total_people} pax</span>
+                      <span>{enq.date_of_travel}</span>
+                      <span>{enq.total_people} pax</span>
                       <span className={urgent ? 'font-bold text-rose-600' : ''}>
-                        ⏰ {enq.followup_date || 'No follow-up'}
+                        {enq.followup_date || 'No follow-up'}
                       </span>
                       {enq.source === 'website' && (
-                        <span className="rounded-full bg-sky-50 px-1.5 py-px text-[9px] font-bold uppercase text-sky-700 ring-1 ring-sky-200">
+                        <span className="rounded-full bg-sky-50 px-1.5 py-px text-[9px] font-bold text-sky-700 ring-1 ring-sky-200">
                           Website
                         </span>
                       )}
@@ -424,7 +424,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             {/* Navy Table Header */}
-            <thead className="bg-[#062B49] text-white text-[11px] font-bold uppercase tracking-wider">
+            <thead className="bg-[#062B49] text-white text-[11px] font-bold">
               <tr>
                 <th className="px-4 py-3.5">Name</th>
                 <th className="px-4 py-3.5">Contact</th>
@@ -477,7 +477,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                           {enq.source === 'website' && (
                             <span
                               title="Came in from the Spirit Adventures website"
-                              className="rounded-full bg-sky-50 px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-sky-700 ring-1 ring-sky-200"
+                              className="rounded-full bg-sky-50 px-1.5 py-px text-[9px] font-bold tracking-wide text-sky-700 ring-1 ring-sky-200"
                             >
                               Website
                             </span>
@@ -528,7 +528,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                         <button
                           onClick={(e) => handleOpenDateModal(e, enq)}
                           title="Click to change follow-up date"
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${
                             isUrgentFollowup
                               ? 'bg-rose-50 text-rose-700 border-rose-300 animate-pulse'
                               : 'bg-sky-50 text-[#0A6FAE] border-sky-200 hover:bg-[#0A6FAE] hover:text-white'
@@ -554,7 +554,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                           className="text-[11px] text-slate-600 truncate max-w-[200px] cursor-pointer hover:text-[#0A6FAE] font-medium mb-1"
                         >
                           {latestComment ? (
-                            <span>💬 {latestComment.comment_text}</span>
+                            <span>{latestComment.comment_text}</span>
                           ) : (
                             <span className="text-slate-400 italic">No comments yet</span>
                           )}
@@ -592,17 +592,17 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                         <div className="flex items-center gap-1 text-[10px] mt-0.5">
                           {enq.boys_count > 0 && (
                             <span className="bg-blue-50 text-blue-700 border border-blue-200 px-1 py-0.2 rounded font-bold">
-                              👦{enq.boys_count}
+                              {enq.boys_count} boys
                             </span>
                           )}
                           {enq.girls_count > 0 && (
                             <span className="bg-rose-50 text-rose-700 border border-rose-200 px-1 py-0.2 rounded font-bold">
-                              👧{enq.girls_count}
+                              {enq.girls_count} girls
                             </span>
                           )}
                           {enq.couples_count > 0 && (
                             <span className="bg-purple-50 text-purple-700 border border-purple-200 px-1 py-0.2 rounded font-bold">
-                              💑{enq.couples_count}
+                              {enq.couples_count} couples
                             </span>
                           )}
                         </div>
@@ -713,7 +713,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
               <button
                 onClick={() => onPageChange(page - 1)}
                 disabled={page <= 1}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-[#EFF8FD] hover:text-[#0A6FAE] font-semibold disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-[#EFF8FD] hover:text-[#0A6FAE] font-semibold disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
               >
                 Previous
               </button>
@@ -724,7 +724,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                   <button
                     key={p}
                     onClick={() => onPageChange(p)}
-                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg font-bold transition cursor-pointer ${
                       p === page
                         ? 'text-white shadow-xs'
                         : 'text-slate-700 border border-slate-200 hover:bg-[#EFF8FD] hover:text-[#0A6FAE]'
@@ -744,7 +744,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
               <button
                 onClick={() => onPageChange(page + 1)}
                 disabled={page >= totalPages}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-[#EFF8FD] hover:text-[#0A6FAE] font-semibold disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-[#EFF8FD] hover:text-[#0A6FAE] font-semibold disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
               >
                 Next
               </button>
@@ -758,7 +758,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
          ========================================================================= */}
       {dateModalEnquiry && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div data-crm-pop className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-200">
+          <div data-crm-pop className="w-full max-w-md bg-white rounded-xl shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain border border-slate-200">
             {/* Modal Header */}
             <div
               className="px-5 py-3.5 text-white flex items-center justify-between"
@@ -818,7 +818,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
          ========================================================================= */}
       {statusModalEnquiry && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div data-crm-pop className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-200">
+          <div data-crm-pop className="w-full max-w-md bg-white rounded-xl shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain border border-slate-200">
             {/* Modal Header */}
             <div
               className="px-5 py-3.5 text-white flex items-center justify-between"
@@ -898,7 +898,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
          ========================================================================= */}
       {commentsModalEnquiry && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div data-crm-pop className="w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-200">
+          <div data-crm-pop className="w-full max-w-lg bg-white rounded-xl shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain border border-slate-200">
             {/* Modal Header */}
             <div
               className="px-5 py-3.5 text-white flex items-center justify-between"
@@ -908,7 +908,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
             >
               <h5 className="font-bold text-sm flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
-                Enquiry Comments — {commentsModalEnquiry.name}
+                Comments for {commentsModalEnquiry.name}
               </h5>
               <button
                 onClick={() => setCommentsModalEnquiry(null)}
@@ -964,7 +964,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                   type="button"
                   disabled={submittingAction || !modalCommentInput.trim()}
                   onClick={handleAddModalComment}
-                  className="bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white px-4 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-1"
+                  className="bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white px-4 py-2 rounded-lg text-xs font-bold transition disabled:opacity-50 cursor-pointer flex items-center gap-1"
                 >
                   <Send className="h-3.5 w-3.5" />
                 </button>
@@ -979,7 +979,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
          ========================================================================= */}
       {paymentModalEnquiry && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div data-crm-pop className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-200">
+          <div data-crm-pop className="w-full max-w-md bg-white rounded-xl shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain border border-slate-200">
             {/* Modal Header */}
             <div
               className="px-5 py-3.5 text-white flex items-center justify-between"

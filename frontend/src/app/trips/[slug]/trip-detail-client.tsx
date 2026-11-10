@@ -48,7 +48,44 @@ const DESTINATION_VIDEO_MAP: Record<string, string> = {
 
 const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").replace(/\D/g, "");
 
+/**
+ * The Trip model ships placeholder defaults ("Dehradun / Base Camp", "Dec - Apr").
+ * Showing them on Ooty or Gokarna packages misleads travellers, so they count as
+ * "not set" unless the trip is actually in Uttarakhand.
+ */
+/** Run the video poster through Next's image optimizer (resized AVIF/WebP) instead of the raw upload. */
+function optimizedPoster(src?: string) {
+  if (!src) return undefined;
+  if (src.startsWith("/_next/") || src.startsWith("data:")) return src;
+  return `/_next/image?url=${encodeURIComponent(src)}&w=1080&q=75`;
+}
+
+const PLACEHOLDER_POINT = "dehradun / base camp";
+const PLACEHOLDER_SEASON = "dec - apr";
+
+function realValue(value: string | undefined | null, placeholder: string, allowPlaceholder: boolean) {
+  const v = (value || "").trim();
+  if (!v) return "";
+  if (!allowPlaceholder && v.toLowerCase() === placeholder) return "";
+  return v;
+}
+
 export default function TripDetailClient({ trip, similar = [], reviews = [] }: TripDetailClientProps) {
+  const destSlug = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
+  const isUttarakhand = destSlug === "uttarakhand";
+  const pickup = realValue(trip.pickup_location, PLACEHOLDER_POINT, isUttarakhand);
+  const drop = realValue(trip.drop_location, PLACEHOLDER_POINT, isUttarakhand);
+  const season = realValue(trip.best_season, PLACEHOLDER_SEASON, isUttarakhand);
+  const hasRating = Boolean(trip.rating && trip.reviews_count && trip.reviews_count > 0);
+  const difficultyLabel = trip.difficulty ? trip.difficulty.charAt(0) + trip.difficulty.slice(1).toLowerCase() : "";
+  const keyFacts: { label: string; value: string; highlight?: boolean }[] = [
+    { label: "Duration", value: trip.duration_label },
+    { label: "Difficulty", value: difficultyLabel },
+    { label: "Max Altitude", value: trip.altitude?.trim() || "" },
+    { label: "Trek Distance", value: trip.trek_distance?.trim() || "" },
+    { label: "Best Season", value: season },
+    { label: "Price / Person", value: formatCurrency(trip.price), highlight: true },
+  ].filter((f) => f.value);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
@@ -84,14 +121,14 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-dvh bg-white">
       {/* 1. Full-Width Cinematic Header Banner */}
-      <div className="relative h-[60vh] sm:h-[70vh] w-full bg-brand-navy overflow-hidden">
+      <div className="relative h-[60dvh] sm:h-[70dvh] w-full bg-brand-navy overflow-hidden">
         {bgVideoSrc ? (
           <video
             ref={videoRef}
             src={bgVideoSrc}
-            poster={trip.cover_image}
+            poster={optimizedPoster(trip.cover_image)}
             autoPlay
             muted
             loop
@@ -116,16 +153,16 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <Link
               href="/trips"
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wider transition"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wide transition"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>All Adventures</span>
+              <span className="whitespace-nowrap">All trips</span>
             </Link>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setLightboxIndex(0)}
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wider transition cursor-pointer"
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wide transition cursor-pointer"
               >
                 <span>View Photos ({images.length})</span>
               </button>
@@ -137,18 +174,20 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
         <div className="absolute bottom-8 left-0 right-0 z-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="px-3 py-1 rounded-full bg-brand-ocean text-white text-[11px] font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-brand-ocean text-white text-[11px] font-bold">
                 {trip.destination_name || trip.destination?.name || "Himalayas"}
               </span>
               {trip.category_name && (
-                <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-bold">
                   {trip.category_name}
                 </span>
               )}
-              <div className="flex items-center space-x-1 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-amber-400 text-xs font-bold">
-                <Star className="w-3.5 h-3.5 fill-amber-400" />
-                <span>{trip.rating || 4.9} ({trip.reviews_count || 24} reviews)</span>
-              </div>
+              {hasRating && (
+                <div className="flex items-center space-x-1 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-amber-400 text-xs font-bold">
+                  <Star className="w-3.5 h-3.5 fill-amber-400" aria-hidden="true" />
+                  <span>{trip.rating} ({trip.reviews_count} {trip.reviews_count === 1 ? "review" : "reviews"})</span>
+                </div>
+              )}
             </div>
 
             <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-tight max-w-4xl text-balance">
@@ -161,39 +200,23 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
       {/* 2. Key Facts Strip */}
       <div className="bg-brand-light border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-brand-navy">
-            <div>
-              <span className="block text-[10px] uppercase font-bold text-slate-600 tracking-wider">Duration</span>
-              <div className="font-display font-bold text-sm sm:text-base mt-0.5">{trip.duration_label}</div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] uppercase font-bold text-slate-600 tracking-wider">Difficulty</span>
-              <div className="font-display font-bold text-sm sm:text-base mt-0.5">{trip.difficulty}</div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] uppercase font-bold text-slate-600 tracking-wider">Max Altitude</span>
-              <div className="font-display font-bold text-sm sm:text-base mt-0.5">{trip.altitude || "12,500 ft"}</div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] uppercase font-bold text-slate-600 tracking-wider">Trek Distance</span>
-              <div className="font-display font-bold text-sm sm:text-base mt-0.5">{trip.trek_distance || "20 km"}</div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] uppercase font-bold text-slate-600 tracking-wider">Best Season</span>
-              <div className="font-display font-bold text-sm sm:text-base mt-0.5">{trip.best_season || "Dec - Apr"}</div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] uppercase font-bold text-slate-600 tracking-wider">Price / Person</span>
-              <div className="font-display font-black text-base sm:text-lg text-brand-ocean mt-0.5">
-                {formatCurrency(trip.price)}
+          <dl className={`grid ${keyFacts.length === 3 ? "grid-cols-3" : "grid-cols-2"} sm:grid-cols-3 lg:flex lg:flex-wrap gap-x-4 gap-y-4 lg:gap-x-14 text-brand-navy`}>
+            {keyFacts.map((fact) => (
+              <div key={fact.label} className="min-w-0">
+                <dt className="block text-[10px] font-bold text-slate-600">{fact.label}</dt>
+                <dd
+                  className={cn(
+                    "font-display mt-0.5 break-words",
+                    fact.highlight
+                      ? "font-black text-base sm:text-lg text-brand-ocean"
+                      : "font-bold text-sm sm:text-base"
+                  )}
+                >
+                  {fact.value}
+                </dd>
               </div>
-            </div>
-          </div>
+            ))}
+          </dl>
         </div>
       </div>
 
@@ -211,17 +234,23 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                 {trip.full_description || trip.short_description}
               </p>
 
-              {/* Pickup & Drop Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 p-5 rounded-2xl bg-brand-light border border-slate-100">
-                <div>
-                  <span className="text-xs font-bold uppercase text-brand-ocean tracking-wider block">Pickup Point</span>
-                  <p className="text-sm font-semibold text-brand-navy mt-1">{trip.pickup_location || "Dehradun / Base Camp"}</p>
-                </div>
-                <div>
-                  <span className="text-xs font-bold uppercase text-brand-ocean tracking-wider block">Drop Point</span>
-                  <p className="text-sm font-semibold text-brand-navy mt-1">{trip.drop_location || "Dehradun / Base Camp"}</p>
-                </div>
-              </div>
+              {/* Pickup & Drop Details: only shown when the trip has real points */}
+              {(pickup || drop) && (
+                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 p-5 rounded-2xl bg-brand-light border border-slate-100">
+                  {pickup && (
+                    <div>
+                      <dt className="text-xs font-bold text-brand-ocean">Pickup Point</dt>
+                      <dd className="text-sm font-semibold text-brand-navy mt-1">{pickup}</dd>
+                    </div>
+                  )}
+                  {drop && (
+                    <div>
+                      <dt className="text-xs font-bold text-brand-ocean">Drop Point</dt>
+                      <dd className="text-sm font-semibold text-brand-navy mt-1">{drop}</dd>
+                    </div>
+                  )}
+                </dl>
+              )}
             </section>
 
             {/* Itinerary */}
@@ -243,7 +272,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                     return (
                       <div
                         key={`${dayNum}-${idx}`}
-                        className="border border-slate-200 rounded-2xl overflow-hidden transition-all duration-200"
+                        className="border border-slate-200 rounded-2xl overflow-hidden transition duration-200"
                       >
                         <button
                           onClick={() => setOpenDay(isOpen ? null : dayNum)}
@@ -266,10 +295,10 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                           <div className="px-5 pb-5 pt-2 text-sm text-slate-600 border-t border-slate-100 bg-slate-50/50 space-y-3">
                             <p className="leading-relaxed">{day.description}</p>
                             <div className="flex flex-wrap gap-4 pt-2 text-xs font-medium text-slate-500">
-                              {day.altitude && <span>📍 Altitude: <strong className="text-slate-700">{day.altitude}</strong></span>}
-                              {day.distance && <span>🚶 Distance: <strong className="text-slate-700">{day.distance}</strong></span>}
-                              {day.meals && <span>🍲 Meals: <strong className="text-slate-700">{day.meals}</strong></span>}
-                              {day.stay_type && <span>⛺ Stay: <strong className="text-slate-700">{day.stay_type}</strong></span>}
+                              {day.altitude && <span>Altitude: <strong className="text-slate-700">{day.altitude}</strong></span>}
+                              {day.distance && <span>Distance: <strong className="text-slate-700">{day.distance}</strong></span>}
+                              {day.meals && <span>Meals: <strong className="text-slate-700">{day.meals}</strong></span>}
+                              {day.stay_type && <span>Stay: <strong className="text-slate-700">{day.stay_type}</strong></span>}
                             </div>
                           </div>
                         )}
@@ -393,7 +422,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-6">
               <div>
-                <span className="text-xs uppercase font-bold tracking-wider text-slate-600 block">Starting From</span>
+                <span className="text-xs font-bold text-slate-600 block">Starting From</span>
                 <div className="flex items-baseline space-x-2 mt-1">
                   <span className="font-display font-black text-3xl text-brand-navy">
                     {formatCurrency(trip.price)}
@@ -410,7 +439,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
               <div className="space-y-3 pt-2">
                 <button
                   onClick={() => setEnquiryOpen(true)}
-                  className="w-full py-4 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02]"
+                  className="w-full py-4 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm uppercase tracking-wide transition duration-300 shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02]"
                 >
                   Book This Adventure
                 </button>
@@ -419,10 +448,10 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                   href={`https://wa.me/${WHATSAPP}?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs uppercase tracking-wider transition"
+                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs uppercase tracking-wide transition"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp Adventure Desk</span>
+                  <span className="whitespace-nowrap">Chat on WhatsApp</span>
                 </a>
               </div>
 
@@ -437,7 +466,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mountain className="w-4 h-4 text-brand-ocean" />
-                  <span>High-Altitude Safety Equipment Included</span>
+                  <span>Safety equipment included</span>
                 </div>
               </div>
             </div>
@@ -452,9 +481,8 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-sky-300">Traveller stories</span>
                 <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-black text-3xl sm:text-4xl uppercase tracking-tight">
-                  Heard from the trail
+                  Traveller stories
                 </h2>
               </div>
               {trip.rating ? (
@@ -489,7 +517,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                     <span className="min-w-0">
                       <span className="block text-sm font-bold truncate">{r.traveler_name}</span>
                       <span className="block text-[11px] text-sky-100/60 truncate">
-                        {[r.trip_title, r.travel_date].filter(Boolean).join(" · ") || r.traveler_location}
+                        {[r.trip_title, r.travel_date].filter(Boolean).join(", ") || r.traveler_location}
                       </span>
                     </span>
                   </figcaption>
@@ -505,13 +533,12 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="flex items-end justify-between gap-4 mb-8">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-ocean">Keep exploring</span>
               <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-black text-3xl sm:text-4xl uppercase tracking-tight text-brand-navy">
                 Similar adventures
               </h2>
             </div>
             <Link href="/trips" className="hidden sm:inline-flex items-center gap-1 text-sm font-bold text-brand-ocean hover:text-brand-navy transition">
-              View all trips →
+              View all trips
             </Link>
           </div>
           <div data-anim="stagger" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -547,7 +574,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             </a>
             <button
               onClick={() => setEnquiryOpen(true)}
-              className="h-11 px-5 rounded-xl bg-brand-ocean text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-brand-ocean/30 active:scale-95 transition"
+              className="h-11 px-5 whitespace-nowrap rounded-xl bg-brand-ocean text-white font-bold text-xs uppercase tracking-wide shadow-lg shadow-brand-ocean/30 active:scale-95 transition"
             >
               Book Now
             </button>

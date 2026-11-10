@@ -51,7 +51,7 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
       <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
         {/* Top Tag */}
         <div className="flex justify-between items-center">
-          <span className="px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-semibold uppercase tracking-widest border border-white/20">
+          <span className="px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-semibold border border-white/20">
             {count ? `${count} ${count === 1 ? "Adventure" : "Adventures"}` : "Explore"}
           </span>
 
@@ -62,7 +62,7 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
 
         {/* Bottom Title & Action */}
         <div>
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-brand-sky block mb-1">
+          <span className="text-[11px] font-bold text-brand-sky block mb-1">
             Region
           </span>
           <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wide uppercase leading-tight">
@@ -74,7 +74,7 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
             </p>
           )}
 
-          <div className="mt-4 inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-white group-hover:text-brand-sky transition-colors">
+          <div className="mt-4 inline-flex items-center space-x-2 text-xs font-semibold text-white group-hover:text-brand-sky transition-colors">
             <span>Explore Adventures</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
           </div>

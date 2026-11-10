@@ -23,7 +23,7 @@ export const QuickActionCards: React.FC<QuickActionCardsProps> = ({
       {/* 1. Add Enquiry - Action Card */}
       <div
         onClick={onOpenNewModal}
-        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#0A6FAE] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
+        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#0A6FAE] shadow-sm hover:shadow-md hover:-translate-y-1 transition duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
       >
         <div className="w-12 h-12 rounded-full bg-[#EFF8FD] text-[#0A6FAE] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
           <PlusCircle className="h-6 w-6 stroke-[2.2]" />
@@ -45,7 +45,7 @@ export const QuickActionCards: React.FC<QuickActionCardsProps> = ({
       {/* 2. Today's Follow-ups */}
       <div
         onClick={() => onNavigateTab('followups')}
-        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#f59e0b] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
+        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#f59e0b] shadow-sm hover:shadow-md hover:-translate-y-1 transition duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
       >
         <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform relative">
           <PhoneCall className="h-5 w-5 stroke-[2.2]" />
@@ -70,7 +70,7 @@ export const QuickActionCards: React.FC<QuickActionCardsProps> = ({
       {/* 3. Payment Dues */}
       <div
         onClick={() => onNavigateTab('dues')}
-        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#ef4444] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
+        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#ef4444] shadow-sm hover:shadow-md hover:-translate-y-1 transition duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
       >
         <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform relative">
           <Wallet className="h-5 w-5 stroke-[2.2]" />
@@ -95,7 +95,7 @@ export const QuickActionCards: React.FC<QuickActionCardsProps> = ({
       {/* 4. Departure Calendar */}
       <div
         onClick={() => onNavigateTab('calendar')}
-        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#0284c7] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
+        className="group bg-white rounded-xl p-5 border border-slate-200/80 border-t-[3px] border-t-[#0284c7] shadow-sm hover:shadow-md hover:-translate-y-1 transition duration-200 cursor-pointer text-center flex flex-col items-center justify-between"
       >
         <div className="w-12 h-12 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform relative">
           <CalendarDays className="h-5 w-5 stroke-[2.2]" />

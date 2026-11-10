@@ -14,11 +14,11 @@ export default async function GalleryPage() {
   const images = await getGallery();
 
   return (
-    <div className="min-h-screen bg-[#F7FBFE] pb-20">
+    <div className="min-h-dvh bg-[#F7FBFE] pb-20">
       <PageHero
         eyebrow="Visual Storytelling"
         title="Nature Gallery"
-        subtitle={<>A window into the raw stillness and towering grandeur of the Indian wilderness captured across our expeditions.</>}
+        subtitle={<>Photos from our treks and trips across India.</>}
         image="https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341330/spirit_adventures/shorts/wayanad_waterfall_poster.jpg"
         crumbs={[{ label: "Gallery" }]}
         edge="text-[#F7FBFE]"

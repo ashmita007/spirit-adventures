@@ -7,14 +7,14 @@ import PageHero from "@/components/page-hero";
 export const metadata: Metadata = {
   alternates: { canonical: "/destinations" },
   title: "Destinations & Regions | Spirit Adventures",
-  description: "Explore majestic mountains and wilderness landscapes of Uttarakhand, Himachal, Kashmir, Ladakh, Maharashtra, and Karnataka.",
+  description: "Treks and trips in Uttarakhand, Himachal, Kashmir, Ladakh, Maharashtra and Karnataka.",
 };
 
 export default async function DestinationsPage() {
   const destinations = await getDestinations();
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-dvh bg-white pb-20">
       <PageHero
         eyebrow="Sacred Lands & Wild Trails"
         title="Explore Destinations"

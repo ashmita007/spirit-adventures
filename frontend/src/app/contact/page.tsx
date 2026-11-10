@@ -16,11 +16,11 @@ export default function ContactPage() {
   const email = process.env.NEXT_PUBLIC_EMAIL || "info@spiritadventures.in";
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-dvh bg-white pb-20">
       <PageHero
         eyebrow="Get in Touch"
         title="Connect With Our Team"
-        subtitle={<>Have questions about upcoming weekend getaways, combo packages, or customized group departures? We&apos;re here to guide you.</>}
+        subtitle={<>Have questions about upcoming weekend getaways, combo packages, or customized group departures?</>}
         image="https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341329/spirit_adventures/shorts/ooty_train_poster.jpg"
         crumbs={[{ label: "Contact" }]}
       />
@@ -31,7 +31,7 @@ export default function ContactPage() {
           <div className="space-y-8">
             <div className="bg-brand-navy rounded-3xl p-8 text-white space-y-6 shadow-xl">
               <h3 className="font-display font-bold text-xl uppercase tracking-wide text-brand-sky">
-                Direct Adventure Desk
+                Contact details
               </h3>
 
               <div className="space-y-4 text-sm">
@@ -43,7 +43,7 @@ export default function ContactPage() {
                 >
                   <MessageCircle className="w-5 h-5 text-emerald-400" />
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">WhatsApp Expert</span>
+                    <span className="text-[10px] font-bold text-slate-400 block">WhatsApp Expert</span>
                     <span className="font-semibold">{whatsappNumber}</span>
                   </div>
                 </a>
@@ -54,7 +54,7 @@ export default function ContactPage() {
                 >
                   <Phone className="w-5 h-5 text-brand-sky" />
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Phone Support</span>
+                    <span className="text-[10px] font-bold text-slate-400 block">Phone Support</span>
                     <span className="font-semibold">{phone}</span>
                   </div>
                 </a>
@@ -65,7 +65,7 @@ export default function ContactPage() {
                 >
                   <Mail className="w-5 h-5 text-brand-sky" />
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Email Inquiries</span>
+                    <span className="text-[10px] font-bold text-slate-400 block">Email Inquiries</span>
                     <span className="font-semibold">{email}</span>
                   </div>
                 </a>
@@ -85,14 +85,14 @@ export default function ContactPage() {
                 </div>
                 <div className="flex items-center space-x-2.5">
                   <Clock className="w-4 h-4 text-brand-sky flex-shrink-0" />
-                  <span>Desk Hours: 9:00 AM – 9:00 PM IST (Mon - Sun)</span>
+                  <span>Desk hours: 9 AM to 9 PM IST, Monday to Sunday</span>
                 </div>
               </div>
             </div>
 
             {/* Social Links */}
             <div className="p-6 rounded-3xl bg-brand-light border border-slate-100 flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-navy">Follow The Trails</span>
+              <span className="text-xs font-bold text-brand-navy">Follow The Trails</span>
               <div className="flex items-center space-x-3">
                 <a
                   href="https://instagram.com"

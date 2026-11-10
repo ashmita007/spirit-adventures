@@ -58,7 +58,7 @@ export default function Navbar() {
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-50 transition duration-300",
           headerBgClass
         )}
       >
@@ -97,7 +97,7 @@ export default function Navbar() {
                     key={link.name}
                     href={link.href}
                     className={cn(
-                      "text-xs font-semibold px-4 py-1.5 rounded-full transition-all duration-200 flex items-center space-x-1.5",
+                      "text-xs font-semibold px-4 py-1.5 rounded-full transition duration-200 flex items-center space-x-1.5",
                       isActive
                         ? "bg-brand-ocean text-white shadow-md font-bold"
                         : "text-white/90 hover:text-white hover:bg-white/15"
@@ -113,7 +113,7 @@ export default function Navbar() {
             <div className="flex items-center space-x-2 sm:space-x-3">
               <a
                 href="tel:+919666567551"
-                className="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md bg-brand-ocean hover:bg-brand-ocean-light text-white hover:scale-105 active:scale-95"
+                className="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition shadow-md bg-brand-ocean hover:bg-brand-ocean-light text-white hover:scale-105 active:scale-95"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>966 656 7551</span>

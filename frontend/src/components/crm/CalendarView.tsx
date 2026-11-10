@@ -56,7 +56,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             return (
               <div
                 key={day.date}
-                className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm hover:shadow-md hover:border-[#0A6FAE]/50 transition-all flex flex-col justify-between"
+                className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm hover:shadow-md hover:border-[#0A6FAE]/50 transition flex flex-col justify-between"
               >
                 <div>
                   {/* Date Header & Headcount Badges */}
@@ -77,13 +77,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       {/* Headcount Segregation */}
                       <div className="flex items-center gap-1 justify-end mt-1 text-[10px]">
                         <span className="px-1.5 py-0.2 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">
-                          👦 {day.boys}
+                          {day.boys} boys
                         </span>
                         <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 font-bold border border-rose-200">
-                          👧 {day.girls}
+                          {day.girls} girls
                         </span>
                         <span className="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 font-bold border border-purple-200">
-                          💑 {day.couples}
+                          {day.couples} couples
                         </span>
                       </div>
                     </div>
@@ -95,11 +95,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <div
                         key={trip.enquiry_id}
                         onClick={() => onSelectEnquiry(trip.enquiry_id)}
-                        className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#0A6FAE] hover:bg-[#EFF8FD]/50 cursor-pointer transition-all text-xs space-y-1.5"
+                        className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#0A6FAE] hover:bg-[#EFF8FD]/50 cursor-pointer transition text-xs space-y-1.5"
                       >
                         <div className="flex items-center justify-between font-semibold">
                           <span className="text-slate-800 truncate font-bold">{trip.lead_name}</span>
-                          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-white text-slate-700 border border-slate-200">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white text-slate-700 border border-slate-200">
                             {trip.status}
                           </span>
                         </div>

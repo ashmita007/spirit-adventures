@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const daysRemaining = targetData ? targetData.days_remaining : 17;
   const counselorName = targetData?.sales_person_name || currentUser?.display_name || 'All Counsellors';
 
-  const marqueeText = `🎯 Monthly Target: ₹${targetAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | 💵 Collected: ₹${collectedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | 💸 Remaining: ₹${remainingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | 📊 Progress: ${percentage}% Complete | 📅 ${daysRemaining} days remaining (${counselorName})`;
+  const marqueeText = `Monthly Target: ₹${targetAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | Collected: ₹${collectedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | Remaining: ₹${remainingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | Progress: ${percentage}% Complete | ${daysRemaining} days remaining (${counselorName})`;
 
   return (
     <div data-crm-nav className="sticky top-0 z-50 w-full" ref={dropdownRef}>
@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
               <span className="hidden sm:block leading-tight">
                 <span className="block font-extrabold text-base tracking-tight text-white">Sales CRM</span>
-                <span className="block whitespace-nowrap text-[10px] text-sky-200/90 font-semibold uppercase tracking-[0.12em]">Leads · Bookings · Payments</span>
+                <span className="block whitespace-nowrap text-[10px] text-sky-200/90 font-semibold">Leads, bookings and payments</span>
               </span>
             </button>
 
@@ -144,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   if (onFilterStatus) onFilterStatus('all');
                   setOpenDropdown(null);
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition cursor-pointer ${
                   activeTab === 'enquiries'
                     ? 'bg-white/20 font-semibold shadow-inner'
                     : 'text-white/90 hover:text-white hover:bg-white/15'
@@ -158,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <button
                   onClick={() => handleDropdownClick('enquiries')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition cursor-pointer ${
                     openDropdown === 'enquiries'
                       ? 'bg-white/20 text-white font-semibold'
                       : 'text-white/90 hover:text-white hover:bg-white/15'
@@ -178,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           if (onFilterStatus) onFilterStatus('all');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <List className="h-4 w-4 text-[#062B49] group-hover:text-white" />
                       All Enquiries
@@ -190,14 +190,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                           alert('Merge Enquiries tool: Select duplicate contacts to merge booking history.');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <UserPlus className="h-4 w-4" />
                       Merge Enquiries
                     </button>
                     <button
                       onClick={() => handleAction(() => onOpenNewModal())}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1 bg-amber-50/50"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1 bg-amber-50/50"
                     >
                       <PlusCircle className="h-4 w-4 text-emerald-600" />
                       <span className="font-bold">Add Enquiry</span>
@@ -208,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           alert('Bulk CSV Upload is ready in Django Ninja endpoint /api/enquiries/');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Upload className="h-4 w-4" />
                       Bulk Upload
@@ -219,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           window.open('/api/v1/docs', '_blank');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Download className="h-4 w-4" />
                       Download Template
@@ -231,7 +231,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           window.open('/api/v1/crm/today-enquiries/', '_blank');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
                       Export Today's Enquiries
@@ -244,7 +244,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <button
                   onClick={() => handleDropdownClick('reports')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition cursor-pointer ${
                     openDropdown === 'reports'
                       ? 'bg-white/20 text-white font-semibold'
                       : 'text-white/90 hover:text-white hover:bg-white/15'
@@ -259,7 +259,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute left-0 mt-2 w-60 bg-white rounded-lg shadow-2xl py-2 border-t-[3px] border-[#38BDF8] z-50 slide-in-from-top-1 duration-150">
                     <button
                       onClick={() => handleAction(() => setActiveTab('followups'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <CalendarClock className="h-4 w-4 text-amber-500" />
                       Today's Followups
@@ -271,7 +271,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           if (onFilterStatus) onFilterStatus('all');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <CalendarCheck className="h-4 w-4 text-blue-500" />
                       Today's Enquiries
@@ -283,7 +283,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           if (onFilterStatus) onFilterStatus('won');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <UserCheck className="h-4 w-4 text-emerald-600" />
                       Joined / Booked Travelers
@@ -295,7 +295,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           if (onFilterStatus) onFilterStatus('lost');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <UserX className="h-4 w-4 text-rose-500" />
                       Dropout / Cancelled
@@ -307,7 +307,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           if (onFilterStatus) onFilterStatus('pending');
                         })
                       }
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Clock className="h-4 w-4 text-amber-600" />
                       Pending Enquiries
@@ -315,21 +315,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="border-t border-[#38BDF8]/30 my-1.5" />
                     <button
                       onClick={() => handleAction(() => setActiveTab('team'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <PieChart className="h-4 w-4 text-purple-600" />
                       Monthly Summary
                     </button>
                     <button
                       onClick={() => handleAction(() => setActiveTab('team'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Briefcase className="h-4 w-4 text-indigo-600" />
                       Counsellor Summary
                     </button>
                     <button
                       onClick={() => handleAction(() => setActiveTab('calendar'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <CalendarDays className="h-4 w-4 text-teal-600" />
                       Day-Wise Departures
@@ -342,7 +342,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <button
                   onClick={() => handleDropdownClick('payments')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition cursor-pointer ${
                     activeTab === 'dues' || openDropdown === 'payments'
                       ? 'bg-white/20 text-white font-semibold'
                       : 'text-white/90 hover:text-white hover:bg-white/15'
@@ -357,28 +357,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-2xl py-2 border-t-[3px] border-[#38BDF8] z-50 slide-in-from-top-1 duration-150">
                     <button
                       onClick={() => handleAction(() => setActiveTab('dues'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Calendar className="h-4 w-4 text-amber-500" />
                       Waiting For Batch
                     </button>
                     <button
                       onClick={() => handleAction(() => setActiveTab('dues'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <AlertCircle className="h-4 w-4 text-rose-500" />
                       Today's Due
                     </button>
                     <button
                       onClick={() => handleAction(() => setActiveTab('dues'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <History className="h-4 w-4 text-sky-500" />
                       Past Due
                     </button>
                     <button
                       onClick={() => handleAction(() => setActiveTab('calendar'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <CalendarDays className="h-4 w-4 text-blue-500" />
                       Monthly Due Calendar
@@ -391,7 +391,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <button
                   onClick={() => handleDropdownClick('management')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition cursor-pointer ${
                     activeTab === 'team' || openDropdown === 'management'
                       ? 'bg-white/20 text-white font-semibold'
                       : 'text-white/90 hover:text-white hover:bg-white/15'
@@ -406,14 +406,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-2xl py-2 border-t-[3px] border-[#38BDF8] z-50 slide-in-from-top-1 duration-150">
                     <button
                       onClick={() => handleAction(() => setActiveTab('team'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <UserPlus className="h-4 w-4 text-emerald-600" />
                       Add Counsellor
                     </button>
                     <button
                       onClick={() => handleAction(() => setActiveTab('team'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <UserCheck className="h-4 w-4 text-blue-600" />
                       Approve Counsellors
@@ -421,7 +421,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="border-t border-[#38BDF8]/30 my-1.5" />
                     <button
                       onClick={() => handleAction(() => setActiveTab('team'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Target className="h-4 w-4 text-rose-500" />
                       Add Monthly Target
@@ -434,7 +434,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <button
                   onClick={() => handleDropdownClick('batches')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition cursor-pointer ${
                     activeTab === 'calendar' || openDropdown === 'batches'
                       ? 'bg-white/20 text-white font-semibold'
                       : 'text-white/90 hover:text-white hover:bg-white/15'
@@ -449,14 +449,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute left-0 mt-2 w-52 bg-white rounded-lg shadow-2xl py-2 border-t-[3px] border-[#38BDF8] z-50 slide-in-from-top-1 duration-150">
                     <button
                       onClick={() => handleAction(() => setActiveTab('calendar'))}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Layers className="h-4 w-4 text-teal-600" />
                       Tour Batches
                     </button>
                     <button
                       onClick={() => handleAction(() => onOpenNewModal())}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all hover:translate-x-1"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition hover:translate-x-1"
                     >
                       <Compass className="h-4 w-4 text-blue-600" />
                       Add Tour Batch
@@ -518,7 +518,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   </div>
 
-                  <div className="text-white hover:text-[#38BDF8] transition-all transform group-hover:scale-105">
+                  <div className="text-white hover:text-[#38BDF8] transition transform group-hover:scale-105">
                     <UserCircle2 className="h-8 w-8 stroke-[1.8]" />
                   </div>
                 </button>
@@ -531,7 +531,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <span className="text-xs font-bold text-slate-800">
                           {effectiveUser?.display_name}
                         </span>
-                        <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                        <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
                           auth.isManager ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
                         }`}>
                           {effectiveUser?.role}
@@ -553,7 +553,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setUserMenuOpen(false);
                           setActiveTab('team');
                         }}
-                        className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition-all"
+                        className="w-full text-left px-4 py-2 text-xs font-semibold text-[#0A6FAE] hover:bg-[#062B49] hover:text-white flex items-center gap-2.5 transition"
                       >
                         <Target className="h-3.5 w-3.5" />
                         Monthly Targets & Team
@@ -564,7 +564,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setUserMenuOpen(false);
                           await auth.logout();
                         }}
-                        className="w-full text-left px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-500 hover:text-white flex items-center gap-2.5 transition-all"
+                        className="w-full text-left px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-500 hover:text-white flex items-center gap-2.5 transition"
                       >
                         <LogOut className="h-3.5 w-3.5" />
                         Logout Session
@@ -652,7 +652,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Pause Indicator overlay on click */}
         {isMarqueePaused && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-[#0A6FAE] text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-md flex items-center gap-1">
-            <span>⏸️ PAUSED</span>
+            <span>PAUSED</span>
             <span className="opacity-80 font-normal hidden sm:inline">- Click to Resume</span>
           </div>
         )}

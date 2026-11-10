@@ -33,14 +33,14 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
     <div data-crm-stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
       {/* 1. Total Enquiries - Primary Orange */}
       <div
-        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition-all duration-300 group"
+        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition duration-300 group"
         style={{
           background: 'linear-gradient(145deg, #0A6FAE 0%, #0A6FAE 100%)',
           boxShadow: '0 8px 16px -2px rgba(254, 119, 67, 0.3)',
         }}
       >
         <div className="flex items-center justify-between mb-1 relative z-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-white/90">
+          <span className="text-xs font-bold text-white/90">
             Total Enquiries
           </span>
           <span className="text-[11px] font-bold bg-white/20 text-white px-2 py-0.5 rounded-full backdrop-blur-xs">
@@ -58,14 +58,14 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
 
       {/* 2. Confirmed Bookings - Emerald / Green Accent */}
       <div
-        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition-all duration-300 group"
+        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition duration-300 group"
         style={{
           background: 'linear-gradient(145deg, #10b981 0%, #059669 100%)',
           boxShadow: '0 8px 16px -2px rgba(16, 185, 129, 0.3)',
         }}
       >
         <div className="flex items-center justify-between mb-1 relative z-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-white/90">
+          <span className="text-xs font-bold text-white/90">
             Confirmed Bookings
           </span>
           <span className="text-[11px] font-bold bg-white/20 text-white px-2 py-0.5 rounded-full backdrop-blur-xs">
@@ -83,14 +83,14 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
 
       {/* 3. Collected vs Pending - Navy Theme */}
       <div
-        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition-all duration-300 group"
+        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition duration-300 group"
         style={{
           background: 'linear-gradient(145deg, #062B49 0%, #1e293b 100%)',
           boxShadow: '0 8px 16px -2px rgba(44, 62, 80, 0.3)',
         }}
       >
         <div className="flex items-center justify-between mb-1 relative z-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-white/90">
+          <span className="text-xs font-bold text-white/90">
             Advance Collected
           </span>
           <span className="text-[11px] font-bold bg-[#0A6FAE] text-white px-2 py-0.5 rounded-full">
@@ -111,14 +111,14 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
 
       {/* 4. Group Segregation - Warm Gold / Indigo Blend */}
       <div
-        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition-all duration-300 group"
+        className="relative overflow-hidden rounded-xl p-5 text-white shadow-md hover:-translate-y-1 transition duration-300 group"
         style={{
           background: 'linear-gradient(145deg, #4f46e5 0%, #3730a3 100%)',
           boxShadow: '0 8px 16px -2px rgba(79, 70, 229, 0.3)',
         }}
       >
         <div className="flex items-center justify-between mb-1 relative z-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-white/90">
+          <span className="text-xs font-bold text-white/90">
             Group Segregation
           </span>
           <span className="text-[11px] font-bold bg-white/20 text-white px-2 py-0.5 rounded-full">
@@ -130,13 +130,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
         </div>
         <div className="flex items-center gap-1.5 pt-1.5 border-t border-white/10 relative z-10">
           <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-            👦 {s.total_boys} Boys
+            {s.total_boys} Boys
           </span>
           <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-            👧 {s.total_girls} Girls
+            {s.total_girls} Girls
           </span>
           <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-            💑 {s.total_couples} Couples
+            {s.total_couples} Couples
           </span>
         </div>
         <Users className="absolute -bottom-3 -right-2 h-24 w-24 text-white/15 stroke-[1.2] pointer-events-none transform group-hover:scale-110 transition-transform" />

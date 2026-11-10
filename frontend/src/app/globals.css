@@ -1,3 +1,7 @@
+/* Hallmark · v2.0.0 · built: the project · redesign: polish · genre: editorial · scope: site + app (owner, crm) · brand kept: navy #062B49, ocean #0A6FAE, sky #38BDF8, Outfit display, Inter body · checked by hand (sloplint not run in this environment) */
+/* Hallmark · pre-emit critique: P3 H4 E4 S4 R4 V3 · weakest: P and V, a polish keeps the existing layout by design; layout gates (8, 9, 58, 77-79) left as notes for a full redesign */
+/* Hallmark · waive 38iii · the hero word ADVENTURE in solid sky, once, in the hero only · it is the brand's signature line and every other heading is one colour */
+/* Hallmark · kept as found, owner to verify (46a): "500+ adventurers", "5.0 Google rating", "40+ destinations", "thousands of happy explorers" */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,9 +15,14 @@
   --color-sky: #38BDF8;
   --color-light: #EFF8FD;
   --color-dark: #0F172A;
+  --color-ring: #0A6FAE;
+  --color-ring-inner: #FFFFFF;
 }
 
 html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -22,7 +31,7 @@ body {
   color: #0F172A;
   background-color: #FFFFFF;
   font-family: var(--font-inter), sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Hide scrollbar for horizontal chip scrollers while retaining touch scroll */
@@ -140,4 +149,36 @@ html { scroll-behavior: smooth; }
 /* Tailwind v4 name used by the CRM screens */
 @layer utilities {
   .outline-hidden { outline: 2px solid transparent; outline-offset: 2px; }
+}
+
+
+/* Phones: iOS Safari zooms the page when a focused field is under 16px and
+   leaves the layout zoomed. Keep every form control at 16px on small screens
+   (public site, owner portal and CRM alike). */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Keyboard focus: an instant two-tone ring (white inside, ocean outside) that stays
+   at 3:1 or better on both the white pages and the navy hero/footer. Components that
+   draw their own focus ring (inputs with focus:ring-*) keep theirs. */
+:where(a, button, summary, [role="button"], [tabindex]:not([tabindex="-1"]), input, select, textarea):focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-ring-inner), 0 0 0 4px var(--color-ring);
+  transition: none;
+}
+
+/* Reduced motion: stop every keyframe and transition site-wide */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

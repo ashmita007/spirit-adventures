@@ -27,8 +27,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-300 text-sm leading-relaxed max-w-sm">
-              Mindfully crafted group adventures, weekend getaways, and high-altitude Himalayan expeditions. 
-              Safe, authentic, and rooted in nature.
+              Group treks, weekend getaways and Himalayan trips from Hyderabad, Bengaluru and Chennai.
             </p>
 
             <div className="pt-2 flex items-center space-x-3">
@@ -64,7 +63,7 @@ export default function Footer() {
 
           {/* Expeditions & Treks */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-brand-sky">Expeditions</h4>
+            <h4 className="text-xs font-bold text-brand-sky">Expeditions</h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li><Link href="/trips?category=snow" className="hover:text-white transition">Kedarkantha Winter Snow Trek</Link></li>
               <li><Link href="/trips?category=water" className="hover:text-white transition">Dandeli White Water Rafting</Link></li>
@@ -76,7 +75,7 @@ export default function Footer() {
 
           {/* Contact & Support */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-brand-sky">Official HQ</h4>
+            <h4 className="text-xs font-bold text-brand-sky">Official HQ</h4>
             <ul className="space-y-2.5 text-sm text-slate-300">
               <li className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-brand-sky flex-shrink-0" />
@@ -100,9 +99,9 @@ export default function Footer() {
               <li className="pt-2">
                 <Link
                   href="/contact"
-                  className="inline-block text-xs uppercase font-semibold tracking-wider text-brand-sky hover:underline"
+                  className="inline-block text-xs uppercase font-semibold tracking-wide text-brand-sky hover:underline"
                 >
-                  Plan A Custom Journey →
+                  Plan a custom trip
                 </Link>
               </li>
             </ul>

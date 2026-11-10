@@ -9,14 +9,14 @@ import PageHero from "@/components/page-hero";
 export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
   title: "Wilderness Stories & Trekking Guides | Spirit Adventures",
-  description: "Read expert packing guides, mountain philosophies, trail reflections, and outdoor knowledge from certified trek leaders.",
+  description: "Packing guides, trail notes and mountain advice from our certified trek leaders.",
 };
 
 export default async function BlogPage() {
   const blogs = await getBlogs();
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-dvh bg-white pb-20">
       <PageHero
         eyebrow="Outdoor Journal"
         title="Stories & Trail Guides"
@@ -30,7 +30,7 @@ export default async function BlogPage() {
           {blogs.map((post) => (
             <article
               key={post.id}
-              className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between"
             >
               <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
                 <Image
@@ -41,7 +41,7 @@ export default async function BlogPage() {
                   className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-brand-navy text-[10px] font-bold uppercase tracking-wider shadow">
+                  <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-brand-navy text-[10px] font-bold shadow">
                     {post.category}
                   </span>
                 </div>
@@ -75,7 +75,7 @@ export default async function BlogPage() {
                 <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-brand-ocean hover:text-brand-navy transition group/link"
+                    className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wide text-brand-ocean hover:text-brand-navy transition group/link"
                   >
                     <span>Read Article</span>
                     <ArrowRight className="w-4 h-4 group-link-hover:translate-x-1 transition-transform" />

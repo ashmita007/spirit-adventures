@@ -40,7 +40,7 @@ const CLIENT_COMMUNITY_PHOTOS: GalleryImage[] = [
     title: "Dandeli Kali River White Water Rapids",
     category: "Rafting & Water",
     image_url: "/videos/shorts/dandeli_rafting_poster.jpg",
-    caption: "Conquering Grade 3 rapids with certified river marshals",
+    caption: "Grade 3 rapids with certified river marshals",
     location: "Dandeli, Karnataka",
     is_featured: true
   },
@@ -168,25 +168,21 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
         {/* Top Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div>
-            <div data-anim="fade-up" className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 text-brand-sky text-xs font-bold uppercase tracking-[0.2em] mb-3 border border-white/15 shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Live Client Photo Feed</span>
-            </div>
 
             <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl text-white uppercase tracking-tight">
               Moments from the Wild
             </h2>
             <p className="mt-2 text-slate-300 text-sm sm:text-base max-w-xl font-light">
-              Real unfiltered client pictures, summit highs, and cozy starry campfire memories from our weekly adventure batches.
+              Photos from our weekly batches: summits, beach cliffs and campfires.
             </p>
           </div>
 
           <div className="flex items-center space-x-3">
             <Link
               href="/gallery"
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition border border-white/20 shadow-xs group"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wide transition border border-white/20 shadow-xs group"
             >
-              <span>View Full Gallery</span>
+              <span className="whitespace-nowrap">View full gallery</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -202,17 +198,12 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                 setActiveIndex(0);
               }}
               className={cn(
-                "flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 border",
+                "flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition duration-200 border",
                 selectedCategory === cat
                   ? "bg-brand-ocean text-white border-brand-ocean shadow-md scale-[1.02]"
                   : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/15 hover:text-white"
               )}
             >
-              {cat === "All" && "✨ "}
-              {cat === "Summit Treks" && "🏔 "}
-              {cat === "Beach & Cliffs" && "🌊 "}
-              {cat === "Rafting & Water" && "🚣 "}
-              {cat === "Camp & Bonfires" && "🏕 "}
               <span>{cat}</span>
             </button>
           ))}
@@ -237,7 +228,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
             {/* Top Bar on Spotlight */}
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 rounded-full bg-black/60 text-[11px] font-bold uppercase tracking-wider text-brand-sky border border-white/15 shadow-md">
+                <span className="px-3 py-1 rounded-full bg-black/60 text-[11px] font-bold text-brand-sky border border-white/15 shadow-md">
                   {currentImage.category || "Adventure"}
                 </span>
                 <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-500/20 text-[11px] font-bold text-emerald-300 border border-emerald-500/30">
@@ -315,7 +306,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
                 <div
                   key={activeIndex}
-                  className="h-full bg-brand-sky transition-all duration-[4500ms] ease-linear w-full"
+                  className="h-full bg-brand-sky transition duration-[4500ms] ease-linear w-full"
                   style={{
                     animation: "progress 4.5s linear infinite"
                   }}
@@ -328,8 +319,8 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
         {/* 2. Dual-Row Infinite Animated Client Photos Stream (Marquee) */}
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
-              ⚡ Infinite Traveler Reel (Hover to Pause)
+            <span className="text-xs font-bold text-slate-400">
+              Traveller reel (hover to pause)
             </span>
           </div>
 
@@ -340,7 +331,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                 <div
                   key={`${img.id}-r1-${idx}`}
                   onClick={() => openInLightbox(img.image_url)}
-                  className="group relative w-56 sm:w-72 aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer flex-shrink-0 border border-white/10 shadow-lg transition-all duration-300 hover:scale-105 hover:border-brand-sky/60 hover:shadow-cyan-500/20"
+                  className="group relative w-56 sm:w-72 aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer flex-shrink-0 border border-white/10 shadow-lg transition duration-300 hover:scale-105 hover:border-brand-sky/60 hover:shadow-cyan-500/20"
                 >
                   <Image
                     src={img.image_url}
@@ -350,7 +341,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                     className="object-cover object-center group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-                    <span className="self-start text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/60 text-brand-sky border border-white/10">
+                    <span className="self-start text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-black/60 text-brand-sky border border-white/10">
                       {img.category}
                     </span>
                     <div>
@@ -374,7 +365,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                 <div
                   key={`${img.id}-r2-${idx}`}
                   onClick={() => openInLightbox(img.image_url)}
-                  className="group relative w-56 sm:w-72 aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer flex-shrink-0 border border-white/10 shadow-lg transition-all duration-300 hover:scale-105 hover:border-brand-sky/60 hover:shadow-cyan-500/20"
+                  className="group relative w-56 sm:w-72 aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer flex-shrink-0 border border-white/10 shadow-lg transition duration-300 hover:scale-105 hover:border-brand-sky/60 hover:shadow-cyan-500/20"
                 >
                   <Image
                     src={img.image_url}
@@ -384,7 +375,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                     className="object-cover object-center group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-                    <span className="self-start text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/60 text-emerald-300 border border-white/10">
+                    <span className="self-start text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-black/60 text-emerald-300 border border-white/10">
                       {img.location?.split(",")[0] || "Wilderness"}
                     </span>
                     <div>

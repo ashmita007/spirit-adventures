@@ -99,7 +99,7 @@ export default function RootLayout({
         />
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       </head>
-      <body className="min-h-screen flex flex-col antialiased selection:bg-brand-ocean selection:text-white pb-16 md:pb-0">
+      <body className="min-h-dvh flex flex-col antialiased selection:bg-brand-ocean selection:text-white pb-16 md:pb-0">
         <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />

@@ -31,25 +31,25 @@ const PIPELINE_STAGES: Array<{
 const WHATSAPP_TEMPLATES = [
   {
     id: "itinerary",
-    title: "📋 Full Itinerary & Quote",
+    title: "Full Itinerary & Quote",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n${lead.trip_price ? `• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)` : "• *Package Price*: we'll share your exact quote shortly"}\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
   },
   {
     id: "payment",
-    title: "💳 Payment & Booking Link",
+    title: "Payment & Booking Link",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\n${lead.trip_price ? `Total Booking Amount: *₹${((lead.travelers_count || 1) * lead.trip_price).toLocaleString("en-IN")}*` : "We'll confirm your total booking amount shortly."}\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
   },
   {
     id: "checklist",
-    title: "🎒 Things to Carry Checklist",
+    title: "Things to Carry Checklist",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🏕️ Here is your essential packing list for *${lead.trip_title}*:\n\n1. Trekking / Trail shoes with good rubber grip\n2. Quick-dry synthetic t-shirts & track pants\n3. Warm fleece / windcheater for evenings\n4. Reusable 1L water bottle\n5. Personal medication, headlamp/torch & power bank\n\nOur team leader contact will be shared 24 hours prior to departure.`
   },
   {
     id: "pickup",
-    title: "📍 Pickup Hub & Timing",
+    title: "Pickup Hub & Timing",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🚌 Pickup logistics for *${lead.trip_title}*:\n\n• *Departure City*: ${lead.departure_city || "Hyderabad / Bengaluru"}\n• *Pickup Point*: Main Hub (Exact GPS pin will be shared)\n• *Reporting Time*: Friday 7:00 PM\n• *Expedition Lead*: Spirit Adventures Ops Team (Aditya / Sathwik)\n\nSee you at the pickup point! Let us know if you have any questions.`
   }
@@ -254,7 +254,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
 
           <button
             onClick={() => setIsAddLeadOpen(true)}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean/90 text-white text-xs font-black uppercase tracking-wider transition shadow-md shadow-brand-ocean/20 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean/90 text-white text-xs font-black uppercase tracking-wide transition shadow-md shadow-brand-ocean/20 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
             <span>+ Add Inquiry</span>
@@ -454,7 +454,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
               className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
             >
               <option value="ALL">All Stages</option>
-              <option value="NEW">⚡ Fresh Leads</option>
+              <option value="NEW">Fresh Leads</option>
               <option value="CONTACTED">In Discussion</option>
               <option value="FOLLOW_UP">Quote Sent</option>
               <option value="PAYMENT_PENDING">Payment Pending</option>
@@ -467,7 +467,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
         {/* The Spreadsheet Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50/80 border-b border-slate-200/80 text-[10px] font-black uppercase tracking-wider text-slate-500 whitespace-nowrap">
+            <thead className="bg-slate-50/80 border-b border-slate-200/80 text-[10px] font-black text-slate-500 whitespace-nowrap">
               <tr>
                 <th className="py-3.5 px-5">Customer</th>
                 <th className="py-3.5 px-4">Package</th>
@@ -497,8 +497,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                         <span>{lead.full_name}</span>
                       </div>
                       <div className="text-[11px] text-slate-500 font-mono mt-0.5 flex items-center space-x-1.5">
-                        <span>{lead.phone}</span>
-                        <span>&bull;</span>
+                        <span>{lead.phone},</span>
                         <span>{lead.departure_city || "Hyderabad"}</span>
                       </div>
                     </td>
@@ -510,7 +509,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
 
                     <td className="py-4 px-4 whitespace-nowrap">
                       <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200 text-[11px] inline-flex items-center space-x-1">
-                        <span>👥 {lead.travelers_count || 1} Pax</span>
+                        <span>{lead.travelers_count || 1} Pax</span>
                       </span>
                     </td>
 
@@ -523,7 +522,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                         value={lead.status}
                         onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                         className={cn(
-                          "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border focus:outline-none cursor-pointer transition",
+                          "px-3 py-1.5 rounded-xl text-[10px] font-black border focus:outline-none cursor-pointer transition",
                           lead.status === "CONVERTED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
                           lead.status === "NEW" ? "bg-sky-50 text-sky-700 border-sky-200" :
                           lead.status === "FOLLOW_UP" ? "bg-purple-50 text-purple-700 border-purple-200" :
@@ -531,11 +530,11 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                           "bg-slate-100 text-slate-600 border-slate-200"
                         )}
                       >
-                        <option value="NEW">⚡ FRESH LEAD</option>
+                        <option value="NEW">FRESH LEAD</option>
                         <option value="CONTACTED">IN DISCUSSION</option>
                         <option value="FOLLOW_UP">QUOTE SENT</option>
                         <option value="PAYMENT_PENDING">PAYMENT PENDING</option>
-                        <option value="CONVERTED">✅ CONFIRMED (PAID)</option>
+                        <option value="CONVERTED">CONFIRMED (PAID)</option>
                         <option value="CLOSED">CLOSED</option>
                       </select>
                     </td>
@@ -546,7 +545,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                         lead.priority === "HIGH" ? "bg-rose-50 text-rose-700 border-rose-200 font-black" :
                         lead.priority === "MEDIUM" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-slate-100 text-slate-600 border-slate-200"
                       )}>
-                        {lead.priority === "HIGH" ? "🔥 VIP" : (lead.priority === "MEDIUM" ? "⚡ Medium" : "💤 Low")}
+                        {lead.priority === "HIGH" ? "VIP" : (lead.priority === "MEDIUM" ? "Medium" : "Low")}
                       </span>
                     </td>
 
@@ -651,7 +650,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
       {/* MODAL 1: LEAD DETAILS & WHATSAPP ACTION DRAWER */}
       {selectedLead && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-6">
+          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90dvh] overflow-y-auto border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-6">
             {/* Modal Header */}
             <div className="flex items-start justify-between border-b border-slate-100 pb-4">
               <div>
@@ -660,14 +659,14 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                     {selectedLead.full_name}
                   </h3>
                   <span className={cn(
-                    "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border",
+                    "px-2.5 py-0.5 rounded-full text-[10px] font-black border",
                     selectedLead.priority === "HIGH" ? "bg-rose-50 text-rose-700 border-rose-200" : "bg-slate-100 text-slate-700 border-slate-200"
                   )}>
                     {selectedLead.priority}
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Inquiry ID #{selectedLead.id} &bull; Received {selectedLead.created_at || "Recently"}
+                  Enquiry #{selectedLead.id}, received {selectedLead.created_at || "Recently"}
                 </p>
               </div>
 
@@ -681,14 +680,14 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
 
             {/* Travel Summary Card */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <div className="text-xs font-bold text-slate-400">
                 Expedition Package Summary
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-bold text-slate-900 text-sm">{selectedLead.trip_title}</div>
                   <div className="text-xs text-slate-500 mt-0.5">
-                    {selectedLead.travel_date || "Upcoming Weekend"} &bull; {selectedLead.departure_city || "Hyderabad"} Departure
+                    {selectedLead.travel_date || "Upcoming Weekend"}, {selectedLead.departure_city || "Hyderabad"} Departure
                   </div>
                 </div>
                 <div className="text-right">
@@ -784,7 +783,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
       {/* MODAL 2: ADD NEW INQUIRY MODAL */}
       {isAddLeadOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-5">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90dvh] overflow-y-auto border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h3 className="text-xl font-display font-black text-slate-900">
@@ -844,7 +843,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                 </select>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Pax Count</label>
                   <input
@@ -874,9 +873,9 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, priority: e.target.value as any })}
                     className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none cursor-pointer"
                   >
-                    <option value="HIGH">🔥 High (VIP)</option>
-                    <option value="MEDIUM">⚡ Medium</option>
-                    <option value="LOW">💤 Low</option>
+                    <option value="HIGH">High (VIP)</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
                   </select>
                 </div>
               </div>
@@ -902,7 +901,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean/90 text-white text-xs font-black uppercase tracking-wider transition shadow-md shadow-brand-ocean/20 cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean/90 text-white text-xs font-black uppercase tracking-wide transition shadow-md shadow-brand-ocean/20 cursor-pointer"
                 >
                   Save Inquiry
                 </button>

@@ -41,9 +41,9 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-dvh bg-white">
       {/* Hero Banner */}
-      <div className="relative h-[50vh] sm:h-[60vh] w-full bg-brand-navy overflow-hidden">
+      <div className="relative h-[50dvh] sm:h-[60dvh] w-full bg-brand-navy overflow-hidden">
         {(() => {
           const bannerMedia = destination.hero_image || destination.cover_image || "";
           if (bannerMedia.endsWith(".mp4")) {
@@ -79,7 +79,7 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <Link
               href="/destinations"
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wider transition"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wide transition"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>All Destinations</span>
@@ -91,9 +91,6 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
         <div className="absolute bottom-8 left-0 right-0 z-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-brand-sky block mb-2">
-                Region Spotlight
-              </span>
               <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight">
                 {destination.name}
               </h1>
@@ -122,7 +119,7 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
         <div className="pt-8 border-t border-slate-100">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-ocean block">Available Journeys</span>
+              <span className="text-xs font-bold text-brand-ocean block">Available Journeys</span>
               <h3 className="font-display font-black text-2xl text-brand-navy uppercase tracking-tight">
                 Trips in {destination.name} ({trips.length})
               </h3>
@@ -141,9 +138,9 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
               <p className="text-slate-600 text-sm">New itineraries for {destination.name} are being scheduled soon.</p>
               <Link
                 href="/contact"
-                className="mt-4 inline-block text-xs font-bold uppercase tracking-wider text-brand-ocean hover:underline"
+                className="mt-4 inline-block text-xs font-bold uppercase tracking-wide text-brand-ocean hover:underline"
               >
-                Request a custom expedition →
+                Request a custom trip
               </Link>
             </div>
           )}

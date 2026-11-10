@@ -211,7 +211,7 @@ export default function EnquiryProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center">
+      <div className="min-h-dvh bg-[#f8f9fa] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#062B49] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-600 font-medium">Loading Enquiry Profile...</p>
@@ -222,7 +222,7 @@ export default function EnquiryProfilePage() {
 
   if (error || !enquiry) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] p-8">
+      <div className="min-h-dvh bg-[#f8f9fa] p-8">
         <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xs border border-slate-200 p-8 text-center">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-slate-800 mb-2">Enquiry Not Found</h2>
@@ -246,7 +246,7 @@ export default function EnquiryProfilePage() {
   const isFullyPaid = totalAmount > 0 && advancePaid >= totalAmount;
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-slate-800 pb-16 font-sans">
+    <div className="min-h-dvh bg-[#f8f9fa] text-slate-800 pb-16 font-sans">
       {/* Toast Notification Container */}
       {toastMessage && (
         <div className="fixed top-5 right-5 z-50 slide-in-from-top-4 duration-300">
@@ -343,7 +343,7 @@ export default function EnquiryProfilePage() {
             {/* Status Badge Top Right */}
             <div className="md:self-start">
               <span
-                className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs ${
+                className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold shadow-xs ${
                   enquiry.status === 'booked' || enquiry.status === 'travelled'
                     ? 'bg-emerald-500 text-white'
                     : enquiry.status === 'cancelled'
@@ -432,13 +432,13 @@ export default function EnquiryProfilePage() {
                     {enquiry.total_people} Total
                   </span>
                   <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-medium text-xs">
-                    👦 {enquiry.boys_count} Boys
+                    {enquiry.boys_count} Boys
                   </span>
                   <span className="px-2 py-0.5 rounded bg-pink-50 text-pink-700 font-medium text-xs">
-                    👧 {enquiry.girls_count} Girls
+                    {enquiry.girls_count} Girls
                   </span>
                   <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-medium text-xs">
-                    💑 {enquiry.couples_count} Couples
+                    {enquiry.couples_count} Couples
                   </span>
                 </div>
               </div>
@@ -499,7 +499,7 @@ export default function EnquiryProfilePage() {
                 {/* Progress Bar */}
                 <div className="w-full bg-slate-200 rounded-full h-5 mb-4 overflow-hidden relative shadow-inner">
                   <div
-                    className="bg-[#17a2b8] h-full text-white text-[11px] font-bold flex items-center justify-center transition-all duration-500"
+                    className="bg-[#17a2b8] h-full text-white text-[11px] font-bold flex items-center justify-center transition duration-500"
                     style={{ width: `${paidPercent}%` }}
                   >
                     {paidPercent}%
@@ -532,7 +532,7 @@ export default function EnquiryProfilePage() {
                 <div className="mt-4 space-y-2 text-xs text-slate-600">
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-slate-500">Payment Status</span>
-                    <span className="font-semibold uppercase tracking-wider text-slate-700">
+                    <span className="font-semibold text-slate-700">
                       {enquiry.payment_status || (isFullyPaid ? 'Paid' : 'Unpaid')}
                     </span>
                   </div>
@@ -581,15 +581,15 @@ export default function EnquiryProfilePage() {
                     onChange={(e) => setCallStatus(e.target.value)}
                     className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-hidden focus:border-[#062B49]"
                   >
-                    <option value="connected">📞 Connected</option>
-                    <option value="interested">⭐ Interested</option>
-                    <option value="call_busy">⏳ Call Busy</option>
-                    <option value="call_not_picked">❌ Not Picked</option>
-                    <option value="callback_requested">🔄 Callback Req</option>
-                    <option value="whatsapp_sent">💬 WhatsApp Sent</option>
-                    <option value="advance_collected">💰 Advance Collected</option>
-                    <option value="payment_followup">💳 Payment Followup</option>
-                    <option value="general_note">📝 General Note</option>
+                    <option value="connected">Connected</option>
+                    <option value="interested">Interested</option>
+                    <option value="call_busy">Call Busy</option>
+                    <option value="call_not_picked">Not Picked</option>
+                    <option value="callback_requested">Callback Req</option>
+                    <option value="whatsapp_sent">WhatsApp Sent</option>
+                    <option value="advance_collected">Advance Collected</option>
+                    <option value="payment_followup">Payment Followup</option>
+                    <option value="general_note">General Note</option>
                   </select>
                 </div>
 
@@ -626,7 +626,7 @@ export default function EnquiryProfilePage() {
                 enquiry.comments.map((c) => (
                   <div
                     key={c.id}
-                    className="bg-[#f9f9fb] border border-[#dee2e6] rounded-xl p-3.5 shadow-2xs hover:bg-white hover:shadow-xs transition-all"
+                    className="bg-[#f9f9fb] border border-[#dee2e6] rounded-xl p-3.5 shadow-2xs hover:bg-white hover:shadow-xs transition"
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
@@ -705,7 +705,7 @@ export default function EnquiryProfilePage() {
       {/* MODAL 1: UPDATE STATUS MODAL */}
       {showStatusModal && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-md border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-md border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <h3 className="font-bold text-slate-800 text-base">Update Status</h3>
               <button
@@ -768,7 +768,7 @@ export default function EnquiryProfilePage() {
       {/* MODAL 2: ADD PAYMENT MODAL */}
       {showPaymentModal && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-md border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-md border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <h3 className="font-bold text-slate-800 text-base">Add Payment</h3>
               <button
@@ -862,7 +862,7 @@ export default function EnquiryProfilePage() {
       {/* MODAL 3: UPDATE FOLLOW-UP DATE */}
       {showFollowupModal && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <h3 className="font-bold text-slate-800 text-base">Update Follow-up Date</h3>
               <button
@@ -909,7 +909,7 @@ export default function EnquiryProfilePage() {
       {/* MODAL 4: DELETE CONFIRMATION */}
       {showDeleteModal && (
         <div data-crm-fade className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <h3 className="font-bold text-slate-800 text-base">Confirm Deletion</h3>
               <button

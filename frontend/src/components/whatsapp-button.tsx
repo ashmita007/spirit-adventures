@@ -66,7 +66,7 @@ export default function WhatsAppButton() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with Spirit Adventures on WhatsApp"
-          className="group relative flex items-center justify-center w-13 h-13 sm:w-15 sm:h-15 rounded-full bg-gradient-to-tr from-[#1EBE5D] via-[#25D366] to-[#45E87D] text-white shadow-2xl hover:shadow-[#25D366]/60 transition-all duration-300 hover:scale-110 active:scale-95 border-2 border-white/80"
+          className="group relative flex items-center justify-center w-13 h-13 sm:w-15 sm:h-15 rounded-full bg-gradient-to-tr from-[#1EBE5D] via-[#25D366] to-[#45E87D] text-white shadow-2xl hover:shadow-[#25D366]/60 transition duration-300 hover:scale-110 active:scale-95 border-2 border-white/80"
         >
           {/* Authentic WhatsApp SVG Logo */}
           <svg

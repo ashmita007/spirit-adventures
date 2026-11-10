@@ -34,10 +34,6 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-14">
             <div>
-              <div data-anim="fade-up" className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-light text-brand-ocean text-xs font-bold uppercase tracking-[0.2em] mb-3 border border-brand-sky/30 shadow-2xs">
-                <Flame className="w-3.5 h-3.5 text-brand-ocean" />
-                <span>Handpicked Expeditions</span>
-              </div>
 
               <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl text-brand-navy uppercase tracking-tight">
                 Recent Packages & Adventures
@@ -46,9 +42,9 @@ export default async function HomePage() {
 
             <Link
               href="/trips"
-              className="hidden sm:inline-flex mt-4 sm:mt-0 items-center space-x-2 text-xs font-extrabold uppercase tracking-wider text-brand-ocean hover:text-brand-navy transition group"
+              className="hidden sm:inline-flex mt-4 sm:mt-0 items-center space-x-2 text-xs font-extrabold uppercase tracking-wide text-brand-ocean hover:text-brand-navy transition group"
             >
-              <span>Explore All Packages</span>
+              <span className="whitespace-nowrap">Explore all packages</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
             </Link>
           </div>
@@ -66,8 +62,8 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="mt-4 flex items-center justify-between sm:hidden">
-            <span className="text-xs font-semibold text-slate-500">Swipe to see more →</span>
-            <Link href="/trips" className="inline-flex h-11 items-center rounded-full bg-brand-navy px-5 text-xs font-bold uppercase tracking-wider text-white active:scale-95 transition">
+            <span className="text-xs font-semibold text-slate-500">Swipe for more</span>
+            <Link href="/trips" className="inline-flex h-11 items-center rounded-full bg-brand-navy px-5 text-xs font-bold uppercase tracking-wide text-white active:scale-95 transition">
               All {allTrips.length} trips
             </Link>
           </div>
@@ -93,27 +89,23 @@ export default async function HomePage() {
         <div data-parallax="-0.3" className="absolute -bottom-32 -left-32 w-[32rem] h-[32rem] bg-brand-sky/20 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center z-10">
-          <div data-anim="fade-up" className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-sky text-xs font-bold uppercase tracking-widest mb-6 border border-white/15 shadow-lg">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Ready for the Wild?</span>
-          </div>
 
           <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl md:text-6xl uppercase tracking-tight leading-[1.08]">
             Leave the Noise Behind. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-sky-300 to-white">
+            <span>
               Your Mountain Awaits.
             </span>
           </h2>
 
           <p data-anim="fade-up" className="mt-5 text-slate-300 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-light leading-relaxed">
-            Whether you seek high Himalayan summits, starry beachside camps, or rapid river rafting—our certified captains are ready to guide you.
+            Himalayan summits, beach camps or river rafting: our certified trip captains lead every batch.
           </p>
 
           <div data-anim="fade-up" className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               data-magnetic
               href="/trips"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-9 py-4 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:shadow-cyan-500/25 hover:scale-[1.03] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-9 py-4 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm uppercase tracking-wide transition duration-300 shadow-xl hover:shadow-cyan-500/25 hover:scale-[1.03] active:scale-[0.98]"
             >
               <span>Explore All Trips</span>
               <ArrowRight className="w-4 h-4" />
@@ -122,7 +114,7 @@ export default async function HomePage() {
             <Link
               data-magnetic
               href="/contact"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-9 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm uppercase tracking-wider transition-all duration-300 border border-white/25 hover:scale-[1.03] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-9 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm uppercase tracking-wide transition duration-300 border border-white/25 hover:scale-[1.03] active:scale-[0.98]"
             >
               <Compass className="w-4 h-4 text-brand-sky" />
               <span>Talk to an Expert</span>

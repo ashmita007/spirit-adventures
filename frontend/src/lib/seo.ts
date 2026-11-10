@@ -7,7 +7,7 @@ export const LOGO_URL = `${SITE_URL}/images/logo.png`;
 export const PHONE = "+91-9666567551";
 export const EMAIL = "info@spiritadventures.in";
 export const DEFAULT_DESCRIPTION =
-  "Small-group treks, river rafting, beach trails and Himalayan expeditions from Hyderabad and Bengaluru with certified trek leaders. Gokarna, Dandeli, Coorg, Kedarkantha, Ladakh and more.";
+  "Small-group treks, river rafting, beach trails and Himalayan trips from Hyderabad and Bengaluru with certified leaders. Gokarna, Dandeli, Coorg, Ladakh & more.";
 
 export const absoluteUrl = (path = "/") => (path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`);
 
@@ -79,8 +79,8 @@ export function tripJsonLd(trip: Trip) {
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
-    name: trip.title,
-    description: trip.short_description,
+    name: tripDisplayName(trip.title),
+    description: tripMetaDescription(trip),
     url: absoluteUrl(`/trips/${trip.slug}`),
     image: trip.cover_image ? [trip.cover_image] : [LOGO_URL],
     touristType: trip.category_name || "Adventure travellers",
@@ -100,7 +100,7 @@ export function tripJsonLd(trip: Trip) {
       itemListElement: (trip.itinerary_days?.length ? trip.itinerary_days : [{ title: destName }]).map((d, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        item: { "@type": "TouristAttraction", name: d.title },
+        item: { "@type": "TouristAttraction", name: cleanText(d.title) || destName },
       })),
     };
   }
@@ -114,4 +114,83 @@ export function tripJsonLd(trip: Trip) {
     };
   }
   return data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Trip metadata: short, unique titles and descriptions per package    */
+/* ------------------------------------------------------------------ */
+
+const SMALL_WORDS = new Set(["and", "of", "the", "to", "in", "on", "for", "via", "with", "at", "by"]);
+const EMOJI = /[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu;
+
+/** Strip emoji and collapse whitespace. */
+export const cleanText = (s = "") => s.replace(EMOJI, "").replace(/\s+/g, " ").trim();
+
+/** "3D 2N GOKARNA & DANDELI" -> "Gokarna & Dandeli". Mixed-case titles are left alone. */
+export function tripDisplayName(title: string) {
+  const base = cleanText(title).replace(/^\d+\s*D\s*\/?\s*\d+\s*N\s+/i, "").trim() || cleanText(title);
+  if (base !== base.toUpperCase()) return base;
+  return base
+    .toLowerCase()
+    .split(" ")
+    .map((w, i) => (i > 0 && SMALL_WORDS.has(w) ? w : w.replace(/^(\p{L})/u, (c) => c.toUpperCase())))
+    .join(" ")
+    .replace(/\bG&d\b/g, "G&D");
+}
+
+function truncateWords(s: string, max: number) {
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:\-–—&]+$/, "").trim()}…`;
+}
+
+const inr = (n: number) => `₹${Math.round(Number(n)).toLocaleString("en-IN")}`;
+
+/** Title tag under ~60 chars: "Gokarna & Dandeli 3D/2N Trip from ₹6,200 | Spirit Adventures". */
+export function tripMetaTitle(trip: Trip) {
+  if (trip.meta_title?.trim()) return trip.meta_title.trim();
+  const name = tripDisplayName(trip.title);
+  const dur = trip.duration_days ? `${trip.duration_days}D/${trip.duration_nights}N` : "";
+  const candidates = [
+    `${name} ${dur} Trip from ${inr(trip.price)} | ${SITE_NAME}`,
+    `${name} ${dur} from ${inr(trip.price)} | ${SITE_NAME}`,
+    `${name} | ${SITE_NAME}`,
+    `${name} ${dur} from ${inr(trip.price)}`,
+  ].map((c) => c.replace(/\s+/g, " "));
+  return candidates.find((c) => c.length <= 60) || truncateWords(name, 60);
+}
+
+/** Templated seed copy ("Curated 3 Days / 2 Nights adventure through X…") is identical across trips. */
+const isTemplatedDescription = (s = "") => /^curated \d+ days? \/ \d+ nights? adventure through/i.test(s.trim());
+
+/** Meta description (≤158 chars), unique per trip, built from real itinerary and inclusions. */
+export function tripMetaDescription(trip: Trip) {
+  if (trip.meta_description?.trim()) return trip.meta_description.trim();
+  const short = cleanText(trip.short_description);
+  if (short && !isTemplatedDescription(short)) return truncateWords(short, 158);
+
+  const name = tripDisplayName(trip.title);
+  const stops = Array.from(
+    new Set(
+      (trip.itinerary_days || [])
+        .map((d) => tripDisplayName(cleanText(d.title).replace(/^day\s*\d+\s*[:\-–]\s*/i, "")))
+        .filter((s) => s && s.length <= 40)
+    )
+  ).slice(0, 3);
+  const incl = (trip.inclusions || []).map((i) => cleanText(i).replace(/\s*\(.*?\)\s*/g, " ").trim()).filter(Boolean).slice(0, 2);
+
+  // Append whole sentences only while they fit, so nothing is cut mid-phrase.
+  let d = `${name}: ${trip.duration_days} days, ${trip.duration_nights} nights from ${inr(trip.price)} per person.`;
+  const extras = [
+    stops.length ? `Covers ${stops.join(", ")}.` : "",
+    incl.length ? `Includes ${incl.join(" and ")}.` : "",
+    incl.length > 1 ? `Includes ${incl[0]}.` : "",
+    `Book with ${SITE_NAME}.`,
+  ];
+  for (const extra of extras) {
+    if (extra && d.length + 1 + extra.length <= 158 && !(extra.startsWith("Includes") && d.includes("Includes"))) {
+      d += ` ${extra}`;
+    }
+  }
+  return truncateWords(d, 158);
 }

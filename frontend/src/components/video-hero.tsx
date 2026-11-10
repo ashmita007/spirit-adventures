@@ -55,6 +55,14 @@ const POPULAR_DESTINATIONS = [
 
 const POPULAR_TAGS = ["Coorg", "Gokarna", "Dandeli", "Munnar", "Chikmagalur", "Ooty", "Manali"];
 
+const POSTER_WIDTHS = [640, 960, 1280, 1920];
+
+/** Ask Cloudinary for a resized image: ".../upload/f_auto,q_auto/..." -> ".../upload/w_960,c_limit,f_auto,q_auto/...". */
+function cloudinaryWidth(url: string, width: number) {
+  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) return url;
+  return url.replace("/upload/", `/upload/w_${width},c_limit,`);
+}
+
 export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -111,7 +119,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
     : POPULAR_DESTINATIONS.slice(0, 6);
 
   return (
-    <section data-anim="hero" aria-label="Spirit Adventures" className="relative min-h-[92vh] sm:min-h-screen w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
+    <section data-anim="hero" aria-label="Spirit Adventures" className="relative min-h-[92dvh] sm:min-h-dvh w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
       {/* 1. Full-Screen Clean Video Background with Instant Poster & Smooth Playback */}
       <div data-hero-bg className="absolute inset-0 z-0 overflow-hidden pointer-events-none will-change-transform">
         {HERO_SCENES.map((scene, idx) => {
@@ -125,20 +133,26 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                 isActive ? "opacity-100 z-10" : "opacity-0 z-0"
               )}
             >
-              {/* Instant High-Res Poster Image Background */}
-              <img
-                src={scene.posterUrl}
-                alt=""
-                aria-hidden="true"
-                fetchPriority={idx === 0 ? "high" : "low"}
-                className="absolute inset-0 w-full h-full object-cover object-center scale-105"
-                loading={idx === 0 ? "eager" : "lazy"}
-              />
+              {/* Poster: only the current and next slide are fetched (hidden slides
+                  still download because they sit inside the viewport), sized to the screen */}
+              {(isActive || idx === (currentSceneIndex + 1) % HERO_SCENES.length) && (
+                <img
+                  src={cloudinaryWidth(scene.posterUrl, 1280)}
+                  srcSet={POSTER_WIDTHS.map((w) => `${cloudinaryWidth(scene.posterUrl, w)} ${w}w`).join(", ")}
+                  sizes="100vw"
+                  alt=""
+                  aria-hidden="true"
+                  decoding="async"
+                  fetchPriority={idx === 0 ? "high" : "low"}
+                  className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                />
+              )}
 
               {/* Ultra-Fast Web Stream Video (loaded only for active & next scene) */}
               {isActive && (
                 <video
-                  poster={scene.posterUrl}
+                  poster={cloudinaryWidth(scene.posterUrl, 1280)}
                   autoPlay
                   muted
                   loop
@@ -164,15 +178,11 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
       {/* 3. Mobile-First Hero Content */}
       <div data-hero-content className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-16 sm:py-32 flex flex-col items-center [perspective:900px]">
         {/* Sleek Pill Badge */}
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-white/20 text-white text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] shadow-2xl mb-4 sm:mb-6" data-hero-item>
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Himalayas & South India Expeditions</span>
-        </div>
 
         {/* Impactful Heading */}
         <h1 data-hero-item="title" className="font-display font-black text-[2.6rem] sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-[1.08] drop-shadow-2xl text-balance">
           FIND YOUR NEXT <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-sky-300 to-white">
+          <span className="text-brand-sky">
             ADVENTURE
           </span>
         </h1>
@@ -186,7 +196,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         <div data-hero-item ref={searchContainerRef} className="relative w-full max-w-xl mt-6 sm:mt-8">
           <form
             onSubmit={handleSearchSubmit}
-            className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition-all duration-300 z-30"
+            className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition duration-300 z-30"
           >
             <div className="pl-3 sm:pl-4 text-slate-400">
               <Search className="w-5 h-5 text-brand-ocean" />
@@ -200,16 +210,16 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                 setSearchQuery(e.target.value);
                 setIsFocused(true);
               }}
-              placeholder="Search destination, treks, rafting…"
+              placeholder="Search treks, rafting, places…"
               aria-label="Search adventures"
-              className="w-full bg-transparent px-3 py-2 text-xs sm:text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none font-medium"
+              className="w-full min-w-0 bg-transparent px-3 py-3 sm:py-2 text-base sm:text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none font-medium"
             />
 
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full mr-1 transition cursor-pointer"
+                className="p-2.5 text-slate-400 hover:text-slate-600 rounded-full mr-1 transition cursor-pointer"
                 aria-label="Clear search"
               >
                 <X className="w-4 h-4" />
@@ -218,7 +228,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 
             <button
               type="submit"
-              className="flex-shrink-0 inline-flex items-center space-x-1.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-brand-ocean hover:bg-brand-navy text-white text-xs sm:text-sm font-bold tracking-wider transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+              className="flex-shrink-0 inline-flex items-center space-x-1.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-brand-ocean hover:bg-brand-navy text-white text-xs sm:text-sm font-bold tracking-wide transition duration-200 shadow-md active:scale-95 cursor-pointer"
             >
               <span>Search</span>
               <ArrowRight className="w-3.5 h-3.5 hidden sm:inline" />
@@ -228,7 +238,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           {/* Destination Autocomplete Suggestions Dropdown */}
           {isFocused && matchingDestinations.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-slate-950/95 backdrop-blur-xl border border-white/15 rounded-3xl p-3 shadow-2xl z-40 text-left animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 flex items-center justify-between">
                 <span>Destinations & Regions</span>
                 <span className="text-brand-sky">Direct Match</span>
               </div>
@@ -294,7 +304,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           <Link
             data-magnetic
             href="/trips"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 active:scale-[0.98]"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-brand-ocean hover:bg-brand-ocean-light text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xl hover:shadow-cyan-500/25 transition duration-300 active:scale-[0.98]"
           >
             <span>Explore All Trips</span>
             <ArrowRight className="w-4 h-4" />
@@ -303,7 +313,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
           <Link
             data-magnetic
             href="/contact"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all duration-300 active:scale-[0.98]"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-7 py-3.5 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs sm:text-sm tracking-wide transition duration-300 active:scale-[0.98]"
           >
             <Compass className="w-4 h-4 text-brand-sky" />
             <span>Custom Plan</span>
@@ -320,7 +330,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                 onClick={() => setCurrentSceneIndex(idx)}
                 aria-label={`Switch to video background ${idx + 1}`}
                 className={cn(
-                  "h-1.5 rounded-full transition-all duration-500",
+                  "h-1.5 rounded-full transition duration-500",
                   isActive
                     ? "w-8 sm:w-10 bg-brand-sky shadow-md shadow-sky-400/50"
                     : "w-2.5 sm:w-3 bg-white/30 hover:bg-white/60"
@@ -331,7 +341,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </div>
       </div>
       {/* Scroll cue */}
-      <div aria-hidden className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 hidden sm:flex flex-col items-center gap-2 text-white/60 text-[10px] font-semibold tracking-[0.35em] uppercase">
+      <div aria-hidden className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 hidden sm:flex flex-col items-center gap-2 text-white/60 text-[10px] font-semibold">
         <span>Scroll</span>
         <span className="relative h-10 w-px overflow-hidden bg-white/25">
           <span className="absolute inset-x-0 top-0 h-1/2 bg-brand-sky animate-[sa-scroll-cue_1.8s_ease-in-out_infinite]" />

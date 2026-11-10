@@ -212,7 +212,7 @@ export default function TripsExplorer({
 
           <button
             type="submit"
-            className="flex-shrink-0 inline-flex items-center space-x-1.5 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full bg-brand-ocean hover:bg-brand-navy text-white text-xs sm:text-sm font-bold tracking-wider transition-all duration-200 shadow-md active:scale-95"
+            className="flex-shrink-0 inline-flex items-center space-x-1.5 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full bg-brand-ocean hover:bg-brand-navy text-white text-xs sm:text-sm font-bold tracking-wide transition duration-200 shadow-md active:scale-95"
           >
             <Search className="w-4 h-4 sm:hidden" />
             <span className="hidden sm:inline">Search Adventures</span>
@@ -223,7 +223,7 @@ export default function TripsExplorer({
         <div className="mt-3 pt-3 sm:mt-5 sm:pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 sm:gap-3">
           {/* Destination Dropdown */}
           <div className="relative">
-            <label htmlFor="f-dest" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="f-dest" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold text-slate-500 mb-1">
               Destination
             </label>
             <select
@@ -243,7 +243,7 @@ export default function TripsExplorer({
 
           {/* Difficulty Dropdown */}
           <div className="relative">
-            <label htmlFor="f-diff" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="f-diff" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold text-slate-500 mb-1">
               Difficulty
             </label>
             <select
@@ -261,7 +261,7 @@ export default function TripsExplorer({
 
           {/* Sort By Dropdown */}
           <div className="relative">
-            <label htmlFor="f-sort" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="f-sort" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold text-slate-500 mb-1">
               Sort By
             </label>
             <select
@@ -406,7 +406,7 @@ export default function TripsExplorer({
           </p>
           <button
             onClick={handleResetFilters}
-            className="inline-flex items-center space-x-2 mt-5 px-6 py-2.5 rounded-full bg-brand-navy text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-ocean transition shadow-md"
+            className="inline-flex items-center space-x-2 mt-5 px-6 py-2.5 rounded-full bg-brand-navy text-white text-xs font-semibold uppercase tracking-wide hover:bg-brand-ocean transition shadow-md"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset All Filters</span>

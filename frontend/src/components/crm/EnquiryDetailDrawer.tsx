@@ -203,7 +203,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
               {enquiry && (
                 <Link
                   href={`/crm/enquiry/${enquiry.id}`}
-                  className="p-1.5 rounded-md text-white/90 hover:text-white hover:bg-white/20 transition-all flex items-center gap-1 text-xs font-semibold"
+                  className="p-1.5 rounded-md text-white/90 hover:text-white hover:bg-white/20 transition flex items-center gap-1 text-xs font-semibold"
                   title="Open Full Page Profile"
                 >
                   <ExternalLink className="h-4 w-4" /> Full Profile
@@ -212,7 +212,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
               {auth.canDelete && (
                 <button
                   onClick={handleDelete}
-                  className="p-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                  className="p-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/20 transition cursor-pointer"
                   title="Delete Enquiry (Manager Only)"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -220,7 +220,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
               )}
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                className="p-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/20 transition cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -337,13 +337,13 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                         {enquiry.total_people} Total
                       </span>
                       <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-medium">
-                        👦 {enquiry.boys_count} Boys
+                        {enquiry.boys_count} Boys
                       </span>
                       <span className="px-1.5 py-0.5 rounded bg-pink-50 text-pink-700 font-medium">
-                        👧 {enquiry.girls_count} Girls
+                        {enquiry.girls_count} Girls
                       </span>
                       <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 font-medium">
-                        💑 {enquiry.couples_count} Couples
+                        {enquiry.couples_count} Couples
                       </span>
                     </div>
                   </div>
@@ -387,7 +387,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                   {/* Progress Bar */}
                   <div className="w-full bg-slate-200 rounded-full h-4 mb-3 overflow-hidden shadow-inner">
                     <div
-                      className="bg-[#17a2b8] h-full text-white text-[10px] font-bold flex items-center justify-center transition-all duration-300"
+                      className="bg-[#17a2b8] h-full text-white text-[10px] font-bold flex items-center justify-center transition duration-300"
                       style={{ width: `${paidPercent}%` }}
                     >
                       {paidPercent}%
@@ -397,15 +397,15 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                   {/* 3 Metrics */}
                   <div className="grid grid-cols-3 gap-2 text-center py-2 border-y border-slate-100 mb-3 text-xs">
                     <div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Target Fees</div>
+                      <div className="text-[10px] text-slate-400 font-bold">Target Fees</div>
                       <div className="text-sm font-bold text-slate-800 mt-0.5">₹{totalAmount.toLocaleString()}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Advance Paid</div>
+                      <div className="text-[10px] text-slate-400 font-bold">Advance Paid</div>
                       <div className="text-sm font-bold text-emerald-600 mt-0.5">₹{advancePaid.toLocaleString()}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Balance Due</div>
+                      <div className="text-[10px] text-slate-400 font-bold">Balance Due</div>
                       <div className="text-sm font-bold text-rose-600 mt-0.5">₹{balanceAmount.toLocaleString()}</div>
                     </div>
                   </div>
@@ -438,15 +438,15 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                           onChange={(e) => setCallStatus(e.target.value)}
                           className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs text-slate-800 focus:outline-hidden focus:border-[#062B49]"
                         >
-                          <option value="connected">📞 Connected</option>
-                          <option value="interested">⭐ Interested</option>
-                          <option value="call_busy">⏳ Call Busy</option>
-                          <option value="call_not_picked">❌ Not Picked</option>
-                          <option value="callback_requested">🔄 Callback Req</option>
-                          <option value="whatsapp_sent">💬 WhatsApp Sent</option>
-                          <option value="advance_collected">💰 Advance Collected</option>
-                          <option value="payment_followup">💳 Payment Followup</option>
-                          <option value="general_note">📝 General Note</option>
+                          <option value="connected">Connected</option>
+                          <option value="interested">Interested</option>
+                          <option value="call_busy">Call Busy</option>
+                          <option value="call_not_picked">Not Picked</option>
+                          <option value="callback_requested">Callback Req</option>
+                          <option value="whatsapp_sent">WhatsApp Sent</option>
+                          <option value="advance_collected">Advance Collected</option>
+                          <option value="payment_followup">Payment Followup</option>
+                          <option value="general_note">General Note</option>
                         </select>
                       </div>
 
@@ -538,7 +538,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
       {/* DRAWER MODAL 1: STATUS */}
       {showStatusModal && (
         <div data-crm-fade className="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50 font-bold text-sm text-slate-800">
               <span>Update Status</span>
               <button onClick={() => setShowStatusModal(false)}><X className="w-4 h-4" /></button>
@@ -590,7 +590,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
       {/* DRAWER MODAL 2: PAYMENT */}
       {showPaymentModal && (
         <div data-crm-fade className="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-sm border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50 font-bold text-sm text-slate-800">
               <span>Record Payment</span>
               <button onClick={() => setShowPaymentModal(false)}><X className="w-4 h-4" /></button>
@@ -658,7 +658,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
       {/* DRAWER MODAL 3: FOLLOWUP DATE */}
       {showFollowupModal && (
         <div data-crm-fade className="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-xs border border-slate-200 overflow-hidden">
+          <div data-crm-pop className="bg-white rounded-xl shadow-xl w-full max-w-xs border border-slate-200 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain">
             <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50 font-bold text-sm text-slate-800">
               <span>Update Follow-up Date</span>
               <button onClick={() => setShowFollowupModal(false)}><X className="w-4 h-4" /></button>

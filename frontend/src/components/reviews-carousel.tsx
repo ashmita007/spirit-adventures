@@ -37,17 +37,13 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
 
             <div>
               {/* Badge */}
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200/80 mb-4 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Google Verified Reviews</span>
-              </div>
 
               <h2 className="font-display font-black text-2xl sm:text-3xl text-brand-navy uppercase tracking-tight leading-tight">
                 Loved by <span data-count="500" data-count-suffix="+">500+</span> Adventurers
               </h2>
               
               <p className="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
-                Real stories from travelers who conquered mountain peaks, coastal cliffs, and white water rapids with us.
+                Reviews from travellers on our treks, beach trips and rafting batches.
               </p>
 
               {/* Google Super Rating Display */}
@@ -115,7 +111,7 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
 
 function ReviewCardCompact({ review }: { review: Review }) {
   return (
-    <div className="w-[320px] sm:w-[350px] flex-shrink-0 bg-white/90 hover:bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 hover:border-brand-sky/60 shadow-2xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1 backdrop-blur-xs flex flex-col justify-between">
+    <div className="w-[320px] sm:w-[350px] flex-shrink-0 bg-white/90 hover:bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 hover:border-brand-sky/60 shadow-2xs hover:shadow-lg transition duration-300 hover:-translate-y-1 backdrop-blur-xs flex flex-col justify-between">
       <div>
         {/* Top: Stars + Trip Title Badge */}
         <div className="flex items-center justify-between gap-2 mb-2.5">
@@ -126,7 +122,7 @@ function ReviewCardCompact({ review }: { review: Review }) {
           </div>
 
           {review.trip_title && (
-            <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-brand-light text-brand-ocean text-[10px] font-bold uppercase tracking-wider border border-brand-sky/20 truncate max-w-[160px]">
+            <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-brand-light text-brand-ocean text-[10px] font-bold border border-brand-sky/20 truncate max-w-[160px]">
               <MapPin className="w-2.5 h-2.5 text-brand-ocean flex-shrink-0" />
               <span className="truncate">{review.trip_title}</span>
             </div>

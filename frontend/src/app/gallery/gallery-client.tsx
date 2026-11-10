@@ -24,7 +24,7 @@ export default function GalleryClient({ initialImages }: GalleryClientProps) {
   const lightboxImages = filteredImages.map((img) => ({
     url: img.image_url,
     title: img.title,
-    caption: `${img.location || ""} • ${img.caption || ""}`.trim(),
+    caption: [img.location, img.caption].filter(Boolean).join(", "),
   }));
 
   return (
@@ -38,7 +38,7 @@ export default function GalleryClient({ initialImages }: GalleryClientProps) {
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={cn(
-                "px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all shadow-sm border flex-shrink-0",
+                "px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wide transition shadow-sm border flex-shrink-0",
                 isSelected
                   ? "bg-brand-navy text-white border-brand-navy shadow"
                   : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
@@ -56,7 +56,7 @@ export default function GalleryClient({ initialImages }: GalleryClientProps) {
           <div
             key={img.id}
             onClick={() => setLightboxIndex(idx)}
-            className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
+            className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition duration-300"
           >
             <Image
               src={img.image_url}
@@ -70,7 +70,7 @@ export default function GalleryClient({ initialImages }: GalleryClientProps) {
                 <Maximize2 className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-brand-sky block">
+                <span className="text-[10px] font-bold text-brand-sky block">
                   {img.category}
                 </span>
                 <h4 className="font-display font-bold text-base text-white leading-tight mt-0.5">

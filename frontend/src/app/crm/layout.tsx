@@ -13,7 +13,7 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <CrmMotion />
-      <div className="min-h-screen bg-[#f8f9fa] text-slate-800 -mb-16 md:mb-0">{children}</div>
+      <div className="min-h-dvh bg-[#f8f9fa] text-slate-800 -mb-16 md:mb-0">{children}</div>
     </AuthProvider>
   );
 }

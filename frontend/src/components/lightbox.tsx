@@ -56,8 +56,8 @@ export default function Lightbox({
       )}
 
       {/* Main Image View */}
-      <div className="relative max-w-5xl max-h-[85vh] w-full h-full flex flex-col items-center justify-center">
-        <div className="relative w-full h-[75vh] flex items-center justify-center">
+      <div className="relative max-w-5xl max-h-[85dvh] w-full h-full flex flex-col items-center justify-center">
+        <div className="relative w-full h-[75dvh] flex items-center justify-center">
           <Image
             src={currentImage.url}
             alt={currentImage.title || currentImage.caption || "Nature Adventure"}

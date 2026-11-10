@@ -346,7 +346,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
             setEditingTrip(newTrip);
             setEditorTab("itinerary");
           }}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-md cursor-pointer hover:scale-105 active:scale-95"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-md cursor-pointer hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Add package</span>
@@ -412,7 +412,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black text-slate-500">
               <tr>
                 <th className="py-4 px-4">Preview</th>
                 <th className="py-4 px-4">Package Name</th>
@@ -454,7 +454,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
                   <td className="py-3 px-4">
                     <span className="inline-flex whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200">
-                      📍 {trip.destination_name}
+                      {trip.destination_name}
                     </span>
                   </td>
 
@@ -463,7 +463,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </td>
 
                   <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold uppercase border border-slate-200">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
                       {trip.difficulty}
                     </span>
                   </td>
@@ -540,11 +540,11 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
       {/* DAY-WISE ITINERARY EDITOR MODAL (WHITE THEME) */}
       {editingTrip && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto">
-          <div className="bg-white w-full max-w-4xl max-h-[92vh] rounded-3xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden text-slate-800">
+          <div className="bg-white w-full max-w-4xl max-h-[92dvh] rounded-3xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden text-slate-800">
             {/* Modal Header */}
             <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between bg-brand-navy text-white">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-sky">
+                <span className="text-[10px] font-bold text-brand-sky">
                   Day-Wise Route Architect
                 </span>
                 <h3 className="text-lg sm:text-xl font-display font-black text-white mt-0.5">
@@ -565,19 +565,19 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               <button
                 onClick={() => setEditorTab("itinerary")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "itinerary"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
                 )}
               >
-                ✨ Day-Wise Timeline Table ({(editingTrip.itinerary_days || []).length} Days)
+                Day-Wise Timeline Table ({(editingTrip.itinerary_days || []).length} Days)
               </button>
 
               <button
                 onClick={() => setEditorTab("general")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "general"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -589,19 +589,19 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               <button
                 onClick={() => setEditorTab("media")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "media"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
                 )}
               >
-                🎬 Video Loop Selector
+                Video Loop Selector
               </button>
 
               <button
                 onClick={() => setEditorTab("inclusions")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wider transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
                   editorTab === "inclusions"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -626,7 +626,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
                     <button
                       onClick={handleAddItineraryDay}
-                      className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-2xs cursor-pointer"
+                      className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-2xs cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add Day {(editingTrip.itinerary_days || []).length + 1}</span>
@@ -641,7 +641,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                         className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="px-3 py-1 rounded-xl bg-brand-light text-brand-ocean font-mono font-bold text-xs uppercase tracking-wider border border-brand-ocean/20">
+                          <span className="px-3 py-1 rounded-xl bg-brand-light text-brand-ocean font-mono font-bold text-xs border border-brand-ocean/20">
                             Day {day.day_number} Milestone
                           </span>
 
@@ -655,7 +655,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1">
+                          <label className="block text-[10px] font-bold text-slate-600 mb-1">
                             Trail Activity Goal
                           </label>
                           <input
@@ -667,7 +667,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1">
+                          <label className="block text-[10px] font-bold text-slate-600 mb-1">
                             Trail Description
                           </label>
                           <textarea
@@ -680,7 +680,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-xs">
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-500">Max Altitude</label>
+                            <label className="block text-[9px] font-bold text-slate-500">Max Altitude</label>
                             <input
                               type="text"
                               value={day.altitude || ""}
@@ -691,7 +691,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                           </div>
 
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-500">Trek Distance</label>
+                            <label className="block text-[9px] font-bold text-slate-500">Trek Distance</label>
                             <input
                               type="text"
                               value={day.distance || ""}
@@ -702,7 +702,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                           </div>
 
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-500">Meals Provided</label>
+                            <label className="block text-[9px] font-bold text-slate-500">Meals Provided</label>
                             <input
                               type="text"
                               value={day.meals || ""}
@@ -713,7 +713,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                           </div>
 
                           <div>
-                            <label className="block text-[9px] uppercase font-bold text-slate-500">Stay Type</label>
+                            <label className="block text-[9px] font-bold text-slate-500">Stay Type</label>
                             <input
                               type="text"
                               value={day.stay_type || ""}
@@ -733,7 +733,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               {editorTab === "general" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Package Title
                     </label>
                     <input
@@ -745,7 +745,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Destination Region
                     </label>
                     <input
@@ -761,7 +761,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     <p className="mt-1 text-[10px] text-slate-400">Pick an existing destination so trips group together. A new name creates a new destination.</p>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Category
                     </label>
                     <input
@@ -777,7 +777,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Difficulty Level
                     </label>
                     <select
@@ -793,7 +793,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Price per Person (₹ INR)
                     </label>
                     <input
@@ -805,13 +805,15 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Duration (Days & Nights)
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         type="number"
                         placeholder="Days"
+                        aria-label="Duration in days"
+                        min={1}
                         value={editingTrip.duration_days}
                         onChange={(e) => setEditingTrip({ ...editingTrip, duration_days: Number(e.target.value) })}
                         className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900"
@@ -819,6 +821,8 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                       <input
                         type="number"
                         placeholder="Nights"
+                        aria-label="Duration in nights"
+                        min={0}
                         value={editingTrip.duration_nights}
                         onChange={(e) => setEditingTrip({ ...editingTrip, duration_nights: Number(e.target.value) })}
                         className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900"
@@ -827,7 +831,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-slate-600 mb-1">
                       Short Overview Summary
                     </label>
                     <textarea
@@ -844,7 +848,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               {editorTab === "media" && (
                 <div className="space-y-6">
                   <div>
-                    <label htmlFor="owner-cover-image" className="block text-xs font-bold uppercase text-slate-600 mb-1.5">
+                    <label htmlFor="owner-cover-image" className="block text-xs font-bold text-slate-600 mb-1.5">
                       Cover Image URL (card & share image)
                     </label>
                     <input
@@ -870,7 +874,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     <p className="mt-1 text-[10px] text-slate-400">Upload goes straight to Cloudinary, or paste any https link. Landscape, at least 1200px wide.</p>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase text-brand-ocean mb-1.5">
+                    <label className="block text-xs font-bold text-brand-ocean mb-1.5">
                       Select Local Looping Video (Card & Banner Background)
                     </label>
                     <select
@@ -887,11 +891,11 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     >
                       <option value="">No video (photo only)</option>
                       {editingTrip.hero_video_url && !AVAILABLE_LOCAL_VIDEOS.some((v) => v.value === editingTrip.hero_video_url) && (
-                        <option value={editingTrip.hero_video_url}>⬆️ Uploaded video &mdash; {editingTrip.hero_video_url}</option>
+                        <option value={editingTrip.hero_video_url}>⬆️ Uploaded video: {editingTrip.hero_video_url}</option>
                       )}
                       {AVAILABLE_LOCAL_VIDEOS.map((vid) => (
                         <option key={vid.value} value={vid.value}>
-                          🎬 {vid.label} [{vid.region}] &mdash; {vid.value}
+                          {vid.label} [{vid.region}]: {vid.value}
                         </option>
                       ))}
                     </select>
@@ -916,7 +920,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   <div className="rounded-2xl border border-slate-200 p-4 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <span className="block text-xs font-bold uppercase text-slate-700">Trip photos</span>
+                        <span className="block text-xs font-bold text-slate-700">Trip photos</span>
                         <span className="text-[10px] text-slate-400">Shown in &ldquo;View Photos&rdquo; on the trip page. Save the package after adding.</span>
                       </div>
                       <MediaUploadButton
@@ -988,7 +992,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               {editorTab === "inclusions" && (
                 <div className="space-y-5 text-xs">
                   <div>
-                    <label className="block text-xs font-bold uppercase text-emerald-700 mb-1.5">
+                    <label className="block text-xs font-bold text-emerald-700 mb-1.5">
                       Included in Package (One item per line)
                     </label>
                     <textarea
@@ -1000,7 +1004,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-rose-700 mb-1.5">
+                    <label className="block text-xs font-bold text-rose-700 mb-1.5">
                       Exclusions (One item per line)
                     </label>
                     <textarea
@@ -1012,7 +1016,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-brand-ocean mb-1.5">
+                    <label className="block text-xs font-bold text-brand-ocean mb-1.5">
                       Things to Carry Checklist
                     </label>
                     <textarea
@@ -1037,7 +1041,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
               <button
                 onClick={handleSaveTripForm}
-                className="px-7 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-md flex items-center space-x-1.5 cursor-pointer"
+                className="px-7 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-md flex items-center space-x-1.5 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Day-wise Itinerary</span>

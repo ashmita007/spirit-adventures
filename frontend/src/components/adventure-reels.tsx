@@ -47,7 +47,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     likes: 3420,
     views: "48K",
     tripSlug: "dandeli-river-rafting-jungle-expedition",
-    badge: "🌊 Water Sports",
+    badge: "Water Sports",
     duration: "2D / 1N"
   },
   {
@@ -61,7 +61,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     likes: 4890,
     views: "62K",
     tripSlug: "gokarna-beach-cliff-trek",
-    badge: "🌅 Beach & Cliff",
+    badge: "Beach & Cliff",
     duration: "3D / 2N"
   },
   {
@@ -75,7 +75,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     likes: 2980,
     views: "39K",
     tripSlug: "coorg-tadiandamol-coffee-trail",
-    badge: "☕ Rainforest & Mist",
+    badge: "Rainforest & Mist",
     duration: "2D / 1N"
   },
   {
@@ -89,7 +89,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     likes: 5120,
     views: "71K",
     tripSlug: "chikmagalur-mullayanagiri-ridge-trek",
-    badge: "⛰ Highest Peak",
+    badge: "Highest Peak",
     duration: "2D / 1N"
   },
   {
@@ -103,7 +103,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     likes: 4180,
     views: "54K",
     tripSlug: "wayanad-chembra-peak-waterfall-trail",
-    badge: "💚 Kerala Wilds",
+    badge: "Kerala Wilds",
     duration: "3D / 2N"
   },
   {
@@ -117,7 +117,7 @@ export const ADVENTURE_SHORTS: AdventureShort[] = [
     likes: 3870,
     views: "44K",
     tripSlug: "ooty-nilgiri-pine-forest-expedition",
-    badge: "🚂 Heritage Nilgiris",
+    badge: "Heritage Nilgiris",
     duration: "3D / 2N"
   }
 ];
@@ -176,15 +176,11 @@ export default function AdventureReelsSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12">
           <div>
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">
-              <Flame className="w-3.5 h-3.5" />
-              <span>Trending Shorts & Stories</span>
-            </div>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight uppercase">
-              South India & Himalayan <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-sky-300 to-cyan-200">Reels</span>
+              South India & Himalayan Reels
             </h2>
             <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-xl">
-              Immersive quick shorts from our real expeditions across Gokarna, Dandeli, Coorg, Chikmagalur, Ooty & Wayanad.
+              Short clips from our own trips to Gokarna, Dandeli, Coorg, Chikmagalur, Ooty & Wayanad.
             </p>
           </div>
 
@@ -192,14 +188,14 @@ export default function AdventureReelsSection() {
           <div className="hidden sm:flex items-center space-x-3 mt-4 md:mt-0">
             <button
               onClick={() => scrollHorizontally("left")}
-              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition-all"
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition"
               aria-label="Previous reels"
             >
               <ChevronLeft className="w-5 h-5 text-white" />
             </button>
             <button
               onClick={() => scrollHorizontally("right")}
-              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition-all"
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition"
               aria-label="Next reels"
             >
               <ChevronRight className="w-5 h-5 text-white" />
@@ -252,7 +248,7 @@ export default function AdventureReelsSection() {
                 onClick={() => handleOpenReel(item)}
                 onPointerEnter={() => setHoveredShortId(item.id)}
                 onPointerLeave={() => setHoveredShortId((curr) => curr === item.id ? null : curr)}
-                className="flex-shrink-0 w-[240px] sm:w-[280px] aspect-[9/16] rounded-2xl overflow-hidden relative group cursor-pointer border border-white/10 shadow-2xl snap-start bg-slate-900 transition-all duration-300 hover:scale-[1.02]"
+                className="flex-shrink-0 w-[240px] sm:w-[280px] aspect-[9/16] rounded-2xl overflow-hidden relative group cursor-pointer border border-white/10 shadow-2xl snap-start bg-slate-900 transition duration-300 hover:scale-[1.02]"
               >
                 {/* Instant High-Res Poster Image */}
                 <Image
@@ -283,7 +279,7 @@ export default function AdventureReelsSection() {
                 {/* Play pulse icon on center when not playing */}
                 {!isHovered && (
                   <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                    <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/90 group-hover:scale-110 group-hover:bg-brand-ocean transition-all shadow-lg">
+                    <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/90 group-hover:scale-110 group-hover:bg-brand-ocean transition shadow-lg">
                       <Play className="w-5 h-5 fill-current ml-0.5" />
                     </div>
                   </div>
@@ -316,7 +312,7 @@ export default function AdventureReelsSection() {
                   {/* Actions Bar */}
                   <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between">
                     <span className="text-[11px] text-slate-300 font-medium">
-                      ⏱ {item.duration}
+                      {item.duration}
                     </span>
                     <button
                       onClick={(e) => toggleLike(item.id, e)}
@@ -362,7 +358,7 @@ export default function AdventureReelsSection() {
           {/* Desktop Next/Prev Arrow Controls */}
           <button
             onClick={handlePrevReel}
-            className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center border border-white/20 transition-all hover:scale-110"
+            className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center border border-white/20 transition hover:scale-110"
             aria-label="Previous reel"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -370,14 +366,14 @@ export default function AdventureReelsSection() {
 
           <button
             onClick={handleNextReel}
-            className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center border border-white/20 transition-all hover:scale-110"
+            className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center border border-white/20 transition hover:scale-110"
             aria-label="Next reel"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
 
           {/* Vertical Reel Container */}
-          <div className="relative w-full sm:max-w-[420px] h-full sm:h-[88vh] sm:rounded-3xl overflow-hidden bg-black border border-white/10 shadow-2xl flex flex-col justify-between">
+          <div className="relative w-full sm:max-w-[420px] h-full sm:h-[88dvh] sm:rounded-3xl overflow-hidden bg-black border border-white/10 shadow-2xl flex flex-col justify-between">
             {/* Reel Video Player */}
             <video
               ref={modalVideoRef}
@@ -410,7 +406,7 @@ export default function AdventureReelsSection() {
                 <span className="px-3 py-1 rounded-full bg-white/15 text-xs font-bold text-white border border-white/10">
                   {activeShort.badge}
                 </span>
-                <span className="text-xs text-slate-200 font-medium">📍 {activeShort.location}</span>
+                <span className="text-xs text-slate-200 font-medium">{activeShort.location}</span>
               </div>
 
               {/* Sound Toggle */}
@@ -472,7 +468,7 @@ export default function AdventureReelsSection() {
                 <Link
                   href={`/trips/${activeShort.tripSlug}`}
                   onClick={handleCloseReel}
-                  className="flex-1 py-3 px-4 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm text-center shadow-lg transition-all active:scale-95"
+                  className="flex-1 py-3 px-4 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm text-center shadow-lg transition active:scale-95"
                 >
                   View Trip Details
                 </Link>
@@ -480,7 +476,7 @@ export default function AdventureReelsSection() {
                 <Link
                   href="/contact"
                   onClick={handleCloseReel}
-                  className="py-3 px-4 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-bold text-sm text-center transition-all active:scale-95"
+                  className="py-3 px-4 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-bold text-sm text-center transition active:scale-95"
                 >
                   Inquire Now
                 </Link>

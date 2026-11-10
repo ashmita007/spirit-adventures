@@ -67,7 +67,7 @@ export function AnalyticsClient({ data }: { data: any }) {
 
         <Link
           href="/owner/leads"
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wider transition shadow-sm hover:scale-105 active:scale-95 cursor-pointer w-fit"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-sm hover:scale-105 active:scale-95 cursor-pointer w-fit"
         >
           <span>Open Leads CRM</span>
           <ArrowRight className="w-4 h-4" />
@@ -93,7 +93,7 @@ export function AnalyticsClient({ data }: { data: any }) {
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black text-slate-500">
               <tr>
                 <th className="py-4 px-4">#</th>
                 <th className="py-4 px-4">Destination Hub</th>
@@ -127,12 +127,12 @@ export function AnalyticsClient({ data }: { data: any }) {
 
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-brand-navy text-sm group-hover:text-brand-ocean transition">
-                        📍 {dest.name}
+                        {dest.name}
                       </div>
                     </td>
 
                     <td className="py-3.5 px-4 font-semibold text-slate-700">
-                      {dest.region} &bull; {dest.state}
+                      {dest.region}, {dest.state}
                     </td>
 
                     <td className="py-3.5 px-4 text-slate-500 truncate max-w-[220px]">
@@ -164,7 +164,7 @@ export function AnalyticsClient({ data }: { data: any }) {
                             : "bg-slate-100 text-slate-600 border-slate-200"
                         )}
                       >
-                        {matchingLeads.length > 2 ? "🔥 High Demand" : "⚡ Active"}
+                        {matchingLeads.length > 2 ? "High Demand" : "Active"}
                       </span>
                     </td>
                   </tr>

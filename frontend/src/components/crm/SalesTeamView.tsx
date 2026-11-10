@@ -58,7 +58,7 @@ export const SalesTeamView: React.FC<SalesTeamViewProps> = ({
           return (
             <div
               key={sp.id}
-              className="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-[#0A6FAE]/50 transition-all flex flex-col justify-between"
+              className="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-[#0A6FAE]/50 transition flex flex-col justify-between"
             >
               <div>
                 {/* Profile Header */}
@@ -91,7 +91,7 @@ export const SalesTeamView: React.FC<SalesTeamViewProps> = ({
                   </div>
                   <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-[#0A6FAE] to-[#10b981] h-full rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-[#0A6FAE] to-[#10b981] h-full rounded-full transition duration-500"
                       style={{ width: `${targetPct}%` }}
                     />
                   </div>
@@ -103,13 +103,13 @@ export const SalesTeamView: React.FC<SalesTeamViewProps> = ({
                 {/* Stats Breakdown */}
                 <div className="grid grid-cols-2 gap-2 text-center text-xs pt-1">
                   <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block uppercase font-bold">
+                    <span className="text-slate-400 text-[10px] block font-bold">
                       Assigned Leads
                     </span>
                     <strong className="text-slate-800 font-mono text-sm">{spEnquiries.length}</strong>
                   </div>
                   <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
-                    <span className="text-emerald-700 text-[10px] block uppercase font-bold">
+                    <span className="text-emerald-700 text-[10px] block font-bold">
                       Joined Bookings
                     </span>
                     <strong className="text-emerald-800 font-mono text-sm">{bookedEnquiries.length}</strong>
@@ -120,7 +120,7 @@ export const SalesTeamView: React.FC<SalesTeamViewProps> = ({
               {/* Filter Button */}
               <button
                 onClick={() => onFilterBySalesperson(sp.id)}
-                className="mt-4 w-full py-2 rounded-lg bg-slate-100 hover:bg-[#0A6FAE] hover:text-white text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                className="mt-4 w-full py-2 rounded-lg bg-slate-100 hover:bg-[#0A6FAE] hover:text-white text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
               >
                 <span>View Counsellor Pipeline</span>
                 <ChevronRight className="h-3.5 w-3.5" />

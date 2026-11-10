@@ -82,8 +82,8 @@ class TripListOut(Schema):
     trek_distance: Optional[str] = ""
     is_featured: bool
     is_bestseller: bool
-    rating: float = 4.9
-    reviews_count: int = 24
+    rating: Optional[float] = None
+    reviews_count: int = 0
 
 class TripDetailOut(Schema):
     id: int
@@ -118,8 +118,8 @@ class TripDetailOut(Schema):
     itinerary_days: List[TripItineraryOut] = []
     faqs: List[FAQOut] = []
     reviews: List[ReviewOut] = []
-    rating: float = 4.9
-    reviews_count: int = 24
+    rating: Optional[float] = None
+    reviews_count: int = 0
 
 class EnquiryIn(Schema):
     trip_id: Optional[int] = None

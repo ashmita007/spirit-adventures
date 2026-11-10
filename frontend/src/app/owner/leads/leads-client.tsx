@@ -28,25 +28,25 @@ const PIPELINE_STAGES: Array<{
 const WHATSAPP_TEMPLATES = [
   {
     id: "itinerary",
-    title: "📋 Full Itinerary & Quote",
+    title: "Full Itinerary & Quote",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n${lead.trip_price ? `• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)` : "• *Package Price*: we'll share your exact quote shortly"}\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
   },
   {
     id: "payment",
-    title: "💳 Payment & Booking Link",
+    title: "Payment & Booking Link",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! ✨ Your slots for *${lead.trip_title}* (${lead.travelers_count || 1} Pax) are temporarily held.\n\n${lead.trip_price ? `Total Booking Amount: *₹${((lead.travelers_count || 1) * lead.trip_price).toLocaleString("en-IN")}*` : "We'll confirm your total booking amount shortly."}\n\nPlease complete your advance confirmation to lock in your mountain tent / homestay reservation. Let us know once completed and we'll dispatch your expedition kit list! 🎒`
   },
   {
     id: "checklist",
-    title: "🎒 Things to Carry Checklist",
+    title: "Things to Carry Checklist",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🏕️ Here is your essential packing list for *${lead.trip_title}*:\n\n1. Trekking / Trail shoes with good rubber grip\n2. Quick-dry synthetic t-shirts & track pants\n3. Warm fleece / windcheater for evenings\n4. Reusable 1L water bottle\n5. Personal medication, headlamp/torch & power bank\n\nOur team leader contact will be shared 24 hours prior to departure.`
   },
   {
     id: "pickup",
-    title: "📍 Pickup Hub & Timing",
+    title: "Pickup Hub & Timing",
     generateText: (lead: OwnerEnquiry) => 
       `Hi ${lead.full_name}! 🚌 Pickup logistics for *${lead.trip_title}*:\n\n• *Departure City*: ${lead.departure_city || "Hyderabad / Bengaluru"}\n• *Pickup Point*: Main Hub (Exact GPS pin will be shared)\n• *Reporting Time*: Friday 7:00 PM\n• *Expedition Lead*: Spirit Adventures Ops Team (Aditya / Sathwik)\n\nSee you at the pickup point! Let us know if you have any questions.`
   }
@@ -301,7 +301,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
 
         <button
           onClick={() => setIsAddLeadOpen(true)}
-          className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider transition shadow-md hover:scale-105 active:scale-95 cursor-pointer"
+          className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wide transition shadow-md hover:scale-105 active:scale-95 cursor-pointer"
         >
           <UserPlus className="w-4 h-4" />
           <span>+ Add Lead</span>
@@ -328,9 +328,9 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
             className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean cursor-pointer"
           >
             <option value="ALL">All Priorities</option>
-            <option value="HIGH">🔥 High Priority (VIP)</option>
-            <option value="MEDIUM">⚡ Medium</option>
-            <option value="LOW">💤 Low</option>
+            <option value="HIGH">High Priority (VIP)</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
           </select>
 
           <select
@@ -370,7 +370,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500 whitespace-nowrap">
+            <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-black text-slate-500 whitespace-nowrap">
               <tr>
                 <th className="py-4 px-3 w-10 text-center hidden xl:table-cell">#</th>
                 <th className="py-4 px-4 min-w-[180px]">Customer</th>
@@ -398,8 +398,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                       {lead.full_name}
                     </div>
                     <div className="text-[11px] text-slate-500 font-mono flex items-center space-x-2 mt-0.5 whitespace-nowrap">
-                      <span>{lead.phone}</span>
-                      <span>&bull;</span>
+                      <span>{lead.phone},</span>
                       <span className="text-slate-500">{lead.departure_city || "Hyderabad"}</span>
                     </div>
                   </td>
@@ -409,7 +408,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200 text-[11px] inline-flex items-center space-x-1">
-                      <span>👥 {lead.travelers_count} Pax</span>
+                      <span>{lead.travelers_count} Pax</span>
                     </span>
                   </td>
                   <td className="py-3.5 px-4 font-display font-black text-brand-ocean text-sm whitespace-nowrap">
@@ -420,7 +419,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                       value={lead.status}
                       onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                       className={cn(
-                        "px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border focus:outline-none cursor-pointer",
+                        "px-2.5 py-1.5 rounded-lg text-[10px] font-black border focus:outline-none cursor-pointer",
                         lead.status === "CONVERTED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
                         lead.status === "NEW" ? "bg-sky-50 text-sky-700 border-sky-200" :
                         lead.status === "FOLLOW_UP" ? "bg-purple-50 text-purple-700 border-purple-200" :
@@ -442,7 +441,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                       lead.priority === "HIGH" ? "bg-rose-50 text-rose-700 border-rose-200 font-black" :
                       lead.priority === "MEDIUM" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-slate-100 text-slate-600 border-slate-200"
                     )}>
-                      {lead.priority === "HIGH" ? "🔥 VIP" : (lead.priority === "MEDIUM" ? "⚡ Medium" : "💤 Low")}
+                      {lead.priority === "HIGH" ? "VIP" : (lead.priority === "MEDIUM" ? "Medium" : "Low")}
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-amber-700 font-semibold whitespace-nowrap">
@@ -503,10 +502,10 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
       {/* ADD LEAD MODAL (WHITE THEME) */}
       {isAddLeadOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-xl rounded-3xl border border-slate-200 shadow-2xl overflow-hidden text-slate-800">
+          <div className="bg-white w-full max-w-xl rounded-3xl border border-slate-200 shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain text-slate-800">
             <div className="bg-brand-navy p-5 flex items-center justify-between border-b border-slate-800 text-white">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-sky">
+                <span className="text-[10px] font-bold text-brand-sky">
                   Lead Ingestion
                 </span>
                 <h3 className="font-display font-bold text-lg text-white">Add Customer Inquiry Row</h3>
@@ -519,7 +518,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
             <form onSubmit={handleCreateLead} className="p-6 space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Customer Name *</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Customer Name *</label>
                   <input
                     type="text"
                     required
@@ -531,7 +530,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">WhatsApp / Phone *</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">WhatsApp / Phone *</label>
                   <input
                     type="tel"
                     required
@@ -543,7 +542,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Email Address</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Email Address</label>
                   <input
                     type="email"
                     placeholder="rahul@example.com"
@@ -554,7 +553,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Departure City</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Departure City</label>
                   <input
                     type="text"
                     placeholder="Hyderabad / Bengaluru"
@@ -565,7 +564,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Trip Package</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Trip Package</label>
                   <select
                     value={newLeadForm.trip_title}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, trip_title: e.target.value })}
@@ -578,7 +577,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Group Size (Pax)</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Group Size (Pax)</label>
                   <input
                     type="number"
                     min={1}
@@ -589,20 +588,20 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Priority</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Priority</label>
                   <select
                     value={newLeadForm.priority}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, priority: e.target.value as any })}
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none cursor-pointer"
                   >
-                    <option value="HIGH">🔥 High Priority (VIP)</option>
-                    <option value="MEDIUM">⚡ Medium</option>
-                    <option value="LOW">💤 Low</option>
+                    <option value="HIGH">High Priority (VIP)</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Follow-Up Date</label>
+                  <label className="block font-bold text-[10px] text-slate-600 mb-1">Follow-Up Date</label>
                   <input
                     type="text"
                     placeholder="Today 4:00 PM"
@@ -614,7 +613,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
               </div>
 
               <div>
-                <label className="block font-bold uppercase text-[10px] text-slate-600 mb-1">Notes & Requirements</label>
+                <label className="block font-bold text-[10px] text-slate-600 mb-1">Notes & Requirements</label>
                 <textarea
                   rows={2}
                   placeholder="Tentative dates, corporate queries, tent requirements..."
@@ -651,12 +650,12 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
             <div className="p-6 bg-brand-navy text-white flex items-start justify-between border-b border-slate-800">
               <div>
                 <div className="flex items-center space-x-2 mb-1.5">
-                  <span className="px-2.5 py-0.5 rounded-full bg-brand-ocean text-white text-[10px] font-bold uppercase">
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-ocean text-white text-[10px] font-bold">
                     {selectedLead.status}
                   </span>
                   {selectedLead.priority === "HIGH" && (
                     <span className="px-2 py-0.5 rounded bg-rose-500 text-white text-[10px] font-bold">
-                      🔥 VIP LEAD
+                      VIP LEAD
                     </span>
                   )}
                 </div>
@@ -664,7 +663,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                   {selectedLead.full_name}
                 </h3>
                 <p className="text-xs text-brand-sky font-semibold mt-0.5">
-                  📍 {selectedLead.trip_title}
+                  {selectedLead.trip_title}
                 </p>
               </div>
 
@@ -678,7 +677,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
 
             <div className="p-6 space-y-6 flex-grow overflow-y-auto">
               <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase text-slate-500 block">
+                <span className="text-[10px] font-bold text-slate-500 block">
                   1-Click WhatsApp Dispatch (Choose Template)
                 </span>
                 
@@ -730,7 +729,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
               </div>
 
               <div>
-                <label className="block font-bold uppercase text-[10px] text-slate-500 mb-2">
+                <label className="block font-bold text-[10px] text-slate-500 mb-2">
                   Update Lead Pipeline Stage
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -753,7 +752,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
               </div>
 
               <div>
-                <label className="block font-bold uppercase text-[10px] text-slate-500 mb-1">
+                <label className="block font-bold text-[10px] text-slate-500 mb-1">
                   Follow-Up Notes & Requests
                 </label>
                 <textarea

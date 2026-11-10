@@ -140,12 +140,12 @@ export default function OwnerSettingsPage() {
         setCronJobs(prev => prev.map(job => 
           job.id === jobId ? { ...job, last_run: nowStr, last_result: `Manual Success - ${data.data?.message || 'Done'}` } : job
         ));
-        showToast(`⚡ Cron '${jobId}' triggered successfully!`);
+        showToast(`Cron '${jobId}' triggered successfully!`);
       } else {
         showToast(`Error: ${data.message || 'Trigger failed'}`);
       }
     } catch (err) {
-      showToast(`⚡ Executed cron simulation for '${jobId}'`);
+      showToast(`Executed cron simulation for '${jobId}'`);
     } finally {
       setTriggeringJobId(null);
     }
@@ -169,7 +169,7 @@ export default function OwnerSettingsPage() {
     await handleTriggerCron("sync_google_reviews");
     setIsSyncing(false);
     setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    showToast("✅ Successfully synced 8 verified 5.0★ Google Reviews from Google Places API!");
+    showToast("Successfully synced 8 verified 5.0★ Google Reviews from Google Places API!");
   };
 
   const paginatedCrons = cronJobs.slice((cronPage - 1) * cronPageSize, cronPage * cronPageSize);
@@ -211,9 +211,9 @@ export default function OwnerSettingsPage() {
           <div>
             <div className="flex items-center space-x-2">
               <Clock className="w-5 h-5 text-brand-ocean" />
-              <h2 className="text-base font-bold text-brand-navy">Automated Cron Jobs Engine</h2>
+              <h2 className="text-base font-bold text-brand-navy">Scheduled tasks</h2>
               <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
-                4 CRONS SCHEDULED
+                4 scheduled
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -232,7 +232,7 @@ export default function OwnerSettingsPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black text-slate-500">
               <tr>
                 <th className="py-3.5 px-4">Task Name & Description</th>
                 <th className="py-3.5 px-4">Cron Schedule</th>
@@ -254,7 +254,7 @@ export default function OwnerSettingsPage() {
 
                   <td className="py-3.5 px-4 font-mono text-[11px] text-slate-600">
                     <span className="px-2 py-1 bg-slate-100 rounded-md border border-slate-200 font-semibold block w-fit">
-                      ⏱ {job.schedule}
+                      {job.schedule}
                     </span>
                     <span className="text-[10px] text-slate-400 block mt-1">Next: {job.next_run}</span>
                   </td>
@@ -325,27 +325,27 @@ export default function OwnerSettingsPage() {
           </div>
 
           <div className="flex items-center space-x-2 text-xs">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-slate-600 font-semibold">Active Engine: Sliding Window</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
+            <span className="text-slate-600 font-semibold">Spam protection is on</span>
           </div>
         </div>
 
         {/* Rate Limiting Rules Table */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-500 block">Public Trips Catalog</span>
+            <span className="text-[10px] font-bold text-slate-500 block">Public Trips Catalog</span>
             <div className="font-display font-black text-xl text-brand-navy">120 req / min</div>
             <span className="text-[11px] text-slate-500 block">Sliding window bucket: <code className="font-mono text-brand-ocean">public_trips</code></span>
           </div>
 
           <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-500 block">Lead / Quote Ingestion</span>
+            <span className="text-[10px] font-bold text-slate-500 block">Lead / Quote Ingestion</span>
             <div className="font-display font-black text-xl text-rose-600">10 req / min</div>
             <span className="text-[11px] text-slate-500 block">Anti-spam guard: <code className="font-mono text-brand-ocean">create_enquiry</code></span>
           </div>
 
           <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-slate-500 block">Health & Monitoring</span>
+            <span className="text-[10px] font-bold text-slate-500 block">Health & Monitoring</span>
             <div className="font-display font-black text-xl text-emerald-600">60 req / min</div>
             <span className="text-[11px] text-slate-500 block">Liveness check: <code className="font-mono text-brand-ocean">health_check</code></span>
           </div>
@@ -399,7 +399,7 @@ export default function OwnerSettingsPage() {
           <button
             onClick={handleSyncGoogleReviews}
             disabled={isSyncing}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition shadow-md cursor-pointer disabled:opacity-50 hover:scale-105 active:scale-95"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wide transition shadow-md cursor-pointer disabled:opacity-50 hover:scale-105 active:scale-95"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
             <span>{isSyncing ? "Fetching..." : "Sync Reviews Now"}</span>
@@ -408,7 +408,7 @@ export default function OwnerSettingsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs text-slate-700">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5 flex items-center space-x-1.5">
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 flex items-center space-x-1.5">
               <Globe className="w-3.5 h-3.5 text-brand-ocean" />
               <span>Google Place ID</span>
             </label>
@@ -421,7 +421,7 @@ export default function OwnerSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5 flex items-center space-x-1.5">
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 flex items-center space-x-1.5">
               <Key className="w-3.5 h-3.5 text-brand-ocean" />
               <span>Google Places API Key</span>
             </label>
@@ -434,7 +434,7 @@ export default function OwnerSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5 flex items-center space-x-1.5">
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 flex items-center space-x-1.5">
               <Star className="w-3.5 h-3.5 text-amber-500" />
               <span>Minimum Star Filter for Public Display</span>
             </label>
@@ -449,7 +449,7 @@ export default function OwnerSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5">
+            <label className="block text-xs font-bold text-slate-600 mb-1.5">
               Sync Frequency
             </label>
             <select
@@ -481,7 +481,7 @@ export default function OwnerSettingsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5 flex items-center space-x-1.5">
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 flex items-center space-x-1.5">
               <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
               <span>Official WhatsApp Dispatch (+91)</span>
             </label>
@@ -494,7 +494,7 @@ export default function OwnerSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5 flex items-center space-x-1.5">
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 flex items-center space-x-1.5">
               <Mail className="w-3.5 h-3.5 text-brand-ocean" />
               <span>Official Support Email</span>
             </label>
@@ -507,7 +507,7 @@ export default function OwnerSettingsPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5">
+          <label className="block text-xs font-bold text-slate-600 mb-1.5">
             Registered Headquarters Address
           </label>
           <textarea
@@ -518,7 +518,7 @@ export default function OwnerSettingsPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase text-slate-600 mb-1.5">
+          <label className="block text-xs font-bold text-slate-600 mb-1.5">
             Primary Departure Hubs
           </label>
           <input
@@ -531,7 +531,7 @@ export default function OwnerSettingsPage() {
         <div className="pt-4 border-t border-slate-100 flex justify-end">
           <button
             onClick={() => showToast("Business configuration & Google API settings saved successfully!")}
-            className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-xs uppercase tracking-wider transition shadow-md flex items-center space-x-1.5 cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-xs uppercase tracking-wide transition shadow-md flex items-center space-x-1.5 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>Save Settings</span>

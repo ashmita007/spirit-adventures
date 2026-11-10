@@ -12,12 +12,12 @@ interface QuickExploreProps {
 }
 
 export const CATEGORIES = [
-  { name: "Treks", slug: "treks", emoji: "🏔", icon: Mountain },
-  { name: "Camping", slug: "camping", emoji: "🏕", icon: Tent },
-  { name: "Water", slug: "water", emoji: "🌊", icon: Waves },
-  { name: "Snow", slug: "snow", emoji: "❄", icon: Snowflake },
-  { name: "Weekend", slug: "weekend", emoji: "🌄", icon: Sun },
-  { name: "Group Trips", slug: "group-trips", emoji: "🔥", icon: Users },
+  { name: "Treks", slug: "treks", icon: Mountain },
+  { name: "Camping", slug: "camping", icon: Tent },
+  { name: "Water", slug: "water", icon: Waves },
+  { name: "Snow", slug: "snow", icon: Snowflake },
+  { name: "Weekend", slug: "weekend", icon: Sun },
+  { name: "Group Trips", slug: "group-trips", icon: Users },
 ];
 
 export default function QuickExplore({
@@ -30,16 +30,14 @@ export default function QuickExplore({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 sm:mb-6">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-ocean">Discover by style</span>
             <h2 className="text-xl sm:text-2xl font-bold font-display text-brand-navy">What are you looking for?</h2>
           </div>
           {!isFilterMode && (
             <Link
               href="/trips"
-              className="text-xs font-semibold uppercase tracking-wider text-brand-ocean hover:text-brand-navy transition inline-flex items-center space-x-1"
+              className="text-xs font-semibold uppercase tracking-wide text-brand-ocean hover:text-brand-navy transition inline-flex items-center space-x-1"
             >
-              <span>View All Categories</span>
-              <span>→</span>
+              <span>View all categories</span>
             </Link>
           )}
         </div>
@@ -50,13 +48,13 @@ export default function QuickExplore({
             <button
               onClick={() => onSelectCategory && onSelectCategory("")}
               className={cn(
-                "flex-shrink-0 px-5 py-2.5 rounded-full text-xs font-semibold transition-all shadow-sm border",
+                "flex-shrink-0 px-5 py-2.5 rounded-full text-xs font-semibold transition shadow-sm border",
                 !activeCategory
                   ? "bg-brand-navy text-white border-brand-navy shadow"
                   : "bg-brand-light text-slate-700 border-slate-200 hover:bg-slate-100"
               )}
             >
-              ✨ All Adventures
+              All adventures
             </button>
           )}
 
@@ -69,13 +67,13 @@ export default function QuickExplore({
                   key={cat.slug}
                   onClick={() => onSelectCategory(isSelected ? "" : cat.slug)}
                   className={cn(
-                    "flex-shrink-0 flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all shadow-sm border",
+                    "flex-shrink-0 flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold transition shadow-sm border",
                     isSelected
                       ? "bg-brand-ocean text-white border-brand-ocean shadow-md scale-[1.02]"
                       : "bg-brand-light text-slate-700 border-slate-200 hover:border-brand-ocean hover:bg-white"
                   )}
                 >
-                  <span className="text-base leading-none">{cat.emoji}</span>
+                  <cat.icon className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{cat.name}</span>
                 </button>
               );
@@ -85,9 +83,9 @@ export default function QuickExplore({
               <Link
                 key={cat.slug}
                 href={`/trips?category=${cat.slug}`}
-                className="flex-shrink-0 flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-semibold bg-brand-light text-brand-dark border border-slate-200/80 hover:border-brand-ocean hover:bg-white hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                className="flex-shrink-0 flex items-center space-x-2 px-5 py-3 rounded-full text-xs font-semibold bg-brand-light text-brand-dark border border-slate-200/80 hover:border-brand-ocean hover:bg-white hover:shadow-md transition duration-200 hover:-translate-y-0.5"
               >
-                <span className="text-base leading-none">{cat.emoji}</span>
+                <cat.icon className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>{cat.name}</span>
               </Link>
             );

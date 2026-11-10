@@ -9,25 +9,25 @@ import PageHero from "@/components/page-hero";
 export const metadata: Metadata = {
   alternates: { canonical: "/about" },
   title: "About Us | Spirit Adventures - Trusted Travel & Adventure Partner",
-  description: "Established in 2022 with operational hubs in Hyderabad, Bengaluru, and Chennai. Curating weekend getaways, trekking expeditions, and group adventures across India.",
+  description: "Established in 2022 with operational hubs in Hyderabad, Bengaluru, and Chennai. Weekend getaways, treks and group trips across India.",
 };
 
 const SPECIALTIES = [
   { title: "Weekend Getaways", desc: "Handpicked 2-day nature escapes from Hyderabad, Bengaluru & Chennai to recharge from city routines." },
   { title: "Trekking Expeditions", desc: "Guided mountain trails from Western Ghats summits to high-altitude Himalayan passes." },
-  { title: "Backpacking Trips", desc: "Immersive explorations through historic ruins, coastal cliff paths, and hidden rainforest trails." },
+  { title: "Backpacking Trips", desc: "Budget trips through Hampi's ruins, coastal cliff paths and rainforest trails." },
   { title: "Adventure Tours", desc: "White water river rafting in Dandeli, cliff jumping, cave exploration, and ocean kayaking." },
-  { title: "Group Departures", desc: "Curated small-group journeys connecting solo travelers, friends, and adventure seekers." },
+  { title: "Group Departures", desc: "Small fixed-date batches where solo travellers and friend groups travel together." },
   { title: "Customized & Corporate", desc: "Bespoke itineraries, corporate team offsites, and private family holiday packages." },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-dvh bg-white pb-20">
       <PageHero
         eyebrow="Established 2022 • Hyderabad • Bengaluru • Chennai"
         title="Discover the Spirit of Adventure"
-        subtitle={<>Welcome to Spirit Adventures, your trusted travel partner for unforgettable journeys across India. We create unique experiences combining adventure, nature, culture, and meaningful human connection.</>}
+        subtitle={<>We run small-group treks, weekend getaways and adventure trips across India, starting from Hyderabad, Bengaluru and Chennai.</>}
         image="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1600&q=80"
         crumbs={[{ label: "About" }]}
         align="center"
@@ -45,46 +45,45 @@ export default function AboutPage() {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
-              <span className="text-brand-sky font-bold text-xs uppercase tracking-widest">Our Journey</span>
+              <span className="text-brand-sky font-bold text-xs">Our Journey</span>
               <h3 className="font-display font-black text-2xl uppercase mt-1">From Kashmir to Kanyakumari</h3>
               <p className="text-xs text-slate-300 mt-2 font-light">Operating across 40+ destinations with thousands of happy explorers.</p>
             </div>
           </div>
 
           <div className="space-y-6">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-light text-brand-ocean text-xs font-bold uppercase tracking-widest border border-brand-sky/20">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-light text-brand-ocean text-xs font-bold border border-brand-sky/20">
               <Sparkles className="w-3.5 h-3.5 text-brand-ocean" />
-              <span>Our Story & Mission</span>
             </div>
 
             <h2 className="font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
-              More Than Travel — Creating Lasting Memories
+              How Spirit Adventures started
             </h2>
 
             <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-              Established in <strong className="text-brand-navy">2022</strong>, Spirit Adventures began with a clear mission: to make adventure travel accessible, authentic, and safe for every explorer.
+              Established in <strong className="text-brand-navy">2022</strong>, Spirit Adventures began with one goal: safe, well-run adventure trips for every traveller.
             </p>
 
             <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-              Today, operating from our hubs in <strong className="text-brand-navy">Hyderabad, Bengaluru, and Chennai</strong>, we lead weekend getaways, trekking expeditions, and bespoke group journeys across the nation—from the emerald coffee hills of Coorg to the white water rapids of Dandeli, the ancient boulders of Hampi, and the snow-capped summits of the Himalayas.
+              Today, operating from our hubs in <strong className="text-brand-navy">Hyderabad, Bengaluru, and Chennai</strong>, we lead weekend getaways, trekking expeditions, and bespoke group journeys across India: the coffee hills of Coorg to the white water rapids of Dandeli, the ancient boulders of Hampi, and the snow-capped summits of the Himalayas.
             </p>
 
             <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-              We believe travel is about discovering new perspectives, forming genuine bonds, and creating stories that stay with you forever. Our trip captains ensure every journey is smooth, supportive, and unforgettable.
+              Every batch has a trip captain who handles transport, stays and timings, so you can focus on the trail and the people you came with.
             </p>
 
             <div className="pt-4 grid grid-cols-3 gap-4 border-t border-slate-100">
               <div>
                 <span className="font-display font-black text-2xl sm:text-3xl text-brand-ocean">2022</span>
-                <p className="text-[11px] text-slate-500 font-semibold uppercase mt-0.5">Founded</p>
+                <p className="text-[11px] text-slate-500 font-semibold mt-0.5">Founded</p>
               </div>
               <div>
                 <span className="font-display font-black text-2xl sm:text-3xl text-brand-ocean">40+</span>
-                <p className="text-[11px] text-slate-500 font-semibold uppercase mt-0.5">Destinations</p>
+                <p className="text-[11px] text-slate-500 font-semibold mt-0.5">Destinations</p>
               </div>
               <div>
                 <span className="font-display font-black text-2xl sm:text-3xl text-brand-ocean">5.0 ★</span>
-                <p className="text-[11px] text-slate-500 font-semibold uppercase mt-0.5">Verified Reviews</p>
+                <p className="text-[11px] text-slate-500 font-semibold mt-0.5">Verified Reviews</p>
               </div>
             </div>
           </div>
@@ -93,12 +92,11 @@ export default function AboutPage() {
         {/* Specialties Grid */}
         <div className="mt-24">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-ocean block mb-2">Curated Experiences</span>
             <h2 className="font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
-              Adventures Crafted for Every Explorer
+              Trips for every kind of traveller
             </h2>
             <p className="text-slate-600 text-sm mt-2">
-              From adrenaline-pumping rapids to quiet sunset cliff camps, we design expeditions tailored to your pace.
+              From Dandeli's rapids to quiet cliff camps, at a pace that suits your group.
             </p>
           </div>
 
@@ -126,22 +124,22 @@ export default function AboutPage() {
       {/* Call to action */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center">
         <h3 className="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-brand-navy mb-4">
-          Ready to Explore India Like Never Before?
+          Ready to plan your next trip?
         </h3>
         <p className="text-slate-600 text-sm max-w-md mx-auto mb-8">
-          Join the Spirit Adventures community and embark on your next unforgettable journey today.
+          Pick a package or tell us where you want to go. We reply on WhatsApp, usually the same day.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/trips"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-brand-navy hover:bg-brand-ocean text-white font-bold text-xs uppercase tracking-wider transition shadow-lg"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-brand-navy hover:bg-brand-ocean text-white font-bold text-xs uppercase tracking-wide transition shadow-lg"
           >
-            <span>Explore All Adventures</span>
+            <span className="whitespace-nowrap">Explore all adventures</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/contact"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-brand-navy font-bold text-xs uppercase tracking-wider transition shadow-xs"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-brand-navy font-bold text-xs uppercase tracking-wide transition shadow-xs"
           >
             <span>Talk to a Trip Captain</span>
           </Link>

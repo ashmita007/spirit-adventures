@@ -146,7 +146,7 @@ export default function GalleryManager() {
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <label className="block">
-            <span className="mb-1 block text-[11px] font-bold uppercase text-slate-500">Category</span>
+            <span className="mb-1 block text-[11px] font-bold text-slate-500">Category</span>
             <input list="gallery-cats" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className={field} />
             <datalist id="gallery-cats">
               {categories.map((c) => (
@@ -155,7 +155,7 @@ export default function GalleryManager() {
             </datalist>
           </label>
           <label className="block">
-            <span className="mb-1 block text-[11px] font-bold uppercase text-slate-500">Location (optional)</span>
+            <span className="mb-1 block text-[11px] font-bold text-slate-500">Location (optional)</span>
             <input value={newLocation} onChange={(e) => setNewLocation(e.target.value)} placeholder="e.g. Coorg, Karnataka" className={field} />
           </label>
           <div className="flex flex-wrap gap-2">
@@ -250,7 +250,7 @@ export default function GalleryManager() {
                   </span>
                 )}
                 {!g.is_published && (
-                  <span className="absolute inset-x-0 bottom-0 bg-slate-900/70 py-1 text-center text-[10px] font-bold uppercase text-white">Hidden</span>
+                  <span className="absolute inset-x-0 bottom-0 bg-slate-900/70 py-1 text-center text-[10px] font-bold text-white">Hidden</span>
                 )}
               </button>
               <figcaption className="flex items-center justify-between gap-1 p-2.5">
@@ -304,21 +304,21 @@ export default function GalleryManager() {
             </div>
             <div className="space-y-3">
               <label className="block">
-                <span className="mb-1 block text-[11px] font-bold uppercase text-slate-500">Title</span>
+                <span className="mb-1 block text-[11px] font-bold text-slate-500">Title</span>
                 <input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className={field} />
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label className="block">
-                  <span className="mb-1 block text-[11px] font-bold uppercase text-slate-500">Category</span>
+                  <span className="mb-1 block text-[11px] font-bold text-slate-500">Category</span>
                   <input list="gallery-cats" value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className={field} />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[11px] font-bold uppercase text-slate-500">Location</span>
+                  <span className="mb-1 block text-[11px] font-bold text-slate-500">Location</span>
                   <input value={editing.location} onChange={(e) => setEditing({ ...editing, location: e.target.value })} className={field} />
                 </label>
               </div>
               <label className="block">
-                <span className="mb-1 block text-[11px] font-bold uppercase text-slate-500">Caption</span>
+                <span className="mb-1 block text-[11px] font-bold text-slate-500">Caption</span>
                 <textarea rows={2} value={editing.caption} onChange={(e) => setEditing({ ...editing, caption: e.target.value })} className={field} />
               </label>
               <label className="flex items-center gap-2 text-sm text-slate-700">

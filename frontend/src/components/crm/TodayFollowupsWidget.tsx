@@ -68,7 +68,7 @@ export const TodayFollowupsWidget: React.FC<TodayFollowupsWidgetProps> = ({
       <div className="p-4 flex-1">
         {followups.length === 0 ? (
           <div className="py-12 text-center text-xs text-slate-400 italic">
-            🎉 All scheduled follow-up calls are completed for today!
+            All scheduled follow-up calls are completed for today!
           </div>
         ) : (
           <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
@@ -78,7 +78,7 @@ export const TodayFollowupsWidget: React.FC<TodayFollowupsWidgetProps> = ({
               return (
                 <div
                   key={enq.id}
-                  className="p-3 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#0A6FAE]/50 transition-all text-xs space-y-2 hover:bg-[#EFF8FD]/30"
+                  className="p-3 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#0A6FAE]/50 transition text-xs space-y-2 hover:bg-[#EFF8FD]/30"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -121,12 +121,12 @@ export const TodayFollowupsWidget: React.FC<TodayFollowupsWidgetProps> = ({
                           onChange={(e) => setCallStatus(e.target.value)}
                           className="bg-white border border-slate-300 rounded-md px-2 py-1 text-[11px] text-slate-800 font-medium focus:outline-none focus:border-[#0A6FAE]"
                         >
-                          <option value="connected">✅ Connected</option>
-                          <option value="ringing_not_answered">🔔 Ringing No Answer</option>
-                          <option value="switched_off">📴 Switched Off</option>
-                          <option value="busy">⏳ Busy</option>
-                          <option value="callback_requested">📞 Callback Later</option>
-                          <option value="booked">🎉 Confirmed Booked</option>
+                          <option value="connected">Connected</option>
+                          <option value="ringing_not_answered">Ringing No Answer</option>
+                          <option value="switched_off">Switched Off</option>
+                          <option value="busy">Busy</option>
+                          <option value="callback_requested">Callback Later</option>
+                          <option value="booked">Confirmed Booked</option>
                         </select>
                         <input
                           type="text"
@@ -139,7 +139,7 @@ export const TodayFollowupsWidget: React.FC<TodayFollowupsWidgetProps> = ({
                         <button
                           type="submit"
                           disabled={loading}
-                          className="bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white px-3 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 transition-all disabled:opacity-50 cursor-pointer"
+                          className="bg-[#0A6FAE] hover:bg-[#0A6FAE] text-white px-3 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 transition disabled:opacity-50 cursor-pointer"
                         >
                           <Send className="h-3 w-3" />
                           Save

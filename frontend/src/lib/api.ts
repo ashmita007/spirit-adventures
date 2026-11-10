@@ -2,8 +2,16 @@ import { ownerFetch } from "./owner-fetch";
 import { 
   Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload 
 } from "./types";
-import { FALLBACK_TRIPS } from "./fallback-trips";
-export { FALLBACK_TRIPS };
+import { FALLBACK_TRIPS as RAW_FALLBACK_TRIPS } from "./fallback-trips";
+
+// Offline fallback data carries no verified reviews, so never surface a rating from it
+// (it would otherwise flow into visible badges and schema.org aggregateRating).
+// Built lazily so client bundles that only need submitEnquiry don't ship the fallback data.
+let fallbackTripsCache: Trip[] | null = null;
+function fallbackTrips(): Trip[] {
+  fallbackTripsCache ??= RAW_FALLBACK_TRIPS.map(({ rating: _rating, reviews_count: _count, ...trip }) => trip as Trip);
+  return fallbackTripsCache;
+}
 
 export const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
@@ -326,14 +334,14 @@ const FALLBACK_BLOGS: BlogPost[] = [
     excerpt: "Why stepping into silence and mountains creates neural rewiring, deep psychological calm, and a profound sense of reconnection.",
     content: `In the modern city, our brains are subjected to continuous partial attention. Constant pings, notifications, traffic hums, and tight deadlines keep our sympathetic nervous system in a state of perpetual low-grade stress.
 
-When you walk along an alpine trail—whether it's the crisp silence of snow-laden Uttarakhand pines or the rhythmic sound of Arabian sea waves on Gokarna's cliffs—your brain enters the default mode network. Research in environmental psychology calls this 'Attention Restoration Theory'.
+When you walk an alpine trail, whether through the silence of snow-laden Uttarakhand pines or past Arabian Sea waves on Gokarna's cliffs, your brain enters the default mode network. Research in environmental psychology calls this 'Attention Restoration Theory'.
 
 ### The Power of Green and Blue Spaces
 1. **Cortisol Drop**: Studies show a 20-minute immersion in high-altitude forests significantly drops salivary cortisol levels.
 2. **Natural Awe**: Experiencing majestic landscapes larger than oneself boosts empathy, gratitude, and creative problem solving.
 3. **Deep Sleep**: Aligning with natural circadian light-dark cycles without artificial blue screen light resets melatonin rhythms.
 
-At Spirit Adventures, we believe wilderness travel is not merely about ticking summits off a checklist—it is an inward journey to restore stillness and rediscover wonder.`,
+At Spirit Adventures, we believe wilderness travel is about more than ticking summits off a list: it gives you time away from screens and deadlines.`,
     cover_image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
     author: "Aman Negi (Expedition Leader)",
     category: "Mountain Philosophy",
@@ -408,7 +416,7 @@ export async function getTrips(params?: {
     query = `?${searchParams.toString()}`;
   }
 
-  const fallback = FALLBACK_TRIPS.filter((t) => {
+  const fallback = fallbackTrips().filter((t) => {
     if (params?.featured && !t.is_featured) return false;
     if (params?.destination && t.destination_slug !== params.destination) return false;
     if (params?.category && t.category_slug !== params.category) return false;
@@ -426,7 +434,7 @@ export async function getTrips(params?: {
 }
 
 export async function getTripBySlug(slug: string): Promise<Trip | null> {
-  const fallback = FALLBACK_TRIPS.find((t) => t.slug === slug) || null;
+  const fallback = fallbackTrips().find((t) => t.slug === slug) || null;
   return fetchFromApi<Trip | null>(`/trips/${slug}/`, fallback);
 }
 
@@ -439,7 +447,7 @@ export async function getDestinations(featured?: boolean): Promise<Destination[]
 export async function getDestinationBySlug(slug: string): Promise<Destination | null> {
   const fallback = FALLBACK_DESTINATIONS.find((d) => d.slug === slug) || null;
   if (fallback) {
-    fallback.trips = FALLBACK_TRIPS.filter(t => t.destination_slug === slug);
+    fallback.trips = fallbackTrips().filter(t => t.destination_slug === slug);
   }
   return fetchFromApi<Destination | null>(`/destinations/${slug}/`, fallback);
 }
@@ -478,15 +486,23 @@ export async function submitEnquiry(payload: EnquiryPayload): Promise<{ success:
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    // Only report success when the server actually saved the enquiry; otherwise the
+    // customer would see "Thank you" while the lead is silently lost.
+    const ok = res.ok && data.success !== false;
+    if (res.status === 429) {
+      return { success: false, message: "Too many attempts. Please wait a minute, or message us on WhatsApp." };
+    }
     return {
-      success: data.success !== false,
-      message: data.message || "Thank you! Our adventure team will contact you shortly.",
+      success: ok,
+      message: data.message || (ok
+        ? "Thank you! We'll contact you shortly."
+        : "We couldn't send your enquiry. Please try again or message us on WhatsApp."),
     };
-  } catch (error) {
+  } catch {
     return {
-      success: true,
-      message: "Thank you! Your enquiry has been received and our adventure team will reach out shortly.",
+      success: false,
+      message: "No connection. Please check your internet and try again, or message us on WhatsApp.",
     };
   }
 }

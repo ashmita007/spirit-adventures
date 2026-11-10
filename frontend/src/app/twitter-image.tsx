@@ -34,7 +34,7 @@ export default async function TwitterImage() {
           <div style={{ fontSize: 76, fontWeight: 900, lineHeight: 1.02, letterSpacing: -2 }}>FIND YOUR NEXT</div>
           <div style={{ fontSize: 76, fontWeight: 900, lineHeight: 1.02, letterSpacing: -2, color: "#BAE6FD" }}>ADVENTURE</div>
           <div style={{ marginTop: 22, fontSize: 30, color: "#E0F2FE" }}>
-            Treks · River rafting · Beach trails · Himalayan expeditions
+            Treks, river rafting, beach trails and Himalayan trips
           </div>
         </div>
         <div style={{ display: "flex", fontSize: 26, color: "#E0F2FE" }}>spiritadventures.in · +91 96665 67551</div>

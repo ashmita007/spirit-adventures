@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/trips" },
   title: "Explore Packages & Expeditions | Spirit Adventures",
   description:
-    "Browse our handpicked Himalayan treks, snow summits, alpine lakes, camping, and weekend nature expeditions with live backend filtering.",
+    "Himalayan treks, snow summits, alpine lakes, camping and weekend trips. Filter by destination, difficulty and trip type.",
 };
 
 interface TripsPageProps {
@@ -36,9 +36,9 @@ export default async function TripsPage({ searchParams }: TripsPageProps) {
   ]);
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-dvh bg-white pb-20">
       <PageHero
-        eyebrow="Curated Expeditions"
+        eyebrow="All packages"
         title="Explore Packages & Adventures"
         subtitle={<>From snowy Himalayan ridge lines to deep Sahyadri canyons and coastal cliff walks. Filter by category, difficulty, destination, or search directly.</>}
         image="https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341328/spirit_adventures/shorts/chikmagalur_peak_poster.jpg"
