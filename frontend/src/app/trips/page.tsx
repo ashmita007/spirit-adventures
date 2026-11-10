@@ -6,9 +6,9 @@ import PageHero from "@/components/page-hero";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/trips" },
-  title: "Explore Packages & Expeditions | Spirit Adventures",
+  title: "Weekend Trips & Tour Packages from Bengaluru | Spirit Adventures",
   description:
-    "Himalayan treks, snow summits, alpine lakes, camping and weekend trips. Filter by destination, difficulty and trip type.",
+    "Weekend trips, treks and tour packages from Bengaluru, Hyderabad and Chennai: Coorg, Gokarna, Dandeli, Ooty, Wayanad, Munnar, Manali and more. Filter by place, days and price.",
 };
 
 interface TripsPageProps {

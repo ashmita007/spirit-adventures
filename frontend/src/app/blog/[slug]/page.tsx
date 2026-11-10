@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Calendar, Compass, Share2 } from "lucide-react";
 import { getBlogBySlug, getBlogs } from "@/lib/api";
+import JsonLd from "@/components/json-ld";
+import { blogPostingJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
@@ -18,13 +20,15 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   }
   return {
     // Keep the brand suffix only when the full title still fits in ~60 chars
-    title: `${post.title} | Spirit Adventures`.length <= 60 ? `${post.title} | Spirit Adventures` : post.title,
-    description: post.excerpt,
+    title: post.meta_title || (`${post.title} | Spirit Adventures`.length <= 60 ? `${post.title} | Spirit Adventures` : post.title),
+    description: post.meta_description || post.excerpt,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       type: "article",
       title: post.title,
-      description: post.excerpt,
+      description: post.meta_description || post.excerpt,
+      publishedTime: post.published_at || undefined,
+      authors: post.author ? [post.author] : undefined,
       images: [{ url: post.cover_image }],
     },
   };
@@ -40,6 +44,16 @@ export default async function BlogPostDetailPage({ params }: BlogPageProps) {
 
   return (
     <article className="min-h-dvh bg-white pt-24 pb-20">
+      <JsonLd
+        data={[
+          blogPostingJsonLd(post),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
       {/* Article Header */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <Link

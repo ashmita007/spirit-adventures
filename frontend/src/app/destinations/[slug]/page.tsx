@@ -6,9 +6,16 @@ import Link from "next/link";
 import { ArrowLeft, Compass, Mountain, MapPin, Sparkles } from "lucide-react";
 import { getDestinationBySlug, getTrips } from "@/lib/api";
 import TripCard from "@/components/trip-card";
+import JsonLd from "@/components/json-ld";
+import { breadcrumbJsonLd, tripListJsonLd } from "@/lib/seo";
 
 interface DestinationPageProps {
   params: Promise<{ slug: string }>;
+}
+
+/** Cut to about 155 characters at a word boundary, for search result snippets. */
+function metaDescription(text: string): string {
+  return text.length <= 158 ? text : text.slice(0, 155).replace(/\s+\S*$/, "") + "…";
 }
 
 export async function generateMetadata({ params }: DestinationPageProps): Promise<Metadata> {
@@ -18,8 +25,10 @@ export async function generateMetadata({ params }: DestinationPageProps): Promis
     return { title: "Destination Not Found | Spirit Adventures" };
   }
   return {
-    title: `${destination.name} Adventures & Treks | Spirit Adventures`,
-    description: destination.description,
+    title: `${destination.name} Trip Packages & Treks | Spirit Adventures`,
+    description: metaDescription(
+      `${destination.name} trip packages and treks with Spirit Adventures, from Bengaluru, Hyderabad and Chennai. ${destination.description}`,
+    ),
     alternates: { canonical: `/destinations/${destination.slug}` },
     openGraph: {
       title: `${destination.name} - Spirit Adventures`,
@@ -42,6 +51,16 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
 
   return (
     <div className="min-h-dvh bg-white">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Destinations", path: "/destinations" },
+            { name: destination.name, path: `/destinations/${destination.slug}` },
+          ]),
+          ...(trips.length > 0 ? [tripListJsonLd(`Trips in ${destination.name}`, trips)] : []),
+        ]}
+      />
       {/* Hero Banner */}
       <div className="relative h-[50dvh] sm:h-[60dvh] w-full bg-brand-navy overflow-hidden">
         {(() => {

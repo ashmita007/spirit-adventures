@@ -6,8 +6,9 @@ import PageHero from "@/components/page-hero";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/destinations" },
-  title: "Destinations & Regions | Spirit Adventures",
-  description: "Treks and trips in Uttarakhand, Himachal, Kashmir, Ladakh, Maharashtra and Karnataka.",
+  title: "South India & Himalaya Trip Destinations | Spirit Adventures",
+  description:
+    "Trips to Coorg, Gokarna, Ooty, Wayanad, Munnar, Hampi, Goa and Pondicherry, plus Manali, Kashmir, Ladakh and Meghalaya. Group departures from Bengaluru, Hyderabad and Chennai.",
 };
 
 export default async function DestinationsPage() {

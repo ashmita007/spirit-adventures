@@ -1,5 +1,6 @@
 /** Shared SEO constants and JSON-LD builders. */
-import type { Trip } from "./types";
+import type { BlogPosting, BreadcrumbList, ItemList, TouristTrip, TravelAgency, WebSite, WithContext } from "schema-dts";
+import type { BlogPost, Trip } from "./types";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://spiritadventures.in").replace(/\/$/, "");
 export const SITE_NAME = "Spirit Adventures";
@@ -11,14 +12,14 @@ export const DEFAULT_DESCRIPTION =
 
 export const absoluteUrl = (path = "/") => (path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`);
 
-export function organizationJsonLd() {
+export function organizationJsonLd(): WithContext<TravelAgency> {
   return {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
     "@id": `${SITE_URL}/#organization`,
     name: SITE_NAME,
     url: SITE_URL,
-    logo: { "@type": "ImageObject", url: LOGO_URL, width: 564, height: 149 },
+    logo: { "@type": "ImageObject", url: LOGO_URL, width: "564", height: "149" },
     image: LOGO_URL,
     description: DEFAULT_DESCRIPTION,
     telephone: PHONE,
@@ -43,7 +44,7 @@ export function organizationJsonLd() {
   };
 }
 
-export function websiteJsonLd() {
+export function websiteJsonLd(): WithContext<WebSite> {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -52,15 +53,11 @@ export function websiteJsonLd() {
     name: SITE_NAME,
     publisher: { "@id": `${SITE_URL}/#organization` },
     inLanguage: "en-IN",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/trips?search={search_term_string}` },
-      "query-input": "required name=search_term_string",
-    },
+    // No SearchAction: Google retired the sitelinks search box in November 2024.
   };
 }
 
-export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+export function breadcrumbJsonLd(items: { name: string; path: string }[]): WithContext<BreadcrumbList> {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -73,10 +70,10 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
   };
 }
 
-export function tripJsonLd(trip: Trip) {
-  const t = trip as Trip & { reviews_count?: number; rating?: number; destination?: { name?: string } | string };
+export function tripJsonLd(trip: Trip): WithContext<TouristTrip> {
+  const t = trip as Trip & { destination?: { name?: string } | string };
   const destName = typeof t.destination === "object" ? t.destination?.name : t.destination_name;
-  const data: Record<string, unknown> = {
+  const data: WithContext<TouristTrip> = {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
     name: tripDisplayName(trip.title),
@@ -104,15 +101,7 @@ export function tripJsonLd(trip: Trip) {
       })),
     };
   }
-  // Only claim a rating when real approved reviews exist
-  if (t.reviews_count && t.reviews_count > 0 && t.rating) {
-    data.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: t.rating,
-      reviewCount: t.reviews_count,
-      bestRating: 5,
-    };
-  }
+  // aggregateRating is not a TouristTrip property in schema.org, so ratings are not claimed here.
   return data;
 }
 
@@ -193,4 +182,42 @@ export function tripMetaDescription(trip: Trip) {
     }
   }
   return truncateWords(d, 158);
+}
+
+/** BlogPosting for /blog/[slug]. Only fields that are visible on the page. */
+export function blogPostingJsonLd(post: BlogPost): WithContext<BlogPosting> {
+  const url = absoluteUrl(`/blog/${post.slug}`);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    headline: post.title,
+    description: post.meta_description || post.excerpt,
+    url,
+    mainEntityOfPage: url,
+    image: post.cover_image ? [absoluteUrl(post.cover_image)] : undefined,
+    datePublished: post.published_at || undefined,
+    dateModified: post.published_at || undefined,
+    articleSection: post.category || undefined,
+    timeRequired: post.reading_time_minutes ? `PT${post.reading_time_minutes}M` : undefined,
+    inLanguage: "en-IN",
+    author: post.author ? { "@type": "Person", name: post.author } : { "@id": `${SITE_URL}/#organization` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+  };
+}
+
+/** ItemList of the trips shown on a listing page (destination pages). */
+export function tripListJsonLd(name: string, trips: Trip[]): WithContext<ItemList> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    numberOfItems: trips.length,
+    itemListElement: trips.map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: absoluteUrl(`/trips/${t.slug}`),
+      name: tripDisplayName(t.title),
+    })),
+  };
 }
