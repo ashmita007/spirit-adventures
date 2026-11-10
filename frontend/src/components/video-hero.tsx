@@ -16,9 +16,25 @@ interface HeroScene {
   video8kUrl: string;
   videoUrl: string;
   posterUrl: string;
+  /** Portrait (9:16) clip: full-bleed on phones, centred over a blurred backdrop on wide screens. */
+  vertical?: boolean;
+}
+
+/**
+ * Gokarna sunset (portrait, 31 s, used with the creator's permission).
+ * Set to the Cloudinary URL once uploaded; the scene is skipped while empty.
+ * The poster is a frame cut from the same video by Cloudinary (so_18 = second 18).
+ */
+const GOKARNA_SUNSET_URL = "https://res.cloudinary.com/tbb5gadt/video/upload/v1794316554/spirit_adventures/hero/gokarna_sunset.mp4";
+
+function videoFrame(videoUrl: string, second: number) {
+  return videoUrl.replace("/video/upload/", `/video/upload/so_${second},f_auto,q_auto/`).replace(/\.(mp4|mov|webm)$/i, ".jpg");
 }
 
 const HERO_SCENES: HeroScene[] = [
+  ...(GOKARNA_SUNSET_URL
+    ? [{ id: 0, video8kUrl: GOKARNA_SUNSET_URL, videoUrl: GOKARNA_SUNSET_URL, posterUrl: videoFrame(GOKARNA_SUNSET_URL, 18), vertical: true }]
+    : []),
   {
     id: 1,
     video8kUrl: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341135/spirit_adventures/hero/rhythms_of_india.mp4",
@@ -145,7 +161,11 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                   aria-hidden="true"
                   decoding="async"
                   fetchPriority={idx === 0 ? "high" : "low"}
-                  className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+                  className={cn(
+                    "absolute inset-0 w-full h-full object-cover object-center scale-105",
+                    // Portrait clip on a wide screen: the poster becomes a soft backdrop behind the centred video
+                    scene.vertical && "sm:scale-125 sm:blur-2xl sm:brightness-75"
+                  )}
                   loading={idx === 0 ? "eager" : "lazy"}
                 />
               )}
@@ -155,6 +175,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                 <HeroVideo
                   url={scene.videoUrl}
                   poster={cloudinaryWidth(scene.posterUrl, 1280)}
+                  vertical={scene.vertical}
                   onReady={() => setIsLoaded(true)}
                 />
               )}
@@ -344,20 +365,24 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 }
 
 /** Background video for the active scene: mounted after page load, phone-sized on phones, skipped on Data Saver. */
-function HeroVideo({ url, poster, onReady }: { url: string; poster: string; onReady: () => void }) {
-  const src = useDeferredVideo(url);
+function HeroVideo({ url, poster, vertical, onReady }: { url: string; poster: string; vertical?: boolean; onReady: () => void }) {
+  // Scenes change every 10 s, so only the first 11 s are downloaded
+  const src = useDeferredVideo(url, "du_11");
   if (!src) return null;
   return (
     <video
       key={src}
-      poster={poster}
+      poster={vertical ? undefined : poster}
       autoPlay
       muted
       loop
       playsInline
       preload="auto"
       onCanPlay={onReady}
-      className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+      className={cn(
+        "absolute inset-0 w-full h-full object-center",
+        vertical ? "object-cover sm:object-contain" : "object-cover scale-105"
+      )}
     >
       <source src={src} type="video/mp4" />
     </video>

@@ -18,21 +18,23 @@ function connection(): NetInfo | undefined {
  * - large screens (1440px+) on fast links: Full HD 1080p, 2.5 Mbps
  * - other desktops: 1280px, 1.5 Mbps
  */
-export function pickVideoUrl(url: string): string | null {
+export function pickVideoUrl(url: string, clip = ""): string | null {
   const net = connection();
   if (net?.saveData || /(^|-)2g$/.test(net?.effectiveType ?? "")) return null;
   if (!isCloudinaryVideo(url)) return url;
   const small = window.matchMedia("(max-width: 767px)").matches || net?.effectiveType === "3g";
-  if (small) return cloudinaryVideo(url, MOBILE_VIDEO);
+  const pre = clip ? `${clip},` : "";
+  if (small) return cloudinaryVideo(url, pre + MOBILE_VIDEO);
   const big = window.matchMedia("(min-width: 1440px)").matches && (!net?.effectiveType || net.effectiveType === "4g");
-  return cloudinaryVideo(url, big ? FULL_HD_VIDEO : DESKTOP_VIDEO);
+  return cloudinaryVideo(url, pre + (big ? FULL_HD_VIDEO : DESKTOP_VIDEO));
 }
 
 /**
  * Returns the video URL to mount, only after the page has finished loading so the
  * video never competes with the HTML, CSS, fonts and hero poster. Null until then.
  */
-export function useDeferredVideo(url: string | undefined | null): string | null {
+/** `clip` is an extra Cloudinary trim, e.g. "du_11" to send only the first 11 seconds. */
+export function useDeferredVideo(url: string | undefined | null, clip = ""): string | null {
   const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function useDeferredVideo(url: string | undefined | null): string | null 
     }
     let cancelled = false;
     const start = () => {
-      if (!cancelled) setSrc(pickVideoUrl(url));
+      if (!cancelled) setSrc(pickVideoUrl(url, clip));
     };
     if (document.readyState === "complete") {
       start();
@@ -55,7 +57,7 @@ export function useDeferredVideo(url: string | undefined | null): string | null 
       cancelled = true;
       window.removeEventListener("load", start);
     };
-  }, [url]);
+  }, [url, clip]);
 
   return src;
 }
