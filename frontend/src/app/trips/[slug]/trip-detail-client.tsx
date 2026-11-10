@@ -14,6 +14,7 @@ import { formatCurrency, cn } from "@/lib/utils";
 import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
 import { useDeferredVideo } from "@/lib/media";
+import { tripDrop, tripFaqs, tripPickup, tripSeason } from "@/lib/trip-faqs";
 
 interface TripDetailClientProps {
   trip: Trip;
@@ -55,22 +56,12 @@ const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").re
  * "not set" unless the trip is actually in Uttarakhand.
  */
 
-const PLACEHOLDER_POINT = "dehradun / base camp";
-const PLACEHOLDER_SEASON = "dec - apr";
-
-function realValue(value: string | undefined | null, placeholder: string, allowPlaceholder: boolean) {
-  const v = (value || "").trim();
-  if (!v) return "";
-  if (!allowPlaceholder && v.toLowerCase() === placeholder) return "";
-  return v;
-}
 
 export default function TripDetailClient({ trip, similar = [], reviews = [] }: TripDetailClientProps) {
-  const destSlug = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
-  const isUttarakhand = destSlug === "uttarakhand";
-  const pickup = realValue(trip.pickup_location, PLACEHOLDER_POINT, isUttarakhand);
-  const drop = realValue(trip.drop_location, PLACEHOLDER_POINT, isUttarakhand);
-  const season = realValue(trip.best_season, PLACEHOLDER_SEASON, isUttarakhand);
+  const pickup = tripPickup(trip);
+  const drop = tripDrop(trip);
+  const season = tripSeason(trip);
+  const faqs = tripFaqs(trip);
   const hasRating = Boolean(trip.rating && trip.reviews_count && trip.reviews_count > 0);
   const difficultyLabel = trip.difficulty ? trip.difficulty.charAt(0) + trip.difficulty.slice(1).toLowerCase() : "";
   const keyFacts: { label: string; value: string; highlight?: boolean }[] = [
@@ -85,7 +76,6 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
   const [openDay, setOpenDay] = useState<number | null>(1);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const destKey = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
@@ -383,32 +373,22 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
               </div>
             </section>
 
-            {/* FAQs */}
-            {trip.faqs && trip.faqs.length > 0 && (
+            {/* FAQs: native <details> so every answer is in the HTML for search engines and works by keyboard */}
+            {faqs.length > 0 && (
               <section id="faqs" className="space-y-4">
                 <h2 className="font-display font-black text-2xl uppercase tracking-tight text-brand-navy">
-                  Frequently Asked Questions
+                  {trip.destination_name ? `${trip.destination_name} trip questions` : "Questions & answers"}
                 </h2>
                 <div className="space-y-3">
-                  {trip.faqs.map((faq) => {
-                    const isOpen = openFaq === faq.id;
-                    return (
-                      <div key={faq.id} className="border border-slate-200 rounded-2xl overflow-hidden">
-                        <button
-                          onClick={() => setOpenFaq(isOpen ? null : faq.id)}
-                          className="w-full flex items-center justify-between p-4 text-left font-bold text-sm text-brand-navy bg-white hover:bg-slate-50 transition"
-                        >
-                          <span>{faq.question}</span>
-                          <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform", isOpen && "rotate-180")} />
-                        </button>
-                        {isOpen && (
-                          <div className="p-4 pt-1 text-sm text-slate-600 bg-slate-50 border-t border-slate-100">
-                            {faq.answer}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {faqs.map((faq, i) => (
+                    <details key={faq.id} open={i === 0} className="group border border-slate-200 rounded-2xl overflow-hidden">
+                      <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer w-full flex items-center justify-between gap-3 p-4 text-left font-bold text-sm text-brand-navy bg-white hover:bg-slate-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-ocean">
+                        <h3 className="text-sm font-bold">{faq.question}</h3>
+                        <ChevronDown aria-hidden="true" className="w-4 h-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
+                      </summary>
+                      <p className="p-4 pt-1 text-sm text-slate-600 bg-slate-50 border-t border-slate-100">{faq.answer}</p>
+                    </details>
+                  ))}
                 </div>
               </section>
             )}
