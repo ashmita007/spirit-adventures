@@ -24,6 +24,14 @@ export BACKEND_URL="http://127.0.0.1:8000"
 export DJANGO_API_URL="http://127.0.0.1:8000/api/v1"
 export INTERNAL_API_URL="http://127.0.0.1:8000/api/v1"
 
+# 0. No SECRET_KEY in the dashboard: make one random key for this container so every
+#    process (gunicorn workers restart every ~1000 requests) shares it. Never fall back to
+#    the public dev key. Set SECRET_KEY in Render to keep logins across restarts.
+if [ -z "${SECRET_KEY:-}" ]; then
+  export SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')"
+  echo "--> WARNING: SECRET_KEY not set; generated a random one for this run." >&2
+fi
+
 # 1. Fast database migrations
 echo "--> Applying database migrations..."
 python "$BACKEND_DIR/manage.py" migrate --no-input

@@ -13,9 +13,20 @@ try:
 except ImportError:
     pass
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'spirit-adventures-dev-secret-key-nature-2025-cinematic')
+_DEV_SECRET_KEY = 'spirit-adventures-dev-secret-key-nature-2025-cinematic'
+SECRET_KEY = os.getenv('SECRET_KEY', _DEV_SECRET_KEY)
 
-DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
+# Secure by default on Render (it sets RENDER=true): debug pages leak URL patterns and
+# settings. Local runs keep DEBUG on unless DEBUG=False is set.
+DEBUG = os.getenv('DEBUG', 'False' if os.getenv('RENDER') else 'True').lower() in ('true', '1', 'yes')
+
+if not DEBUG and SECRET_KEY == _DEV_SECRET_KEY:
+    # The dev key is public in the repo; anyone could forge sessions with it. Use a random
+    # per-process key instead of crashing. Logins reset on every restart until SECRET_KEY is set.
+    import secrets as _secrets
+    import sys as _sys
+    SECRET_KEY = _secrets.token_urlsafe(50)
+    print('WARNING: SECRET_KEY is not set; using a random key (logins reset on restart).', file=_sys.stderr)
 
 # Public domain of the site, e.g. spiritadventures.in (used for hosts, CSRF and CORS)
 SITE_DOMAIN = os.getenv('SITE_DOMAIN', '').strip().lower()
@@ -26,9 +37,6 @@ if SITE_DOMAIN and '*' not in ALLOWED_HOSTS:
 # Containers talk to each other by service name (frontend -> backend:8000)
 if '*' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS += ['backend', 'localhost', '127.0.0.1']
-
-if not DEBUG and SECRET_KEY == 'spirit-adventures-dev-secret-key-nature-2025-cinematic':
-    raise RuntimeError('Set a real SECRET_KEY before running with DEBUG=False.')
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CARD_VIDEO, DESKTOP_VIDEO, FULL_HD_VIDEO, MOBILE_VIDEO, cloudinaryVideo, isCloudinaryVideo } from "./video-url";
 
-const DESKTOP_VIDEO = "w_1280,c_limit,q_auto:good,vc_h264,br_1500k";
-const MOBILE_VIDEO = "w_720,c_limit,q_auto:eco,vc_h264,br_600k";
+export { isVideoUrl, cloudinaryVideo } from "./video-url";
 
 type NetInfo = { saveData?: boolean; effectiveType?: string };
 
@@ -14,13 +14,18 @@ function connection(): NetInfo | undefined {
 /**
  * Pick a video rendition for this device, or null when the visitor is on
  * Data Saver or a 2G link (the poster image stays instead).
- * Phones and 3G links get a 720px / 600 kbps encode (about a third of the size).
+ * - phones and 3G: 720px, 600 kbps
+ * - large screens (1440px+) on fast links: Full HD 1080p, 2.5 Mbps
+ * - other desktops: 1280px, 1.5 Mbps
  */
 export function pickVideoUrl(url: string): string | null {
   const net = connection();
   if (net?.saveData || /(^|-)2g$/.test(net?.effectiveType ?? "")) return null;
+  if (!isCloudinaryVideo(url)) return url;
   const small = window.matchMedia("(max-width: 767px)").matches || net?.effectiveType === "3g";
-  return small ? url.replace(DESKTOP_VIDEO, MOBILE_VIDEO) : url;
+  if (small) return cloudinaryVideo(url, MOBILE_VIDEO);
+  const big = window.matchMedia("(min-width: 1440px)").matches && (!net?.effectiveType || net.effectiveType === "4g");
+  return cloudinaryVideo(url, big ? FULL_HD_VIDEO : DESKTOP_VIDEO);
 }
 
 /**
@@ -55,18 +60,13 @@ export function useDeferredVideo(url: string | undefined | null): string | null 
   return src;
 }
 
-const CARD_VIDEO = "so_0,du_8,w_640,c_limit,q_auto:eco,vc_h264,br_600k";
 
 /**
  * Small preview rendition for trip cards: first 8 seconds, about 640px, 600 kbps (~0.75 MB).
  * ".../video/upload/<any transforms>/v123/x.mp4" -> ".../video/upload/w_640,.../v123/x.mp4"
  */
 export function cardVideoUrl(url: string): string {
-  if (!url.includes("res.cloudinary.com") || !url.includes("/video/upload/")) return url;
-  const [head, rest] = url.split("/video/upload/");
-  const versioned = rest.match(/(?:^|\/)(v\d+\/.*)$/);
-  const tail = versioned ? versioned[1] : rest;
-  return `${head}/video/upload/${CARD_VIDEO}/${tail}`;
+  return cloudinaryVideo(url, CARD_VIDEO);
 }
 
 /** False on Data Saver, 2G links and for visitors who asked for reduced motion. */

@@ -13,7 +13,7 @@ import TripCard from "@/components/trip-card";
 import { formatCurrency, cn } from "@/lib/utils";
 import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
-import { useDeferredVideo } from "@/lib/media";
+import { isVideoUrl, useDeferredVideo } from "@/lib/media";
 import { tripDrop, tripFaqs, tripPickup, tripSeason } from "@/lib/trip-faqs";
 
 interface TripDetailClientProps {
@@ -80,12 +80,13 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
 
   const destKey = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
 
-  // Resolve background ambient loop (only MP4 direct files)
-  const bgRawVideo = trip.hero_video_url && trip.hero_video_url.endsWith(".mp4")
+  // Background loop: the trip's own uploaded video (any Cloudinary upload, incl. phone .mov),
+  // else the built-in clip for this trip or destination. YouTube links are skipped.
+  const bgRawVideo = isVideoUrl(trip.hero_video_url)
     ? trip.hero_video_url
     : LOCAL_VIDEO_MAP[trip.slug] || DESTINATION_VIDEO_MAP[destKey];
-  // Mounted after page load, phone-sized on phones, skipped on Data Saver / 2G
-  const bgVideoSrc = useDeferredVideo(bgRawVideo && bgRawVideo.endsWith(".mp4") ? bgRawVideo : null);
+  // Mounted after page load, sized for the device (720p phone / 1080p big screens), skipped on Data Saver / 2G
+  const bgVideoSrc = useDeferredVideo(isVideoUrl(bgRawVideo) ? bgRawVideo : null);
 
   React.useEffect(() => {
     if (videoRef.current && bgVideoSrc) {
@@ -377,7 +378,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             {faqs.length > 0 && (
               <section id="faqs" className="space-y-4">
                 <h2 className="font-display font-black text-2xl uppercase tracking-tight text-brand-navy">
-                  {trip.destination_name ? `${trip.destination_name} trip questions` : "Questions & answers"}
+                  {(trip.destination_name || trip.destination?.name) ? `${trip.destination_name || trip.destination?.name} trip questions` : "Questions & answers"}
                 </h2>
                 <div className="space-y-3">
                   {faqs.map((faq, i) => (

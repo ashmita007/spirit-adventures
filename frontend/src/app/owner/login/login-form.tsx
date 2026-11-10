@@ -13,7 +13,7 @@ export default function LoginForm() {
 
   // Only allow redirects back into the owner portal or CRM (no open redirect)
   const rawNext = params.get("next") || "";
-  const safeNext = /^\/(owner|crm)(\/|$|\?)/.test(rawNext) ? rawNext : "";
+  const safeNext = /^\/(owner|crm)(\/|$|\?)/.test(rawNext) && !/^\/owner\/login/.test(rawNext) ? rawNext : "";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

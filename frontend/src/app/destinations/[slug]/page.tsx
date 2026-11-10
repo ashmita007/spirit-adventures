@@ -7,6 +7,7 @@ import { ArrowLeft, Compass, Mountain, MapPin, Sparkles } from "lucide-react";
 import { getDestinationBySlug, getTrips } from "@/lib/api";
 import TripCard from "@/components/trip-card";
 import JsonLd from "@/components/json-ld";
+import { DESKTOP_VIDEO, cloudinaryVideo, isVideoUrl } from "@/lib/video-url";
 import { breadcrumbJsonLd, tripListJsonLd } from "@/lib/seo";
 
 interface DestinationPageProps {
@@ -65,10 +66,10 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
       <div className="relative h-[50dvh] sm:h-[60dvh] w-full bg-brand-navy overflow-hidden">
         {(() => {
           const bannerMedia = destination.hero_image || destination.cover_image || "";
-          if (bannerMedia.endsWith(".mp4")) {
+          if (isVideoUrl(bannerMedia)) {
             return (
               <video
-                src={bannerMedia}
+                src={cloudinaryVideo(bannerMedia, DESKTOP_VIDEO)}
                 autoPlay
                 muted
                 loop

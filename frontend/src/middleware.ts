@@ -7,12 +7,14 @@ const ipRequestTimestamps = new Map<string, number[]>();
 export function middleware(request: NextRequest) {
   // Owner portal + CRM gate: no Django session cookie -> team login page.
   // (Django still checks the session, staff flag and CRM role on every API call.)
-  const { pathname } = request.nextUrl;
-  const isPortal = pathname.startsWith('/owner') || pathname === '/crm' || pathname.startsWith('/crm/');
+  // Trailing slashes are not normalized (skipTrailingSlashRedirect), so "/owner/login/"
+  // must count as the login page too, or it redirects to itself forever.
+  const pathname = request.nextUrl.pathname.replace(/\/+$/, '') || '/';
+  const isPortal = pathname === '/owner' || pathname.startsWith('/owner/') || pathname === '/crm' || pathname.startsWith('/crm/');
   if (isPortal && pathname !== '/owner/login' && !request.cookies.get('sessionid')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/owner/login';
-    url.search = `?next=${encodeURIComponent(pathname)}`;
+    // Fresh URL so the original trailing slash is not carried over
+    const url = new URL('/owner/login', request.url);
+    url.searchParams.set('next', pathname);
     return NextResponse.redirect(url);
   }
 

@@ -1,13 +1,29 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Compass, ArrowLeft, Mountain, Home } from "lucide-react";
+import { Compass, Mountain, Home } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Page not found | Spirit Adventures",
+  robots: { index: false, follow: true },
+  alternates: { canonical: null },
+};
+
+const POPULAR = [
+  { name: "Coorg", href: "/destinations/coorg" },
+  { name: "Gokarna", href: "/destinations/gokarna" },
+  { name: "Ooty", href: "/destinations/ooty" },
+  { name: "Wayanad", href: "/destinations/wayanad" },
+  { name: "Munnar", href: "/destinations/munnar" },
+  { name: "Manali", href: "/destinations/manali" },
+];
 
 export default function NotFound() {
   return (
-    <div className="min-h-[75dvh] flex items-center justify-center bg-white px-4 py-16">
+    <div className="min-h-[75dvh] flex items-center justify-center bg-white px-4 pt-28 pb-16">
       <div className="max-w-md w-full text-center space-y-6">
         <div className="w-20 h-20 mx-auto rounded-3xl bg-brand-light border border-brand-sky/30 flex items-center justify-center text-brand-ocean shadow-lg">
-          <Compass className="w-10 h-10 animate-spin" style={{ animationDuration: "12s" }} />
+          <Compass aria-hidden="true" className="w-10 h-10 motion-safe:animate-spin" style={{ animationDuration: "12s" }} />
         </div>
 
         <div className="space-y-2">
@@ -21,6 +37,22 @@ export default function NotFound() {
             This page has moved or doesn&apos;t exist. Browse our trips or go back home.
           </p>
         </div>
+
+        <nav aria-label="Popular destinations" className="pt-1">
+          <p className="text-xs font-bold text-slate-500 mb-3">Popular destinations</p>
+          <ul className="flex flex-wrap justify-center gap-2">
+            {POPULAR.map((d) => (
+              <li key={d.href}>
+                <Link
+                  href={d.href}
+                  className="inline-block px-3.5 py-2 rounded-full border border-slate-200 text-sm font-semibold text-brand-navy hover:border-brand-ocean hover:text-brand-ocean transition"
+                >
+                  {d.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link

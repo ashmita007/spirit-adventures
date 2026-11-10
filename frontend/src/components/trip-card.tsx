@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Heart, Star, Clock, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import { Trip } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
-import { canPlayPreviews, cardVideoUrl } from "@/lib/media";
+import { canPlayPreviews, cardVideoUrl, isVideoUrl } from "@/lib/media";
 
 interface TripCardProps {
   trip: Trip;
@@ -64,7 +64,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
   const difficultyClass = difficultyColors[trip.difficulty] || difficultyColors.MODERATE;
   const rawVideo = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug] || "";
   // Only direct video files can preview in a card (a YouTube link cannot)
-  const videoSrc = /\.(mp4|webm|mov)(\?|$)/i.test(rawVideo) ? rawVideo : "";
+  const videoSrc = isVideoUrl(rawVideo) ? rawVideo : "";
   const cover = trip.cover_image || FALLBACK_COVER;
 
   useEffect(() => {
