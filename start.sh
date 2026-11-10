@@ -28,6 +28,26 @@ export INTERNAL_API_URL="http://127.0.0.1:8000/api/v1"
 echo "--> Applying database migrations..."
 python "$BACKEND_DIR/manage.py" migrate --no-input
 
+# 1b. First start on a real database (DATABASE_URL set, e.g. Postgres): copy the
+#     bundled SQLite data (trips, leads, CRM users, gallery...) in once. Runs only
+#     while the database has no trips, so it never overwrites live data.
+if [ -n "${DATABASE_URL:-}" ] && [ -f "$BACKEND_DIR/db.sqlite3" ]; then
+  TRIP_COUNT=$(python "$BACKEND_DIR/manage.py" shell -c "from adventures.models import Trip; print(Trip.objects.count())" 2>/dev/null | tail -1)
+  if [ "$TRIP_COUNT" = "0" ]; then
+    echo "--> Empty database: importing bundled SQLite data..."
+    EXPORT_DIR="$(mktemp -d /tmp/sqlite-export-XXXXXX)"; EXPORT_FILE="$EXPORT_DIR/import.json"
+    if DATABASE_URL="sqlite:///$BACKEND_DIR/db.sqlite3" python "$BACKEND_DIR/manage.py" dumpdata \
+         --natural-foreign --natural-primary \
+         -e contenttypes -e auth.permission -e admin.logentry -e sessions > "$EXPORT_FILE" \
+       && python "$BACKEND_DIR/manage.py" loaddata "$EXPORT_FILE"; then
+      echo "--> Import done."
+    else
+      echo "--> Import FAILED; starting with the empty database." >&2
+    fi
+    rm -rf "$EXPORT_DIR"
+  fi
+fi
+
 # 2. Launch Gunicorn Django Server on 127.0.0.1:8000 (1 worker, 4 threads to fit safely inside 512MB RAM)
 echo "--> Launching Gunicorn Django Server on 127.0.0.1:8000..."
 gunicorn spirit_backend.wsgi:application \

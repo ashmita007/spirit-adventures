@@ -17,6 +17,12 @@ services:
         generateValue: true
       - key: CLOUDINARY_URL
         sync: false  # set in the Render dashboard: cloudinary://<api_key>:<api_secret>@<cloud_name>
+      # Persistent database. Without it the site runs on the SQLite file baked into
+      # the image, and every deploy resets enquiries, leads and edits.
+      # Set in the dashboard: postgresql://user:password@host:5432/dbname
+      # (Render Postgres "Internal Database URL", or Neon / Supabase).
+      - key: DATABASE_URL
+        sync: false
       - key: ALLOWED_HOSTS
         value: "*"
       - key: SEED_DEMO_DATA
