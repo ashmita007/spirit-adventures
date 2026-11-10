@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Mountain, Users, Image as ImageIcon, Star, ShieldCheck, Briefcase, Terminal } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "How-To Guide | Owner HQ",
+  title: "Help | Owner HQ",
   robots: { index: false, follow: false },
 };
 
@@ -12,7 +12,7 @@ const sections = [
     icon: Mountain,
     title: "Add a new package (trip)",
     steps: [
-      <>Open <Link href="/owner/packages" className="text-brand-ocean font-semibold underline">Day-Wise Itinerary Studio</Link> and click <b>Add package</b>.</>,
+      <>Open <Link href="/owner/packages" className="text-brand-ocean font-semibold underline">Trips</Link> and click <b>Add package</b>.</>,
       <><b>Pricing &amp; Logistics</b> tab: set the title, destination (pick an existing one so it groups with other trips), category, difficulty, price per person, days/nights and a short summary.</>,
       <><b>Day-Wise Timeline</b> tab: add one row per day with title, description, altitude, distance, meals and stay.</>,
       <><b>Video Loop Selector</b> tab: choose the background video and paste a cover image URL (landscape, 1200px+ wide).</>,
@@ -33,7 +33,7 @@ const sections = [
     steps: [
       <>Open <b>Photo Gallery</b> in the sidebar, pick a category, then click <b>Add photos</b> and choose one or many photos from your phone or laptop.</>,
       <>Click a photo to change its title, caption or category. The eye icon hides it from the site; the bin removes it.</>,
-      <>For a trip: <b>Day-Wise Itinerary Studio</b> → <b>Edit</b> → <b>Video loop selector</b> → <b>Upload cover photo</b>, <b>Upload your own video</b> or <b>Add trip photos</b>, then save.</>,
+      <>For a trip: <b>Trips</b> → <b>Edit</b> → <b>Video loop selector</b> → <b>Upload cover photo</b>, <b>Upload your own video</b> or <b>Add trip photos</b>, then save.</>,
       <>Everything is stored on Cloudinary. Photos up to 10 MB, videos up to 100 MB.</>,
     ],
   },
@@ -80,7 +80,7 @@ export default function OwnerHelpPage() {
   return (
     <div className="mx-auto max-w-3xl p-4 sm:p-8 space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-display font-black text-brand-navy">How-To Guide</h1>
+        <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900">Help</h1>
         <p className="mt-1 text-sm text-slate-500">Everything you need to run the website day to day.</p>
       </div>
 

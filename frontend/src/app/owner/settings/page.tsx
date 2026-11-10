@@ -187,18 +187,18 @@ export default function OwnerSettingsPage() {
       {/* Clean Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-black text-brand-navy">
-            System Settings & Security
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900">
+            Settings
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Monitor automated background crons, rate limiting engine, and operations configurations.
+            Google reviews, scheduled tasks and business details.
           </p>
         </div>
 
         <button
           onClick={() => handleTriggerCron("sync_google_reviews")}
           disabled={triggeringJobId !== null}
-          className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-sm hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50 w-fit"
+          className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-sm active:scale-[0.98] cursor-pointer disabled:opacity-50 w-fit"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${triggeringJobId ? "animate-spin" : ""}`} />
           <span>Sync All Reviews & Crons</span>
@@ -399,10 +399,10 @@ export default function OwnerSettingsPage() {
           <button
             onClick={handleSyncGoogleReviews}
             disabled={isSyncing}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wide transition shadow-md cursor-pointer disabled:opacity-50 hover:scale-105 active:scale-95"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-md cursor-pointer disabled:opacity-50 active:scale-[0.98]"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
-            <span>{isSyncing ? "Fetching..." : "Sync Reviews Now"}</span>
+            <span>{isSyncing ? "Fetching..." : "Sync reviews"}</span>
           </button>
         </div>
 
@@ -465,10 +465,10 @@ export default function OwnerSettingsPage() {
 
         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between text-xs">
           <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-slate-600">Last Synced: <strong className="text-slate-900">{lastSyncTime}</strong></span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="text-slate-600">Last synced: <strong className="text-slate-900">{lastSyncTime}</strong></span>
           </div>
-          <span className="text-emerald-700 font-bold">Status: 5.0★ Rating Active (120+ reviews)</span>
+          
         </div>
       </div>
 
@@ -519,7 +519,7 @@ export default function OwnerSettingsPage() {
 
         <div>
           <label className="block text-xs font-bold text-slate-600 mb-1.5">
-            Primary Departure Hubs
+            Departure cities
           </label>
           <input
             type="text"
@@ -531,7 +531,7 @@ export default function OwnerSettingsPage() {
         <div className="pt-4 border-t border-slate-100 flex justify-end">
           <button
             onClick={() => showToast("Business configuration & Google API settings saved successfully!")}
-            className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-xs uppercase tracking-wide transition shadow-md flex items-center space-x-1.5 cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-xs transition shadow-md flex items-center space-x-1.5 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>Save Settings</span>

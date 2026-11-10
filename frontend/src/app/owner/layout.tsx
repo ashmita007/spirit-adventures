@@ -30,44 +30,44 @@ export default function OwnerLayout({
 
   const navigation = [
     {
-      name: "Dashboard Overview",
+      name: "Today",
       href: "/owner",
       icon: LayoutDashboard,
       exact: true,
-      badge: "Live",
+      badge: "",
     },
     {
-      name: "Customer Leads & CRM",
+      name: "Leads",
       href: "/owner/leads",
       icon: Users,
       exact: false,
     },
     {
-      name: "Day-Wise Itinerary Studio",
+      name: "Trips",
       href: "/owner/packages",
       icon: Mountain,
       exact: false,
     },
     {
-      name: "Photo Gallery",
+      name: "Gallery",
       href: "/owner/gallery",
       icon: ImageIcon,
       exact: false,
     },
     {
-      name: "Destination Breakdown",
+      name: "Analytics",
       href: "/owner/analytics",
       icon: BarChart3,
       exact: false,
     },
     {
-      name: "Google Reviews & Settings",
+      name: "Settings",
       href: "/owner/settings",
       icon: Settings,
       exact: false,
     },
     {
-      name: "How-To Guide",
+      name: "Help",
       href: "/owner/help",
       icon: BookOpen,
       exact: false,
@@ -93,17 +93,10 @@ export default function OwnerLayout({
                 <img src="/images/logo.png" alt="Spirit Adventures Logo" className="h-7 w-auto object-contain" />
               </div>
             </Link>
-            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[9px] font-bold text-slate-600 border border-slate-200">
-              HQ
-            </span>
           </div>
 
           {/* Navigation Items */}
-          <nav className="p-3 space-y-1.5">
-            <div className="px-3 py-2 text-[10px] font-bold text-slate-400">
-              Management Modules
-            </div>
-
+          <nav className="p-3 space-y-0.5">
             {navigation.map((item) => {
               const active = isLinkActive(item);
               const Icon = item.icon;
@@ -112,14 +105,14 @@ export default function OwnerLayout({
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition group",
+                    "relative flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition group",
                     active
-                      ? "bg-brand-ocean text-white shadow-md shadow-brand-ocean/20 font-black"
-                      : "text-slate-600 hover:text-brand-navy hover:bg-slate-100/80"
+                      ? "bg-slate-100 text-slate-900 font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:rounded-full before:bg-brand-ocean"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                   )}
                 >
                   <div className="flex items-center space-x-3">
-                    <Icon className={cn("w-4 h-4 transition group-hover:scale-110", active ? "text-white" : "text-slate-400 group-hover:text-brand-ocean")} />
+                    <Icon className={cn("w-4 h-4 transition", active ? "text-brand-ocean" : "text-slate-400 group-hover:text-slate-600")} />
                     <span>{item.name}</span>
                   </div>
 
@@ -146,7 +139,7 @@ export default function OwnerLayout({
           >
             <div className="flex items-center space-x-2">
               <Eye className="w-3.5 h-3.5 text-brand-ocean" />
-              <span>Consumer Site</span>
+              <span>Website</span>
             </div>
             <ExternalLink className="w-3 h-3 text-slate-400" />
           </Link>
@@ -170,7 +163,7 @@ export default function OwnerLayout({
           >
             <div className="flex items-center space-x-2">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Django Admin DB</span>
+              <span>Database admin</span>
             </div>
             <ExternalLink className="w-3 h-3 text-slate-400" />
           </a>
@@ -213,12 +206,12 @@ export default function OwnerLayout({
                       href={item.href}
                       onClick={() => setSidebarOpen(false)}
                       className={cn(
-                        "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition",
-                        active ? "bg-brand-ocean text-white font-black" : "text-slate-600 hover:bg-slate-100"
+                        "flex items-center justify-between px-3 py-3 rounded-lg text-[15px] font-medium transition",
+                        active ? "bg-slate-100 text-slate-900 font-semibold" : "text-slate-600 hover:bg-slate-50"
                       )}
                     >
                       <div className="flex items-center space-x-3">
-                        <Icon className="w-4 h-4" />
+                        <Icon className={cn("w-4 h-4", active ? "text-brand-ocean" : "text-slate-400")} />
                         <span>{item.name}</span>
                       </div>
                       {item.badge && (
@@ -234,7 +227,7 @@ export default function OwnerLayout({
 
             <div className="pt-4 border-t border-slate-100 space-y-2">
               <Link href="/" target="_blank" className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 text-xs font-semibold text-slate-700 border border-slate-200">
-                <span>View Public Site</span>
+                <span>Website</span>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
               </Link>
               <a href={crmUrl} className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 text-xs font-semibold text-slate-700 border border-slate-200">
@@ -253,7 +246,7 @@ export default function OwnerLayout({
       {/* 3. MAIN CONTENT CONTAINER (WHITE CANVAS) */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 shadow-2xs">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -264,27 +257,20 @@ export default function OwnerLayout({
             </button>
 
             <div className="flex items-center space-x-2 text-xs">
-              <span className="font-bold text-slate-400">Owner HQ</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-              <span className="font-extrabold text-brand-navy">
-                {navigation.find(n => isLinkActive(n))?.name || "Overview"}
+              <span className="text-sm font-semibold text-slate-900">
+                {navigation.find(n => isLinkActive(n))?.name || "Today"}
               </span>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Systems Online</span>
-            </div>
-
             <Link
               href="/"
               target="_blank"
               className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200 shadow-2xs"
             >
               <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-              <span className="hidden sm:inline">View Site</span>
+              <span className="hidden sm:inline">View website</span>
             </Link>
           </div>
         </header>

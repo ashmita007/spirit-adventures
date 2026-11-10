@@ -182,3 +182,33 @@ html { scroll-behavior: smooth; }
     scroll-behavior: auto !important;
   }
 }
+
+/* Dropdowns: one look on every page (site, owner portal, CRM). Native <select> keeps the
+   phone's own picker and full keyboard support; only the closed control is restyled.
+   `select:not(...)` outranks single utility classes, so padding-right always leaves room
+   for the arrow even when a component sets px-3. */
+select:not([multiple]):not([size]) {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 1.05em;
+  padding-right: 2.1rem;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+/* The open list: readable on every OS (Windows draws it with the control's colours) */
+select option {
+  color: #0f172a;
+  background-color: #ffffff;
+}

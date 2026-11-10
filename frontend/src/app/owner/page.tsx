@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: "Owner HQ & Business Operations | Spirit Adventures",
-  description: "Executive overview, multi-page CRM, itinerary studio, and regional demand intelligence.",
+  title: "Owner portal | Spirit Adventures",
+  description: "Leads, trips and bookings for Spirit Adventures.",
 };
 
 export default async function OwnerPage() {

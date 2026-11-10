@@ -294,11 +294,11 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
       {/* Clean Header with Create Package Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-black text-brand-navy">
-            Adventure Packages
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900">
+            Trips
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Manage itineraries, pricing, durations, and day-by-day expedition plans.
+            Prices, dates and the day-by-day plan for every trip on the website.
           </p>
         </div>
 
@@ -346,7 +346,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
             setEditingTrip(newTrip);
             setEditorTab("itinerary");
           }}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-md cursor-pointer hover:scale-105 active:scale-95"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-md cursor-pointer active:scale-[0.98]"
         >
           <Plus className="w-4 h-4" />
           <span>Add package</span>
@@ -565,7 +565,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               <button
                 onClick={() => setEditorTab("itinerary")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black transition whitespace-nowrap cursor-pointer",
                   editorTab === "itinerary"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -577,7 +577,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               <button
                 onClick={() => setEditorTab("general")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black transition whitespace-nowrap cursor-pointer",
                   editorTab === "general"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -589,7 +589,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               <button
                 onClick={() => setEditorTab("media")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black transition whitespace-nowrap cursor-pointer",
                   editorTab === "media"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -601,7 +601,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
               <button
                 onClick={() => setEditorTab("inclusions")}
                 className={cn(
-                  "px-4 py-2.5 rounded-t-xl text-xs font-black uppercase tracking-wide transition whitespace-nowrap cursor-pointer",
+                  "px-4 py-2.5 rounded-t-xl text-xs font-black transition whitespace-nowrap cursor-pointer",
                   editorTab === "inclusions"
                     ? "bg-white text-brand-ocean border-t-2 border-brand-ocean font-black shadow-2xs"
                     : "text-slate-500 hover:text-slate-800"
@@ -626,7 +626,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
                     <button
                       onClick={handleAddItineraryDay}
-                      className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-2xs cursor-pointer"
+                      className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-2xs cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add Day {(editingTrip.itinerary_days || []).length + 1}</span>
@@ -1041,7 +1041,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
 
               <button
                 onClick={handleSaveTripForm}
-                className="px-7 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-md flex items-center space-x-1.5 cursor-pointer"
+                className="px-7 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-md flex items-center space-x-1.5 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Day-wise Itinerary</span>

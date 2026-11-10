@@ -33,7 +33,7 @@ const WHATSAPP_TEMPLATES = [
     id: "itinerary",
     title: "Full Itinerary & Quote",
     generateText: (lead: OwnerEnquiry) => 
-      `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Upcoming Weekend"}\n${lead.trip_price ? `• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)` : "• *Package Price*: we'll share your exact quote shortly"}\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
+      `Hi ${lead.full_name}! 🌿 Greetings from *Spirit Adventures*.\n\nThank you for reaching out regarding *${lead.trip_title}* for *${lead.travelers_count || 1} travelers*.\n\nHere are your trip details:\n• *Destination*: ${lead.trip_title}\n• *Group Size*: ${lead.travelers_count || 1} Pax\n• *Travel Dates*: ${lead.travel_date || "Date not set"}\n${lead.trip_price ? `• *Package Price*: ₹${lead.trip_price.toLocaleString("en-IN")}/person (All-inclusive stay, meals, guide & permits)` : "• *Package Price*: we'll share your exact quote shortly"}\n\nWould you like us to reserve your slots or send the detailed day-wise schedule PDF? 🏔️`
   },
   {
     id: "payment",
@@ -217,7 +217,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
   }, [data?.trips]);
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 selection:bg-brand-ocean selection:text-white">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 selection:bg-brand-ocean selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-2.5 font-bold text-xs border border-emerald-400/40 animate-fade-in">
@@ -226,189 +226,60 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
         </div>
       )}
 
-      {/* 1. EXECUTIVE TOP HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl sm:text-3xl font-display font-black text-slate-900 tracking-tight">
-              Executive HQ & Operations
-            </h1>
-            <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-black tracking-wide border border-emerald-200 flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE PIPELINE</span>
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time revenue monitoring, customer CRM intelligence, and expedition management.
+          <p className="text-xs font-semibold text-slate-500">
+            {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}
           </p>
+          <h1 className="mt-1 text-2xl sm:text-3xl font-display font-bold text-slate-900 tracking-tight">
+            {data.metrics.new_leads > 0
+              ? `${data.metrics.new_leads} new ${data.metrics.new_leads === 1 ? "lead" : "leads"} waiting for a reply`
+              : "No new leads waiting"}
+          </h1>
         </div>
 
-        <div className="flex items-center space-x-2.5">
+        <div className="grid grid-cols-2 sm:flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold transition border border-slate-200 shadow-2xs cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition border border-slate-200 cursor-pointer"
           >
             <Download className="w-4 h-4 text-slate-500" />
-            <span>Export Leads</span>
+            <span>Export CSV</span>
           </button>
-
           <button
             onClick={() => setIsAddLeadOpen(true)}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean/90 text-white text-xs font-black uppercase tracking-wide transition shadow-md shadow-brand-ocean/20 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-navy text-white text-sm font-semibold transition active:scale-[0.98] cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
-            <span>+ Add Inquiry</span>
+            <span>Add lead</span>
           </button>
         </div>
       </div>
 
-      {/* 2. HIGH-IMPACT REVENUE & KPI METRIC CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Est Revenue Card */}
-        <div className="bg-gradient-to-br from-brand-navy to-slate-900 text-white p-5 rounded-3xl border border-slate-800 shadow-lg relative overflow-hidden group">
-          <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-28 h-28 bg-brand-ocean/20 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-          <div className="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
-            <span>Estimated Pipeline Revenue</span>
-            <div className="p-2 rounded-xl bg-white/10 text-emerald-400">
-              <DollarSign className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-display font-black text-white tracking-tight">
-            {formatCurrency(data.metrics.est_revenue)}
-          </div>
-          <div className="mt-3 flex items-center space-x-2 text-[11px] text-emerald-400 font-semibold">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{data.metrics.conversion_rate}% Conversion Rate</span>
-          </div>
-        </div>
-
-        {/* Fresh Inquiries */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition group">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-bold mb-3">
-            <span>Fresh Inquiries</span>
-            <div className="p-2 rounded-xl bg-sky-50 text-sky-600 border border-sky-100">
-              <Sparkles className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-display font-black text-slate-900 tracking-tight">
-            {data.metrics.new_leads}
-          </div>
-          <div className="mt-3 flex items-center space-x-2 text-[11px] text-sky-600 font-semibold">
-            <span>Requires instant outreach</span>
-          </div>
-        </div>
-
-        {/* Confirmed Bookings */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition group">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-bold mb-3">
-            <span>Confirmed (Paid)</span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-display font-black text-slate-900 tracking-tight">
-            {data.metrics.converted_leads}
-          </div>
-          <div className="mt-3 flex items-center space-x-2 text-[11px] text-emerald-600 font-semibold">
-            <span>Fully paid departures</span>
-          </div>
-        </div>
-
-        {/* Active Expeditions */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition group">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-bold mb-3">
-            <span>Active Expeditions</span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
-              <Mountain className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-display font-black text-slate-900 tracking-tight">
-            {data.metrics.active_trips_count}
-          </div>
-          <div className="mt-3 flex items-center space-x-2 text-[11px] text-purple-600 font-semibold">
-            <span>Published on website</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. DEDICATED MODULE ACCESS CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link
-          href="/owner/leads"
-          className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-brand-ocean/40 transition group flex flex-col justify-between"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2.5 rounded-2xl bg-sky-50 text-sky-600 border border-sky-100 group-hover:bg-brand-ocean group-hover:text-white transition">
-                <Users className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                {data.enquiries.length} Total Leads
-              </span>
-            </div>
-            <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-ocean transition">
-              Customer Leads & Pipeline CRM
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Full spreadsheet table, Kanban stage transitions, WhatsApp quote dispatch, and follow-up tracking.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center text-xs font-bold text-brand-ocean space-x-1 group-hover:translate-x-1 transition-transform">
-            <span>Open Leads Studio</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
+      {/* Numbers */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200">
+        <Link href="/owner/leads" className="bg-white p-4 sm:p-5 hover:bg-slate-50 transition">
+          <p className="text-xs font-semibold text-slate-500">New leads</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-display font-bold text-slate-900 tabular-nums">{data.metrics.new_leads}</p>
+          <p className="mt-1 text-xs text-slate-500">of {data.enquiries.length} total</p>
         </Link>
-
-        <Link
-          href="/owner/packages"
-          className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-brand-ocean/40 transition group flex flex-col justify-between"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2.5 rounded-2xl bg-purple-50 text-purple-600 border border-purple-100 group-hover:bg-brand-ocean group-hover:text-white transition">
-                <Mountain className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                {data.trips.length} Packages
-              </span>
-            </div>
-            <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-ocean transition">
-              Day-Wise Itinerary Studio
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Curate day-wise schedules, update pricing, manage inclusions, and edit trip photography.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center text-xs font-bold text-brand-ocean space-x-1 group-hover:translate-x-1 transition-transform">
-            <span>Open Itinerary Studio</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
+        <Link href="/owner/leads" className="bg-white p-4 sm:p-5 hover:bg-slate-50 transition">
+          <p className="text-xs font-semibold text-slate-500">Paid bookings</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-display font-bold text-slate-900 tabular-nums">{data.metrics.converted_leads}</p>
+          <p className="mt-1 text-xs text-slate-500">{data.metrics.conversion_rate}% of leads</p>
         </Link>
-
-        <Link
-          href="/owner/analytics"
-          className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-brand-ocean/40 transition group flex flex-col justify-between"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2.5 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 group-hover:bg-brand-ocean group-hover:text-white transition">
-                <BarChart3 className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                Demand Metrics
-              </span>
-            </div>
-            <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-ocean transition">
-              Destination Breakdown & Insights
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Track high-intent booking destinations (Dandeli, Gokarna, Coorg) and revenue attribution.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center text-xs font-bold text-brand-ocean space-x-1 group-hover:translate-x-1 transition-transform">
-            <span>View Analytics</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
+        <Link href="/owner/analytics" className="bg-white p-4 sm:p-5 hover:bg-slate-50 transition">
+          <p className="text-xs font-semibold text-slate-500">Booked value</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-display font-bold text-slate-900 tabular-nums">{formatCurrency(data.metrics.est_revenue)}</p>
+          <p className="mt-1 text-xs text-slate-500">
+            {data.metrics.converted_leads > 0 && !data.metrics.est_revenue ? "Paid leads have no trip linked" : "Trip price × people, paid leads"}
+          </p>
+        </Link>
+        <Link href="/owner/packages" className="bg-white p-4 sm:p-5 hover:bg-slate-50 transition">
+          <p className="text-xs font-semibold text-slate-500">Live trips</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-display font-bold text-slate-900 tabular-nums">{data.metrics.active_trips_count}</p>
+          <p className="mt-1 text-xs text-slate-500">on the website</p>
         </Link>
       </div>
 
@@ -418,13 +289,13 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
-              <span>Recent Inquiries</span>
+              <span>Recent leads</span>
               <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
                 {filteredLeads.length}
               </span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Click any customer row to open full inquiry modal, dispatch WhatsApp quotes, or update stage.
+              Tap a lead to see details or send a quote on WhatsApp.
             </p>
           </div>
 
@@ -451,29 +322,53 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                 setStageFilter(e.target.value);
                 setLeadsPage(1);
               }}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+              aria-label="Filter by stage" className="w-full sm:w-auto py-2.5 sm:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
             >
-              <option value="ALL">All Stages</option>
-              <option value="NEW">Fresh Leads</option>
-              <option value="CONTACTED">In Discussion</option>
-              <option value="FOLLOW_UP">Quote Sent</option>
-              <option value="PAYMENT_PENDING">Payment Pending</option>
-              <option value="CONVERTED">Confirmed (Paid)</option>
+              <option value="ALL">All stages</option>
+              <option value="NEW">Fresh leads</option>
+              <option value="CONTACTED">In discussion</option>
+              <option value="FOLLOW_UP">Quote sent</option>
+              <option value="PAYMENT_PENDING">Payment pending</option>
+              <option value="CONVERTED">Confirmed (paid)</option>
               <option value="CLOSED">Closed</option>
             </select>
           </div>
         </div>
 
-        {/* The Spreadsheet Table */}
-        <div className="overflow-x-auto">
+        {/* Phones: one row per lead */}
+        <ul className="md:hidden divide-y divide-slate-100">
+          {paginatedLeads.map((lead) => (
+            <li key={lead.id}>
+              <button type="button" onClick={() => setSelectedLead(lead)} className="w-full text-left px-4 py-3.5 flex items-center gap-3 active:bg-slate-50">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-slate-900 truncate">{lead.full_name}</p>
+                  <p className="text-xs text-slate-500 truncate">{lead.trip_title}</p>
+                </div>
+                <span className={cn(
+                  "shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold border",
+                  lead.status === "CONVERTED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                  lead.status === "NEW" ? "bg-sky-50 text-sky-700 border-sky-200" :
+                  lead.status === "FOLLOW_UP" ? "bg-purple-50 text-purple-700 border-purple-200" :
+                  lead.status === "PAYMENT_PENDING" ? "bg-orange-50 text-orange-700 border-orange-200" :
+                  "bg-slate-100 text-slate-600 border-slate-200"
+                )}>
+                  {({ NEW: "New", CONTACTED: "Talking", FOLLOW_UP: "Quoted", PAYMENT_PENDING: "Payment due", CONVERTED: "Paid", CLOSED: "Closed" } as Record<string, string>)[lead.status] || lead.status}
+                </span>
+              </button>
+            </li>
+          ))}
+          {paginatedLeads.length === 0 && <li className="py-10 text-center text-sm text-slate-400">No leads match this filter.</li>}
+        </ul>
+
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50/80 border-b border-slate-200/80 text-[10px] font-black text-slate-500 whitespace-nowrap">
               <tr>
                 <th className="py-3.5 px-5">Customer</th>
                 <th className="py-3.5 px-4">Package</th>
-                <th className="py-3.5 px-4">Group Size</th>
-                <th className="py-3.5 px-4">Estimated Deal</th>
-                <th className="py-3.5 px-4">Pipeline Stage</th>
+                <th className="py-3.5 px-4">People</th>
+                <th className="py-3.5 px-4">Value</th>
+                <th className="py-3.5 px-4">Stage</th>
                 <th className="py-3.5 px-4">Priority</th>
                 <th className="py-3.5 px-5 text-right">Actions</th>
               </tr>
@@ -482,7 +377,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
               {paginatedLeads.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-slate-400 text-xs">
-                    No inquiries found matching your filter criteria.
+                    No leads match this filter.
                   </td>
                 </tr>
               ) : (
@@ -504,12 +399,12 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
 
                     <td className="py-4 px-4 font-semibold text-slate-800">
                       <div className="truncate max-w-[220px] font-bold text-slate-900">{lead.trip_title}</div>
-                      <div className="text-[10px] text-slate-400 font-normal">{lead.travel_date || "Upcoming Weekend"}</div>
+                      <div className="text-[10px] text-slate-400 font-normal">{lead.travel_date || "Date not set"}</div>
                     </td>
 
                     <td className="py-4 px-4 whitespace-nowrap">
                       <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200 text-[11px] inline-flex items-center space-x-1">
-                        <span>{lead.travelers_count || 1} Pax</span>
+                        <span>{lead.travelers_count || 1}</span>
                       </span>
                     </td>
 
@@ -522,7 +417,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                         value={lead.status}
                         onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                         className={cn(
-                          "px-3 py-1.5 rounded-xl text-[10px] font-black border focus:outline-none cursor-pointer transition",
+                          "py-1.5 pl-2.5 rounded-lg text-[11px] font-bold border focus:outline-none transition",
                           lead.status === "CONVERTED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
                           lead.status === "NEW" ? "bg-sky-50 text-sky-700 border-sky-200" :
                           lead.status === "FOLLOW_UP" ? "bg-purple-50 text-purple-700 border-purple-200" :
@@ -530,11 +425,11 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                           "bg-slate-100 text-slate-600 border-slate-200"
                         )}
                       >
-                        <option value="NEW">FRESH LEAD</option>
-                        <option value="CONTACTED">IN DISCUSSION</option>
-                        <option value="FOLLOW_UP">QUOTE SENT</option>
-                        <option value="PAYMENT_PENDING">PAYMENT PENDING</option>
-                        <option value="CONVERTED">CONFIRMED (PAID)</option>
+                        <option value="NEW">Fresh lead</option>
+                        <option value="CONTACTED">In discussion</option>
+                        <option value="FOLLOW_UP">Quote sent</option>
+                        <option value="PAYMENT_PENDING">Payment pending</option>
+                        <option value="CONVERTED">Confirmed (paid)</option>
                         <option value="CLOSED">CLOSED</option>
                       </select>
                     </td>
@@ -583,7 +478,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
           onPageChange={setLeadsPage}
           onPageSizeChange={setLeadsPageSize}
           pageSizeOptions={[5, 8, 15, 25]}
-          itemLabel="inquiries"
+          itemLabel="leads"
         />
       </div>
 
@@ -592,17 +487,17 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-lg font-bold text-slate-900">
-              Active Adventure Packages
+              Top trips
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Top curated expeditions running this season.
+              Most enquired trips on the website.
             </p>
           </div>
           <Link
             href="/owner/packages"
             className="text-xs font-bold text-brand-ocean hover:underline flex items-center space-x-1"
           >
-            <span>Manage All ({data.trips.length})</span>
+            <span>All trips ({data.trips.length})</span>
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

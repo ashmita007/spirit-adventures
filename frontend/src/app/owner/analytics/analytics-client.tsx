@@ -57,19 +57,19 @@ export function AnalyticsClient({ data }: { data: any }) {
       {/* Clean Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-black text-brand-navy">
-            Destination & Revenue Analytics
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900">
+            Analytics
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Tabular tracking of traveler demand, conversion velocities, and gross revenue per adventure hub.
+            Leads, bookings and booked value for each destination.
           </p>
         </div>
 
         <Link
           href="/owner/leads"
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold uppercase tracking-wide transition shadow-sm hover:scale-105 active:scale-95 cursor-pointer w-fit"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-ocean hover:bg-brand-ocean-light text-white text-xs font-bold transition shadow-sm active:scale-[0.98] cursor-pointer w-fit"
         >
-          <span>Open Leads CRM</span>
+          <span>Open leads</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -96,7 +96,7 @@ export function AnalyticsClient({ data }: { data: any }) {
             <thead className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black text-slate-500">
               <tr>
                 <th className="py-4 px-4">#</th>
-                <th className="py-4 px-4">Destination Hub</th>
+                <th className="py-4 px-4">Destination</th>
                 <th className="py-4 px-4">State & Region</th>
                 <th className="py-4 px-4">Primary Attraction</th>
                 <th className="py-4 px-4">Inquiries</th>
@@ -151,7 +151,7 @@ export function AnalyticsClient({ data }: { data: any }) {
                       {conversionRate}%
                     </td>
 
-                    <td className="py-3.5 px-4 font-display font-black text-brand-navy text-sm">
+                    <td className="py-3.5 px-4 font-display font-bold text-slate-900 text-sm">
                       {formatCurrency(destRevenue)}
                     </td>
 

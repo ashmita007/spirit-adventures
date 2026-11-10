@@ -291,20 +291,20 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
       {/* Clean Header with Add Lead Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-black text-brand-navy">
-            Customer Leads
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900">
+            Leads
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Manage inquiries, update pipeline stages, and dispatch WhatsApp itineraries.
+            Every enquiry from the website. Change the stage as you talk to each person.
           </p>
         </div>
 
         <button
           onClick={() => setIsAddLeadOpen(true)}
-          className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wide transition shadow-md hover:scale-105 active:scale-95 cursor-pointer"
+          className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black transition shadow-md active:scale-[0.98] cursor-pointer"
         >
           <UserPlus className="w-4 h-4" />
-          <span>+ Add Lead</span>
+          <span>Add lead</span>
         </button>
       </div>
 
@@ -321,14 +321,14 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
           />
         </div>
 
-        <div className="flex items-center space-x-2 overflow-x-auto w-full md:w-auto">
+        <div className="grid grid-cols-2 gap-2 w-full md:flex md:items-center md:w-auto">
           <select
             value={priorityFilter}
             onChange={(e) => handlePriorityFilterChange(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean cursor-pointer"
+            aria-label="Filter by priority" className="w-full md:w-auto py-2.5 md:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm md:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
           >
-            <option value="ALL">All Priorities</option>
-            <option value="HIGH">High Priority (VIP)</option>
+            <option value="ALL">All priorities</option>
+            <option value="HIGH">High (VIP)</option>
             <option value="MEDIUM">Medium</option>
             <option value="LOW">Low</option>
           </select>
@@ -336,9 +336,9 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
           <select
             value={statusFilter}
             onChange={(e) => handleStatusFilterChange(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean cursor-pointer"
+            aria-label="Filter by stage" className="w-full md:w-auto py-2.5 md:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm md:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
           >
-            <option value="ALL">All Pipeline Stages</option>
+            <option value="ALL">All stages</option>
             <option value="NEW">Fresh Inquiries</option>
             <option value="CONTACTED">In Discussion</option>
             <option value="FOLLOW_UP">Quote / Itinerary Sent</option>
@@ -350,9 +350,9 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
           <select
             value={destinationFilter}
             onChange={(e) => handleDestinationFilterChange(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean cursor-pointer"
+            aria-label="Filter by destination" className="col-span-2 w-full md:w-auto py-2.5 md:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm md:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
           >
-            <option value="ALL">All Destinations</option>
+            <option value="ALL">All destinations</option>
             <option value="Hampi">Hampi & Gokarna</option>
             <option value="Dandeli">Dandeli</option>
             <option value="Coorg">Coorg</option>
@@ -368,7 +368,67 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
 
       {/* MASTER DATA TABLE (CLEAN WHITE) */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Phones: one card per lead (a 9-column table cannot fit) */}
+        <ul className="md:hidden divide-y divide-slate-100">
+          {paginatedEnquiries.map((lead) => (
+            <li key={lead.id} className="p-4 space-y-3">
+              <button type="button" onClick={() => setSelectedLead(lead)} className="w-full text-left">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-bold text-brand-navy text-[15px] truncate">{lead.full_name}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{lead.phone} · {lead.departure_city || "Hyderabad"}</p>
+                  </div>
+                  <span className={cn(
+                    "shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold border",
+                    lead.priority === "HIGH" ? "bg-rose-50 text-rose-700 border-rose-200" :
+                    lead.priority === "MEDIUM" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-slate-100 text-slate-600 border-slate-200"
+                  )}>
+                    {lead.priority === "HIGH" ? "VIP" : lead.priority === "MEDIUM" ? "Medium" : "Low"}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm font-semibold text-slate-800 line-clamp-2">{lead.trip_title}</p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {lead.travel_date || "Date not set"} · {lead.travelers_count} {lead.travelers_count === 1 ? "person" : "people"}
+                  {lead.trip_price ? <> · <span className="font-bold text-brand-ocean">{formatCurrency(lead.trip_price * (lead.travelers_count || 1))}</span></> : null}
+                </p>
+              </button>
+              <div className="flex items-center gap-2">
+                <select
+                  value={lead.status}
+                  aria-label={`Stage for ${lead.full_name}`}
+                  onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
+                  className={cn(
+                    "flex-1 py-2.5 pl-3 rounded-xl text-sm font-bold border focus:outline-none",
+                    lead.status === "CONVERTED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                    lead.status === "NEW" ? "bg-sky-50 text-sky-700 border-sky-200" :
+                    lead.status === "FOLLOW_UP" ? "bg-purple-50 text-purple-700 border-purple-200" :
+                    lead.status === "PAYMENT_PENDING" ? "bg-orange-50 text-orange-700 border-orange-200" :
+                    "bg-slate-100 text-slate-600 border-slate-200"
+                  )}
+                >
+                  <option value="NEW">Fresh lead</option>
+                  <option value="CONTACTED">In discussion</option>
+                  <option value="FOLLOW_UP">Quote sent</option>
+                  <option value="PAYMENT_PENDING">Payment pending</option>
+                  <option value="CONVERTED">Confirmed (paid)</option>
+                  <option value="CLOSED">Closed</option>
+                </select>
+                <button type="button" onClick={() => openWhatsAppLead(lead, "itinerary")} aria-label={`WhatsApp ${lead.full_name}`} className="p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <MessageCircle className="w-4 h-4" />
+                </button>
+                <a href={`tel:${lead.phone}`} aria-label={`Call ${lead.full_name}`} className="p-3 rounded-xl bg-slate-100 text-slate-700 border border-slate-200">
+                  <Phone className="w-4 h-4" />
+                </a>
+              </div>
+              {lead.follow_up_date && <p className="text-xs font-semibold text-amber-700">Follow up: {lead.follow_up_date}</p>}
+            </li>
+          ))}
+          {paginatedEnquiries.length === 0 && (
+            <li className="py-12 text-center text-slate-400">No leads match these filters.</li>
+          )}
+        </ul>
+
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-black text-slate-500 whitespace-nowrap">
               <tr>
@@ -419,7 +479,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                       value={lead.status}
                       onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                       className={cn(
-                        "px-2.5 py-1.5 rounded-lg text-[10px] font-black border focus:outline-none cursor-pointer",
+                        "py-1.5 pl-2.5 rounded-lg text-[11px] font-bold border focus:outline-none",
                         lead.status === "CONVERTED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
                         lead.status === "NEW" ? "bg-sky-50 text-sky-700 border-sky-200" :
                         lead.status === "FOLLOW_UP" ? "bg-purple-50 text-purple-700 border-purple-200" :
@@ -427,12 +487,12 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                         "bg-slate-100 text-slate-600 border-slate-200"
                       )}
                     >
-                      <option value="NEW">FRESH LEAD</option>
-                      <option value="CONTACTED">IN DISCUSSION</option>
-                      <option value="FOLLOW_UP">QUOTE SENT</option>
-                      <option value="PAYMENT_PENDING">PAYMENT PENDING</option>
-                      <option value="CONVERTED">CONFIRMED (PAID)</option>
-                      <option value="CLOSED">CLOSED</option>
+                      <option value="NEW">Fresh lead</option>
+                      <option value="CONTACTED">In discussion</option>
+                      <option value="FOLLOW_UP">Quote sent</option>
+                      <option value="PAYMENT_PENDING">Payment pending</option>
+                      <option value="CONVERTED">Confirmed (paid)</option>
+                      <option value="CLOSED">Closed</option>
                     </select>
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap">
