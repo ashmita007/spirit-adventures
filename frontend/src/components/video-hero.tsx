@@ -136,7 +136,15 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
     : POPULAR_DESTINATIONS.slice(0, 6);
 
   return (
-    <section data-anim="hero" aria-label="Spirit Adventures" className="relative min-h-[92dvh] sm:min-h-dvh w-full flex items-center justify-center overflow-hidden bg-brand-navy select-none">
+    <section
+      data-anim="hero"
+      aria-label="Spirit Adventures"
+      className={cn(
+        "relative min-h-[92dvh] sm:min-h-dvh w-full flex items-center justify-center bg-brand-navy select-none",
+        // While the search suggestions are open, sit above the trust strip (z-30) and let the list overflow the hero
+        isFocused ? "z-40 overflow-visible" : "overflow-hidden"
+      )}
+    >
       {/* 1. Full-Screen Clean Video Background with Instant Poster & Smooth Playback */}
       <div data-hero-bg className="absolute inset-0 z-0 overflow-hidden pointer-events-none will-change-transform">
         {HERO_SCENES.map((scene, idx) => {
@@ -188,7 +196,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
       <div className="absolute inset-0 z-10 bg-radial-vignette opacity-75 pointer-events-none" />
 
       {/* 3. Mobile-First Hero Content */}
-      <div data-hero-content className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-16 sm:py-32 flex flex-col items-center [perspective:900px]">
+      <div data-hero-content className="relative z-30 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-16 sm:py-32 flex flex-col items-center [perspective:900px]">
         {/* Sleek Pill Badge */}
 
         {/* Impactful Heading */}
@@ -205,7 +213,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </p>
 
         {/* 4. Responsive Search Bar for Mobile & Desktop with Destination Suggestions */}
-        <div data-hero-item ref={searchContainerRef} className="relative w-full max-w-xl mt-6 sm:mt-8">
+        <div data-hero-item ref={searchContainerRef} className="relative z-30 w-full max-w-xl mt-6 sm:mt-8">
           <form
             onSubmit={handleSearchSubmit}
             className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition duration-300 z-30"
@@ -224,7 +232,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
               }}
               placeholder="Search treks, rafting, places…"
               aria-label="Search adventures"
-              className="w-full min-w-0 bg-transparent px-3 py-3 sm:py-2 text-base sm:text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none font-medium"
+              className="w-full min-w-0 bg-transparent px-3 py-3 sm:py-2 text-base sm:text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none focus-visible:shadow-none font-medium"
             />
 
             {searchQuery && (
@@ -249,7 +257,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 
           {/* Destination Autocomplete Suggestions Dropdown */}
           {isFocused && matchingDestinations.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-slate-950/95 backdrop-blur-xl border border-white/15 rounded-3xl p-3 shadow-2xl z-40 text-left animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="absolute top-full left-0 right-0 mt-2 max-h-[min(22rem,45dvh)] overflow-y-auto overscroll-contain bg-slate-950 border border-white/15 rounded-3xl p-3 shadow-2xl z-40 text-left animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 flex items-center justify-between">
                 <span>Destinations & Regions</span>
                 <span className="text-brand-sky">Direct Match</span>
