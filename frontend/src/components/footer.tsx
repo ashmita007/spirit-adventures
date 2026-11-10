@@ -110,7 +110,17 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 space-y-4 sm:space-y-0">
-          <p>© {currentYear} Spirit Adventures (spiritadventures.in). All rights reserved.</p>
+          <div className="flex flex-col items-center sm:items-start gap-1.5 text-center sm:text-left">
+            <p>© {currentYear} Spirit Adventures (spiritadventures.in). All rights reserved.</p>
+            <a
+              href="https://kashiiupdatez.online/"
+              target="_blank"
+              rel="noopener"
+              className="hover:text-white transition underline-offset-4 hover:underline"
+            >
+              Designed &amp; developed by updatezbykashi
+            </a>
+          </div>
           <div className="flex items-center space-x-6">
             <Link href="/gallery" className="hover:text-white transition">Gallery</Link>
             <Link href="/blog" className="hover:text-white transition">Stories</Link>
