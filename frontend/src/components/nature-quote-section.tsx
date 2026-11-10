@@ -3,13 +3,14 @@
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Compass, Sparkles } from "lucide-react";
+import { pickVideoUrl } from "@/lib/media";
 
 export default function NatureQuoteSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
 
-  const posterUrl = "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
+  const posterUrl = "https://res.cloudinary.com/xvxaicfe/image/upload/w_1280,c_limit,f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
   const videoUrl = "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4";
 
   useEffect(() => {
@@ -56,10 +57,10 @@ export default function NatureQuoteSection() {
       />
 
       {/* Cinematic Looping video with subtle zoom - mounted only when scrolled into view */}
-      {inView && (
+      {inView && pickVideoUrl(videoUrl) && (
         <video
           ref={videoRef}
-          src={videoUrl}
+          src={pickVideoUrl(videoUrl) ?? undefined}
           poster={posterUrl}
           autoPlay
           muted

@@ -41,6 +41,9 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Cloudinary resizes its own images; see src/lib/image-loader.ts
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days image caching
     remotePatterns: [

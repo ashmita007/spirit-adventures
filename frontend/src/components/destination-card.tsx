@@ -36,7 +36,7 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
         alt={destination.name}
         fill
         onLoad={() => setLoaded(true)}
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        sizes="(max-width: 640px) 70vw, (max-width: 1024px) 50vw, 33vw"
         className={cn(
           "object-cover object-center group-hover:scale-110 transition-[transform,opacity] duration-700 ease-out",
           loaded ? "opacity-100" : "opacity-0"

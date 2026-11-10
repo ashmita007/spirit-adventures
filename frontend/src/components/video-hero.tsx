@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Compass, Search, Sparkles, X, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDeferredVideo } from "@/lib/media";
 
 interface VideoHeroProps {
   onPlanTripClick?: () => void;
@@ -151,20 +152,11 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 
               {/* Ultra-Fast Web Stream Video (loaded only for active & next scene) */}
               {isActive && (
-                <video
+                <HeroVideo
+                  url={scene.videoUrl}
                   poster={cloudinaryWidth(scene.posterUrl, 1280)}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload={isActive ? "auto" : "metadata"}
-                  onCanPlay={() => {
-                    if (isActive) setIsLoaded(true);
-                  }}
-                  className="absolute inset-0 w-full h-full object-cover object-center scale-105"
-                >
-                  <source src={scene.videoUrl} type="video/mp4" />
-                </video>
+                  onReady={() => setIsLoaded(true)}
+                />
               )}
             </div>
           );
@@ -348,5 +340,26 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </span>
       </div>
     </section>
+  );
+}
+
+/** Background video for the active scene: mounted after page load, phone-sized on phones, skipped on Data Saver. */
+function HeroVideo({ url, poster, onReady }: { url: string; poster: string; onReady: () => void }) {
+  const src = useDeferredVideo(url);
+  if (!src) return null;
+  return (
+    <video
+      key={src}
+      poster={poster}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      onCanPlay={onReady}
+      className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+    >
+      <source src={src} type="video/mp4" />
+    </video>
   );
 }

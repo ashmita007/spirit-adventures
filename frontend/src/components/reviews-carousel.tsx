@@ -13,14 +13,23 @@ interface ReviewsCarouselProps {
 export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   if (!reviews || reviews.length === 0) return null;
 
-  // Split reviews into two tracks for rich dual-row infinite sliding
-  const half = Math.ceil(reviews.length / 2);
-  const row1 = reviews.slice(0, half);
-  const row2 = reviews.slice(half);
+  // Two tracks of at most 6 reviews each. The marquee keyframes move by -50%,
+  // so one duplicate copy is enough for a seamless loop.
+  const shown = reviews.slice(0, 12);
+  const half = Math.ceil(shown.length / 2);
+  const row1 = shown.slice(0, half);
+  const row2 = shown.slice(half).length ? shown.slice(half) : row1;
 
-  // Duplicate for seamless infinite loop
-  const marqueeList1 = [...row1, ...row1, ...row1, ...row1];
-  const marqueeList2 = [...row2, ...row2, ...row2, ...row2];
+  // Pad short rows to 6 cards so one copy is always wider than the track.
+  const pad = (row: Review[]) => {
+    const out = [...row];
+    while (out.length < 6) out.push(...row);
+    return out;
+  };
+  const track1 = pad(row1);
+  const track2 = pad(row2);
+  const marqueeList1 = [...track1, ...track1];
+  const marqueeList2 = [...track2, ...track2];
 
   return (
     <section className="py-12 sm:py-16 bg-slate-50/70 border-y border-slate-200/70 relative overflow-hidden">
@@ -91,14 +100,14 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
             {/* Track 1: Moving Left */}
             <div className="animate-marquee-left flex space-x-4 mb-4">
               {marqueeList1.map((review, idx) => (
-                <ReviewCardCompact key={`row1-${review.id}-${idx}`} review={review} />
+                <ReviewCardCompact key={`row1-${review.id}-${idx}`} review={review} hidden={idx >= track1.length} />
               ))}
             </div>
 
             {/* Track 2: Moving Right */}
             <div className="animate-marquee-right flex space-x-4">
               {marqueeList2.map((review, idx) => (
-                <ReviewCardCompact key={`row2-${review.id}-${idx}`} review={review} />
+                <ReviewCardCompact key={`row2-${review.id}-${idx}`} review={review} hidden={idx >= track2.length} />
               ))}
             </div>
           </div>
@@ -109,9 +118,9 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   );
 }
 
-function ReviewCardCompact({ review }: { review: Review }) {
+function ReviewCardCompact({ review, hidden = false }: { review: Review; hidden?: boolean }) {
   return (
-    <div className="w-[320px] sm:w-[350px] flex-shrink-0 bg-white/90 hover:bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 hover:border-brand-sky/60 shadow-2xs hover:shadow-lg transition duration-300 hover:-translate-y-1 backdrop-blur-xs flex flex-col justify-between">
+    <div aria-hidden={hidden || undefined} className="w-[320px] sm:w-[350px] flex-shrink-0 bg-white/90 hover:bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 hover:border-brand-sky/60 shadow-2xs hover:shadow-lg transition duration-300 hover:-translate-y-1 backdrop-blur-xs flex flex-col justify-between">
       <div>
         {/* Top: Stars + Trip Title Badge */}
         <div className="flex items-center justify-between gap-2 mb-2.5">

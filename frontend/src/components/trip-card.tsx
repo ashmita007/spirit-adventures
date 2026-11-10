@@ -126,7 +126,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
           alt={trip.title}
           fill
           priority={priority}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) 70vw, (max-width: 1024px) 50vw, 33vw"
           onLoad={() => setImgLoaded(true)}
           className={cn(
             "object-cover object-center pointer-events-none transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.08]",

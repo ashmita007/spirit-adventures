@@ -13,6 +13,7 @@ import TripCard from "@/components/trip-card";
 import { formatCurrency, cn } from "@/lib/utils";
 import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
+import { useDeferredVideo } from "@/lib/media";
 
 interface TripDetailClientProps {
   trip: Trip;
@@ -53,12 +54,6 @@ const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").re
  * Showing them on Ooty or Gokarna packages misleads travellers, so they count as
  * "not set" unless the trip is actually in Uttarakhand.
  */
-/** Run the video poster through Next's image optimizer (resized AVIF/WebP) instead of the raw upload. */
-function optimizedPoster(src?: string) {
-  if (!src) return undefined;
-  if (src.startsWith("/_next/") || src.startsWith("data:")) return src;
-  return `/_next/image?url=${encodeURIComponent(src)}&w=1080&q=75`;
-}
 
 const PLACEHOLDER_POINT = "dehradun / base camp";
 const PLACEHOLDER_SEASON = "dec - apr";
@@ -99,7 +94,8 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
   const bgRawVideo = trip.hero_video_url && trip.hero_video_url.endsWith(".mp4")
     ? trip.hero_video_url
     : LOCAL_VIDEO_MAP[trip.slug] || DESTINATION_VIDEO_MAP[destKey];
-  const bgVideoSrc = bgRawVideo && bgRawVideo.endsWith(".mp4") ? bgRawVideo : null;
+  // Mounted after page load, phone-sized on phones, skipped on Data Saver / 2G
+  const bgVideoSrc = useDeferredVideo(bgRawVideo && bgRawVideo.endsWith(".mp4") ? bgRawVideo : null);
 
   React.useEffect(() => {
     if (videoRef.current && bgVideoSrc) {
@@ -124,26 +120,26 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
     <div className="min-h-dvh bg-white">
       {/* 1. Full-Width Cinematic Header Banner */}
       <div className="relative h-[60dvh] sm:h-[70dvh] w-full bg-brand-navy overflow-hidden">
-        {bgVideoSrc ? (
+        {/* Cover image is always the first paint (LCP); the video fades in over it once loaded */}
+        <Image
+          src={trip.cover_image}
+          alt={trip.title}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {bgVideoSrc && (
           <video
             ref={videoRef}
+            key={bgVideoSrc}
             src={bgVideoSrc}
-            poster={optimizedPoster(trip.cover_image)}
             autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
-            className="w-full h-full object-cover object-center scale-105"
-          />
-        ) : (
-          <Image
-            src={trip.cover_image}
-            alt={trip.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover object-center scale-105"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/40 to-black/60 pointer-events-none" />
