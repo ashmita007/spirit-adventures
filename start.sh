@@ -94,13 +94,8 @@ echo "--> Next.js started with PID $NEXT_PID"
     sleep 0.2
   done
 
-  # First owner account (only created if credentials supplied)
-  if [ -n "${DJANGO_SUPERUSER_EMAIL:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then
-    echo "--> Ensuring owner account ${DJANGO_SUPERUSER_EMAIL} exists..."
-    python "$BACKEND_DIR/manage.py" createsuperuser --noinput >/dev/null 2>&1 \
-      && echo "--> Owner account ${DJANGO_SUPERUSER_EMAIL} created" \
-      || echo "--> Owner account already exists"
-  fi
+  # Owner account from DJANGO_SUPERUSER_EMAIL / DJANGO_SUPERUSER_PASSWORD (create or update)
+  python "$BACKEND_DIR/manage.py" ensure_owner || echo "--> Owner account setup FAILED" >&2
 
   # Demo trips only on an empty database if requested
   if [ "${SEED_DEMO_DATA:-0}" = "1" ]; then
