@@ -222,6 +222,8 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
     X_FRAME_OPTIONS = 'DENY'
+    # Render serves this site over HTTPS only; tell browsers to never try plain http (6 months)
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 180
 
 
 # ----------------- Cloudinary (photo + video uploads from the owner portal) -----------------

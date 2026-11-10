@@ -19,6 +19,9 @@ from crm.accounts.auth import OptionalAuthBearer, ManagerBearer, AuthBearer, sco
 router = Router(tags=["CRM Enquiries"], auth=AuthBearer())
 
 
+VALID_STATUSES = {value for value, _label in Enquiry.STATUS_CHOICES}
+
+
 def _get_visible_enquiry(request, id: int):
     """Fetch an enquiry the current user may see, else None (reps only see their own)."""
     enquiry = Enquiry.objects.select_related('tour_package', 'sales_person').filter(id=id).first()
@@ -306,8 +309,13 @@ def update_enquiry(request, id: int, payload: EnquiryUpdateIn):
     user = getattr(request, 'user', None)
     update_data = payload.dict(exclude_unset=True)
 
+    if "status" in update_data and update_data["status"] is not None and update_data["status"] not in VALID_STATUSES:
+        return 403, {"message": "Unknown status."}
+
     if user and user.is_authenticated and not user.is_manager_or_admin:
-        if enquiry.sales_person_id and enquiry.sales_person_id != user.id:
+        # Same rule as every other edit: reps only touch leads assigned to them. Unassigned
+        # leads are invisible to reps in the lists, so they must not be editable by id either.
+        if not user.can_edit_enquiry(enquiry):
             return 403, {"message": "Permission denied: You can only edit enquiries assigned to you."}
         if "sales_person_id" in update_data and update_data["sales_person_id"] != user.id:
             return 403, {"message": "Permission denied: Sales representatives cannot reassign leads to others."}
@@ -333,9 +341,10 @@ def update_status(request, enquiry_id: int, status: str, status_note: Optional[s
     try:
         enquiry = Enquiry.objects.get(id=enquiry_id)
         user = getattr(request, 'user', None)
-        if user and user.is_authenticated and not user.is_manager_or_admin:
-            if enquiry.sales_person_id and enquiry.sales_person_id != user.id:
-                return {"status": "error", "message": "Permission denied: You can only update your assigned enquiries."}
+        if not user.can_edit_enquiry(enquiry):
+            return {"status": "error", "message": "Permission denied: You can only update your assigned enquiries."}
+        if status not in VALID_STATUSES:
+            return {"status": "error", "message": "Unknown status."}
 
         enquiry.status = status
         enquiry.save()
