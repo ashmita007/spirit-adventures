@@ -2,9 +2,9 @@
 
 // Cloudinary renditions. Any uploaded video (any Cloudinary account, .mp4 or a phone .mov)
 // is re-encoded on Cloudinary's CDN to H.264 MP4, so the original 4K file is never sent.
-export const FULL_HD_VIDEO = "w_1920,c_limit,q_auto:good,vc_h264,br_2500k";
-export const DESKTOP_VIDEO = "w_1280,c_limit,q_auto:good,vc_h264,br_1500k";
-export const MOBILE_VIDEO = "w_720,c_limit,q_auto:eco,vc_h264,br_600k";
+export const FULL_HD_VIDEO = "w_1920,c_limit,q_auto:best,vc_h264,br_5000k";
+export const DESKTOP_VIDEO = "w_1280,c_limit,q_auto:best,vc_h264,br_3000k";
+export const MOBILE_VIDEO = "w_1080,c_limit,q_auto:good,vc_h264,br_2000k";
 
 const TRANSFORM_PART = /^(w|h|c|q|f|vc|ac|br|so|du|eo|e|g|ar|fl|b|t|dpr|o|r|sp|af|fps)_[^.]+$/;
 const isTransformSegment = (seg: string) => seg.split(",").every((part) => TRANSFORM_PART.test(part));

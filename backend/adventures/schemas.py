@@ -178,6 +178,8 @@ class ApiResponse(Schema):
     data: Optional[Any] = None
     message: str = "Success"
     errors: Optional[Any] = None
+    # Present only when the caller asked for a page (?page=1&page_size=12)
+    pagination: Optional[Any] = None
 
 class TriggerCronIn(Schema):
     job_id: str

@@ -11,6 +11,7 @@ import {
 import { Review, Trip } from "@/lib/types";
 import TripCard from "@/components/trip-card";
 import { formatCurrency, cn } from "@/lib/utils";
+import { smartCase, stripDayPrefix, stripTrailingEmoji, stripLeadingEmoji, splitStops } from "@/lib/readable-text";
 import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
 import { isVideoUrl, useDeferredVideo } from "@/lib/media";
@@ -75,7 +76,16 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
-  const [openDay, setOpenDay] = useState<number | null>(1);
+  const inclusions = trip.inclusions ?? [];
+  const exclusions = trip.exclusions ?? [];
+  const thingsToCarry = trip.things_to_carry ?? [];
+  const sectionLinks = [
+    { id: "overview", label: "About" },
+    ...(trip.itinerary_days?.length ? [{ id: "itinerary", label: "Day by day" }] : []),
+    ...(inclusions.length || exclusions.length ? [{ id: "inclusions", label: "Price covers" }] : []),
+    ...(thingsToCarry.length ? [{ id: "gear", label: "What to pack" }] : []),
+    ...(faqs.length ? [{ id: "faqs", label: "Questions" }] : []),
+  ];
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const destKey = (trip.destination_slug || trip.destination?.slug || "").toLowerCase();
@@ -140,7 +150,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <Link
               href="/trips"
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wide transition"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-sm font-semibold transition"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="whitespace-nowrap">All trips</span>
@@ -149,9 +159,9 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setLightboxIndex(0)}
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wide transition cursor-pointer"
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-sm font-semibold transition cursor-pointer"
               >
-                <span>View Photos ({images.length})</span>
+                <span>Photos ({images.length})</span>
               </button>
             </div>
           </div>
@@ -177,8 +187,8 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
               )}
             </div>
 
-            <h1 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-tight max-w-4xl text-balance">
-              {trip.title}
+            <h1 data-anim="heading" className="[perspective:800px] font-display font-bold text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] max-w-4xl text-balance drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+              {smartCase(trip.title)}
             </h1>
           </div>
         </div>
@@ -190,7 +200,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <dl className={`grid ${keyFacts.length === 3 ? "grid-cols-3" : "grid-cols-2"} sm:grid-cols-3 lg:flex lg:flex-wrap gap-x-4 gap-y-4 lg:gap-x-14 text-brand-navy`}>
             {keyFacts.map((fact) => (
               <div key={fact.label} className="min-w-0">
-                <dt className="block text-[10px] font-bold text-slate-600">{fact.label}</dt>
+                <dt className="block text-xs font-medium text-slate-500">{fact.label}</dt>
                 <dd
                   className={cn(
                     "font-display mt-0.5 break-words",
@@ -207,17 +217,32 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
         </div>
       </div>
 
+      {/* Jump to a section */}
+      <nav aria-label="On this page" className="border-b border-slate-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ul className="flex gap-1 overflow-x-auto py-2 -mx-1 text-sm font-semibold text-slate-600 [scrollbar-width:none]">
+            {sectionLinks.map((s) => (
+              <li key={s.id}>
+                <a href={`#${s.id}`} className="block whitespace-nowrap rounded-full px-3.5 py-2 hover:bg-slate-100 hover:text-brand-navy transition">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+
       {/* 3. Main Content & Sticky Booking Box */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column: Details */}
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-14 [&>section]:scroll-mt-28">
             {/* Overview */}
             <section id="overview" className="space-y-4">
-              <h2 className="font-display font-black text-2xl uppercase tracking-tight text-brand-navy">
-                Overview & Experience
+              <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
+                About this trip
               </h2>
-              <p className="text-slate-700 text-base leading-relaxed whitespace-pre-line font-normal">
+              <p className="max-w-[68ch] text-slate-700 text-[17px] leading-8 whitespace-pre-line">
                 {trip.full_description || trip.short_description}
               </p>
 
@@ -226,14 +251,14 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 p-5 rounded-2xl bg-brand-light border border-slate-100">
                   {pickup && (
                     <div>
-                      <dt className="text-xs font-bold text-brand-ocean">Pickup Point</dt>
-                      <dd className="text-sm font-semibold text-brand-navy mt-1">{pickup}</dd>
+                      <dt className="text-xs font-semibold text-slate-500">Pickup point</dt>
+                      <dd className="text-base font-semibold text-brand-navy mt-1">{pickup}</dd>
                     </div>
                   )}
                   {drop && (
                     <div>
-                      <dt className="text-xs font-bold text-brand-ocean">Drop Point</dt>
-                      <dd className="text-sm font-semibold text-brand-navy mt-1">{drop}</dd>
+                      <dt className="text-xs font-semibold text-slate-500">Drop point</dt>
+                      <dd className="text-base font-semibold text-brand-navy mt-1">{drop}</dd>
                     </div>
                   )}
                 </dl>
@@ -244,150 +269,127 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             {trip.itinerary_days && trip.itinerary_days.length > 0 && (
               <section id="itinerary" className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-display font-black text-2xl uppercase tracking-tight text-brand-navy">
-                    Day-by-Day Itinerary
+                  <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
+                    Day-by-day plan
                   </h2>
                   <span className="text-xs font-semibold text-slate-600">
-                    {trip.itinerary_days.length} Days Plan
+                    {trip.itinerary_days.length} {trip.itinerary_days.length === 1 ? "day" : "days"}
                   </span>
                 </div>
 
-                <div className="space-y-4">
+                <ol className="relative border-l-2 border-slate-200 ml-4 space-y-8">
                   {trip.itinerary_days.map((day, idx) => {
                     const dayNum = day.day_number || idx + 1;
-                    const isOpen = openDay === dayNum;
+                    const facts = [
+                      day.altitude && ["Altitude", day.altitude],
+                      day.distance && ["Distance", day.distance],
+                      day.meals && ["Meals", day.meals],
+                      day.stay_type && ["Stay", day.stay_type],
+                    ].filter(Boolean) as [string, string][];
+                    const stops = splitStops(day.description || "");
                     return (
-                      <div
-                        key={`${dayNum}-${idx}`}
-                        className="border border-slate-200 rounded-2xl overflow-hidden transition duration-200"
-                      >
-                        <button
-                          onClick={() => setOpenDay(isOpen ? null : dayNum)}
-                          className="w-full flex items-center justify-between p-5 text-left bg-white hover:bg-slate-50 transition"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <span className="w-8 h-8 rounded-xl bg-brand-navy text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
-                              D{dayNum}
-                            </span>
-                            <h3 className="font-display font-bold text-base text-brand-navy">
-                              {day.title}
-                            </h3>
-                          </div>
-                          <ChevronDown
-                            className={cn("w-5 h-5 text-slate-400 transition-transform", isOpen && "rotate-180")}
-                          />
-                        </button>
-
-                        {isOpen && (
-                          <div className="px-5 pb-5 pt-2 text-sm text-slate-600 border-t border-slate-100 bg-slate-50/50 space-y-3">
-                            <p className="leading-relaxed">{day.description}</p>
-                            <div className="flex flex-wrap gap-4 pt-2 text-xs font-medium text-slate-500">
-                              {day.altitude && <span>Altitude: <strong className="text-slate-700">{day.altitude}</strong></span>}
-                              {day.distance && <span>Distance: <strong className="text-slate-700">{day.distance}</strong></span>}
-                              {day.meals && <span>Meals: <strong className="text-slate-700">{day.meals}</strong></span>}
-                              {day.stay_type && <span>Stay: <strong className="text-slate-700">{day.stay_type}</strong></span>}
-                            </div>
-                          </div>
+                      <li key={`${dayNum}-${idx}`} className="relative pl-8">
+                        <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-brand-navy text-white text-xs font-bold ring-4 ring-white">
+                          {dayNum}
+                        </span>
+                        <p className="text-xs font-semibold text-brand-ocean">Day {dayNum}</p>
+                        <h3 className="mt-0.5 font-display font-bold text-lg text-brand-navy leading-snug">{smartCase(stripTrailingEmoji(stripDayPrefix(day.title || ""))) || `Day ${dayNum}`}</h3>
+                        {stops.length > 0 ? (
+                          <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-[15px] leading-6 text-slate-700">
+                            {stops.map((s, i) => (
+                              <li key={i} className="flex items-start gap-2.5">
+                                <span aria-hidden="true" className="w-5 shrink-0 text-center">{s.icon || "•"}</span>
+                                <span>{s.label}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : day.description ? (
+                          <p className="mt-2 max-w-[68ch] text-[16px] leading-7 text-slate-700 whitespace-pre-line">{day.description}</p>
+                        ) : null}
+                        {facts.length > 0 && (
+                          <dl className="mt-3 flex flex-wrap gap-2">
+                            {facts.map(([k, v]) => (
+                              <div key={k} className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+                                <dt className="inline">{k}: </dt>
+                                <dd className="inline font-semibold text-slate-800">{v}</dd>
+                              </div>
+                            ))}
+                          </dl>
                         )}
-                      </div>
+                      </li>
                     );
                   })}
+                </ol>
+              </section>
+            )}
+
+            {/* Inclusions & Exclusions (only what the trip actually lists) */}
+            {(inclusions.length > 0 || exclusions.length > 0) && (
+              <section id="inclusions" className="space-y-5">
+                <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">What the price covers</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {inclusions.length > 0 && (
+                    <div className="rounded-2xl p-5 sm:p-6 border border-emerald-200 bg-emerald-50/50">
+                      <h3 className="font-display font-bold text-lg text-emerald-900 mb-4">Included</h3>
+                      <ul className="space-y-3 text-[15px] leading-6 text-slate-800">
+                        {inclusions.map((inc, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <Check aria-hidden="true" className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-1" />
+                            <span>{stripLeadingEmoji(inc)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {exclusions.length > 0 && (
+                    <div className="rounded-2xl p-5 sm:p-6 border border-slate-200 bg-slate-50">
+                      <h3 className="font-display font-bold text-lg text-slate-800 mb-4">Not included</h3>
+                      <ul className="space-y-3 text-[15px] leading-6 text-slate-700">
+                        {exclusions.map((exc, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <XIcon aria-hidden="true" className="w-4 h-4 text-rose-500 flex-shrink-0 mt-1" />
+                            <span>{stripLeadingEmoji(exc)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </section>
             )}
 
-            {/* Inclusions & Exclusions */}
-            <section id="inclusions" className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Inclusions */}
-              <div className="bg-emerald-50/60 rounded-3xl p-6 border border-emerald-100">
-                <h3 className="font-display font-bold text-lg text-emerald-900 mb-4 flex items-center space-x-2">
-                  <Check className="w-5 h-5 text-emerald-600" />
-                  <span>What&apos;s Included</span>
-                </h3>
-                <ul className="space-y-3 text-sm text-emerald-950">
-                  {(trip.inclusions && trip.inclusions.length > 0
-                    ? trip.inclusions
-                    : [
-                        "Certified mountain guides & safety team",
-                        "High-altitude 4-season alpine tents",
-                        "Nutritious mountain vegetarian meals",
-                        "Forest permits & environmental fees",
-                        "Medical kit & emergency oxygen cylinder"
-                      ]
-                  ).map((inc, i) => (
-                    <li key={i} className="flex items-start space-x-2">
-                      <Check className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                      <span>{inc}</span>
+            {/* Things to carry */}
+            {thingsToCarry.length > 0 && (
+              <section id="gear" className="space-y-5">
+                <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy flex items-center gap-2.5">
+                  <Backpack aria-hidden="true" className="w-6 h-6 text-brand-ocean" />
+                  <span>What to pack</span>
+                </h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-[15px] leading-6 text-slate-800">
+                  {thingsToCarry.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2.5 border-b border-slate-100 pb-3">
+                      <Check aria-hidden="true" className="w-4 h-4 text-brand-ocean flex-shrink-0 mt-1" />
+                      <span>{stripLeadingEmoji(item)}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
-
-              {/* Exclusions */}
-              <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200">
-                <h3 className="font-display font-bold text-lg text-slate-800 mb-4 flex items-center space-x-2">
-                  <XIcon className="w-5 h-5 text-rose-500" />
-                  <span>What&apos;s Not Included</span>
-                </h3>
-                <ul className="space-y-3 text-sm text-slate-700">
-                  {(trip.exclusions && trip.exclusions.length > 0
-                    ? trip.exclusions
-                    : [
-                        "Transport to base camp (can be arranged)",
-                        "Personal trekking gear & warm jackets",
-                        "Backpack offloading fee",
-                        "Personal emergency insurance"
-                      ]
-                  ).map((exc, i) => (
-                    <li key={i} className="flex items-start space-x-2">
-                      <XIcon className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-                      <span>{exc}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-
-            {/* Things To Carry */}
-            <section id="gear" className="space-y-4">
-              <h2 className="font-display font-black text-2xl uppercase tracking-tight text-brand-navy flex items-center space-x-2">
-                <Backpack className="w-6 h-6 text-brand-ocean" />
-                <span>Things To Carry & Gear Checklist</span>
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {(trip.things_to_carry && trip.things_to_carry.length > 0
-                  ? trip.things_to_carry
-                  : [
-                      "50-60L Rucksack with rain cover",
-                      "High-ankle waterproof trekking shoes",
-                      "3-layer thermal clothing & heavy jacket",
-                      "Polarized sunglasses (UV protection)",
-                      "Personal medical kit & reusable water bottles",
-                      "Headlamp / Torch with extra batteries"
-                    ]
-                ).map((item, i) => (
-                  <div key={i} className="flex items-center space-x-3 p-3.5 rounded-xl bg-brand-light/60 border border-slate-100 text-sm text-brand-navy">
-                    <span className="w-2 h-2 rounded-full bg-brand-sky flex-shrink-0" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
+              </section>
+            )}
 
             {/* FAQs: native <details> so every answer is in the HTML for search engines and works by keyboard */}
             {faqs.length > 0 && (
               <section id="faqs" className="space-y-4">
-                <h2 className="font-display font-black text-2xl uppercase tracking-tight text-brand-navy">
+                <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
                   {(trip.destination_name || trip.destination?.name) ? `${trip.destination_name || trip.destination?.name} trip questions` : "Questions & answers"}
                 </h2>
                 <div className="space-y-3">
                   {faqs.map((faq, i) => (
                     <details key={faq.id} open={i === 0} className="group border border-slate-200 rounded-2xl overflow-hidden">
-                      <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer w-full flex items-center justify-between gap-3 p-4 text-left font-bold text-sm text-brand-navy bg-white hover:bg-slate-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-ocean">
-                        <h3 className="text-sm font-bold">{faq.question}</h3>
+                      <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left font-semibold text-brand-navy bg-white hover:bg-slate-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-ocean">
+                        <h3 className="text-[15px] sm:text-base font-semibold leading-snug">{faq.question}</h3>
                         <ChevronDown aria-hidden="true" className="w-4 h-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
                       </summary>
-                      <p className="p-4 pt-1 text-sm text-slate-600 bg-slate-50 border-t border-slate-100">{faq.answer}</p>
+                      <p className="px-4 sm:px-5 pb-5 pt-0 max-w-[68ch] text-[15px] leading-7 text-slate-700">{faq.answer}</p>
                     </details>
                   ))}
                 </div>
@@ -399,7 +401,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-6">
               <div>
-                <span className="text-xs font-bold text-slate-600 block">Starting From</span>
+                <span className="text-sm font-medium text-slate-500 block">From</span>
                 <div className="flex items-baseline space-x-2 mt-1">
                   <span className="font-display font-black text-3xl text-brand-navy">
                     {formatCurrency(trip.price)}
@@ -416,30 +418,30 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
               <div className="space-y-3 pt-2">
                 <button
                   onClick={() => setEnquiryOpen(true)}
-                  className="w-full py-4 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-sm uppercase tracking-wide transition duration-300 shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02]"
+                  className="w-full py-4 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-base transition duration-300 shadow-lg shadow-brand-ocean/20 active:scale-[0.98]"
                 >
-                  Book This Adventure
+                  Book this trip
                 </button>
 
                 <a
                   href={`https://wa.me/${WHATSAPP}?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs uppercase tracking-wide transition"
+                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-sm transition"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span className="whitespace-nowrap">Chat on WhatsApp</span>
                 </a>
               </div>
 
-              <div className="border-t border-slate-100 pt-5 space-y-3 text-xs text-slate-600">
+              <div className="border-t border-slate-100 pt-5 space-y-3 text-sm text-slate-600">
                 <div className="flex items-center space-x-2">
                   <ShieldCheck className="w-4 h-4 text-brand-ocean" />
-                  <span>Certified IMF Trek Leaders</span>
+                  <span>Certified trek leaders</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Calendar className="w-4 h-4 text-brand-ocean" />
-                  <span>Flexible Date Rescheduling</span>
+                  <span>Change your date if plans shift</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mountain className="w-4 h-4 text-brand-ocean" />
@@ -458,7 +460,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
               <div>
-                <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-black text-3xl sm:text-4xl uppercase tracking-tight">
+                <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-bold text-3xl sm:text-4xl tracking-tight">
                   Traveller stories
                 </h2>
               </div>
@@ -485,7 +487,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                         <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                       ))}
                     </div>
-                    <blockquote className="text-sm leading-relaxed text-sky-50/90">&ldquo;{r.review_text}&rdquo;</blockquote>
+                    <blockquote className="text-[15px] leading-7 text-sky-50/90">&ldquo;{r.review_text}&rdquo;</blockquote>
                   </div>
                   <figcaption className="mt-6 flex items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-sky to-brand-ocean font-bold text-sm">
@@ -510,7 +512,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="flex items-end justify-between gap-4 mb-8">
             <div>
-              <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-black text-3xl sm:text-4xl uppercase tracking-tight text-brand-navy">
+              <h2 data-anim="heading" className="[perspective:800px] mt-2 font-display font-bold text-3xl sm:text-4xl tracking-tight text-brand-navy">
                 Similar adventures
               </h2>
             </div>
@@ -536,7 +538,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                 <span className="text-[11px] text-slate-400 line-through">{formatCurrency(trip.original_price)}</span>
               )}
             </div>
-            <span className="text-[10px] font-medium text-sky-200">per person · {trip.duration_label}</span>
+            <span className="text-xs font-medium text-sky-200">per person · {trip.duration_label}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -551,9 +553,9 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             </a>
             <button
               onClick={() => setEnquiryOpen(true)}
-              className="h-11 px-5 whitespace-nowrap rounded-xl bg-brand-ocean text-white font-bold text-xs uppercase tracking-wide shadow-lg shadow-brand-ocean/30 active:scale-95 transition"
+              className="h-11 px-5 whitespace-nowrap rounded-xl bg-brand-ocean text-white font-bold text-sm shadow-lg shadow-brand-ocean/30 active:scale-95 transition"
             >
-              Book Now
+              Book now
             </button>
           </div>
         </div>

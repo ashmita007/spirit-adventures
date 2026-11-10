@@ -130,6 +130,20 @@ else:
         }
     }
 
+# Cache for public API responses and nothing else. In-process memory is right for the single
+# gunicorn worker this site runs; set REDIS_URL to share one cache across several workers.
+REDIS_URL = os.getenv('REDIS_URL', '').strip()
+if REDIS_URL:
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.redis.RedisCache', 'LOCATION': REDIS_URL}}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'spirit-public-api',
+            'OPTIONS': {'MAX_ENTRIES': 500},
+        }
+    }
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},

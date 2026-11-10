@@ -20,6 +20,8 @@ from .schemas import (
     TriggerCronIn, ToggleCronIn
 )
 from .ratelimit import rate_limit, limiter
+from .cache import cached_public, invalidate_public_cache
+from .pagination import paginate
 from .cron import CRON_JOB_REGISTRY, execute_cron_job
 
 
@@ -124,13 +126,16 @@ def health_check(request):
 # ----------------- Trips -----------------
 @api.get("/trips/", response=ApiResponse, tags=["Trips"])
 @rate_limit(max_requests=120, window_seconds=60, bucket_name="public_trips")
+@cached_public()
 def list_trips(
     request,
     destination: Optional[str] = None,
     category: Optional[str] = None,
     difficulty: Optional[str] = None,
     featured: Optional[bool] = None,
-    search: Optional[str] = None
+    search: Optional[str] = None,
+    page: Optional[int] = None,
+    page_size: Optional[int] = None,
 ):
     queryset = Trip.objects.filter(is_published=True).select_related('destination', 'category')
     
@@ -143,7 +148,7 @@ def list_trips(
     if featured is not None:
         queryset = queryset.filter(is_featured=featured)
     if search:
-        search_clean = search.strip()
+        search_clean = search.strip()[:100]
         tokens = search_clean.split()
         if len(tokens) <= 1:
             queryset = queryset.filter(
@@ -170,7 +175,8 @@ def list_trips(
             queryset = queryset.filter(q_multi)
     
     trips_data = []
-    for t in with_review_stats(queryset):
+    rows, pagination = paginate(with_review_stats(queryset), page, page_size)
+    for t in rows:
         trips_data.append({
             "id": t.id,
             "title": t.title,
@@ -198,10 +204,13 @@ def list_trips(
     return {
         "success": True,
         "data": trips_data,
-        "message": f"Found {len(trips_data)} adventures"
+        "pagination": pagination,
+        "message": f"Found {pagination['total'] if pagination else len(trips_data)} adventures"
     }
 
 @api.get("/trips/{slug}/", response=ApiResponse, tags=["Trips"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_trip")
+@cached_public()
 def get_trip(request, slug: str):
     try:
         t = Trip.objects.select_related('destination', 'category').prefetch_related(
@@ -313,6 +322,8 @@ def get_trip(request, slug: str):
 
 # ----------------- Destinations -----------------
 @api.get("/destinations/", response=ApiResponse, tags=["Destinations"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_destinations")
+@cached_public()
 def list_destinations(request, featured: Optional[bool] = None):
     queryset = Destination.objects.filter(is_published=True).annotate(
         trip_count=Count('trips', filter=Q(trips__is_published=True))
@@ -338,6 +349,8 @@ def list_destinations(request, featured: Optional[bool] = None):
     return {"success": True, "data": dest_data, "message": f"Found {len(dest_data)} destinations"}
 
 @api.get("/destinations/{slug}/", response=ApiResponse, tags=["Destinations"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_destination")
+@cached_public()
 def get_destination(request, slug: str):
     try:
         d = Destination.objects.annotate(
@@ -396,6 +409,8 @@ def get_destination(request, slug: str):
 
 # ----------------- Categories -----------------
 @api.get("/categories/", response=ApiResponse, tags=["Categories"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_categories")
+@cached_public()
 def list_categories(request):
     categories = Category.objects.filter(is_published=True)
     data = [
@@ -479,13 +494,17 @@ def create_enquiry(request, payload: EnquiryIn):
 
 # ----------------- Reviews -----------------
 @api.get("/reviews/", response=ApiResponse, tags=["Reviews"])
-def list_reviews(request, featured_only: Optional[bool] = None, trip_slug: Optional[str] = None):
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_reviews")
+@cached_public()
+def list_reviews(request, featured_only: Optional[bool] = None, trip_slug: Optional[str] = None,
+                 page: Optional[int] = None, page_size: Optional[int] = None):
     queryset = Review.objects.filter(is_approved=True).select_related('trip')
     if featured_only:
         queryset = queryset.filter(is_featured=True)
     if trip_slug:
         queryset = queryset.filter(trip__slug=trip_slug)
-        
+
+    rows, pagination = paginate(queryset, page, page_size)
     reviews_data = [
         {
             "id": r.id,
@@ -499,19 +518,23 @@ def list_reviews(request, featured_only: Optional[bool] = None, trip_slug: Optio
             "is_featured": r.is_featured,
             "trip_title": r.trip.title if r.trip else "Spirit Adventure"
         }
-        for r in queryset
+        for r in rows
     ]
-    return {"success": True, "data": reviews_data, "message": f"Found {len(reviews_data)} reviews"}
+    return {"success": True, "data": reviews_data, "pagination": pagination, "message": f"Found {len(reviews_data)} reviews"}
 
 # ----------------- Gallery -----------------
 @api.get("/gallery/", response=ApiResponse, tags=["Gallery"])
-def list_gallery(request, category: Optional[str] = None, featured_only: Optional[bool] = None):
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_gallery")
+@cached_public()
+def list_gallery(request, category: Optional[str] = None, featured_only: Optional[bool] = None,
+                 page: Optional[int] = None, page_size: Optional[int] = None):
     queryset = GalleryImage.objects.filter(is_published=True)
     if category and category.lower() != 'all':
         queryset = queryset.filter(category__iexact=category)
     if featured_only:
         queryset = queryset.filter(is_featured=True)
-        
+
+    rows, pagination = paginate(queryset, page, page_size)
     data = [
         {
             "id": g.id,
@@ -522,17 +545,21 @@ def list_gallery(request, category: Optional[str] = None, featured_only: Optiona
             "location": g.location,
             "is_featured": g.is_featured
         }
-        for g in queryset
+        for g in rows
     ]
-    return {"success": True, "data": data, "message": f"Found {len(data)} gallery items"}
+    return {"success": True, "data": data, "pagination": pagination, "message": f"Found {len(data)} gallery items"}
 
 # ----------------- Blog -----------------
 @api.get("/blog/", response=ApiResponse, tags=["Blog"])
-def list_blogs(request, featured_only: Optional[bool] = None):
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_blog")
+@cached_public()
+def list_blogs(request, featured_only: Optional[bool] = None,
+               page: Optional[int] = None, page_size: Optional[int] = None):
     queryset = BlogPost.objects.filter(is_published=True)
     if featured_only:
         queryset = queryset.filter(is_featured=True)
-        
+
+    rows, pagination = paginate(queryset, page, page_size)
     data = [
         {
             "id": b.id,
@@ -545,11 +572,13 @@ def list_blogs(request, featured_only: Optional[bool] = None):
             "reading_time_minutes": b.reading_time_minutes,
             "published_at": b.published_at
         }
-        for b in queryset
+        for b in rows
     ]
-    return {"success": True, "data": data, "message": f"Found {len(data)} blog articles"}
+    return {"success": True, "data": data, "pagination": pagination, "message": f"Found {len(data)} blog articles"}
 
 @api.get("/blog/{slug}/", response=ApiResponse, tags=["Blog"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_blog_post")
+@cached_public()
 def get_blog(request, slug: str):
     try:
         b = BlogPost.objects.get(slug=slug, is_published=True)
@@ -588,23 +617,22 @@ class UpdateTripConfigIn(Schema):
 
 @api.get("/owner/overview/", auth=owner_auth, response=ApiResponse, tags=["Owner"])
 def get_owner_overview(request):
-    enquiries = Enquiry.objects.select_related('trip').order_by('-created_at')
-    trips = Trip.objects.select_related('destination').all()
-    reviews = Review.objects.all()
+    # One query per table: leads (with their trip), trips (with lead counts), one review count.
+    # Every number below is worked out from these rows instead of asking the database again.
+    enquiries = list(Enquiry.objects.select_related('trip').order_by('-created_at'))
+    trips = list(Trip.objects.select_related('destination').annotate(leads_count=Count('enquiries')))
+    approved_reviews_count = Review.objects.filter(is_approved=True).count()
 
-    total_leads = enquiries.count()
-    converted_leads = enquiries.filter(status='CONVERTED').count()
-    new_leads = enquiries.filter(status='NEW').count()
-    in_pipeline = enquiries.filter(status__in=['CONTACTED', 'FOLLOW_UP']).count()
-    
+    total_leads = len(enquiries)
+    converted = [e for e in enquiries if e.status == 'CONVERTED']
+    converted_leads = len(converted)
+    new_leads = sum(1 for e in enquiries if e.status == 'NEW')
+    in_pipeline = sum(1 for e in enquiries if e.status in ('CONTACTED', 'FOLLOW_UP'))
+
     conversion_rate = round((converted_leads / total_leads * 100), 1) if total_leads > 0 else 0
 
-    # Calculate estimated revenue from converted bookings
-    est_revenue = 0
-    for e in enquiries.filter(status='CONVERTED'):
-        if e.trip:
-            est_revenue += float(e.trip.price) * (e.travelers_count or 1)
-        # leads without a trip have no price yet; they are not counted
+    # Booked value: trip price x people for paid leads (leads without a trip have no price yet)
+    est_revenue = sum(float(e.trip.price) * (e.travelers_count or 1) for e in converted if e.trip)
 
     enquiry_list = []
     for e in enquiries:
@@ -644,7 +672,7 @@ def get_owner_overview(request):
             "is_featured": t.is_featured,
             "is_bestseller": t.is_bestseller,
             "is_published": t.is_published,
-            "leads_count": t.enquiries.count()
+            "leads_count": t.leads_count
         })
 
     data = {
@@ -655,8 +683,8 @@ def get_owner_overview(request):
             "in_pipeline": in_pipeline,
             "conversion_rate": conversion_rate,
             "est_revenue": est_revenue,
-            "active_trips_count": trips.filter(is_published=True).count(),
-            "approved_reviews_count": reviews.filter(is_approved=True).count()
+            "active_trips_count": sum(1 for t in trips if t.is_published),
+            "approved_reviews_count": approved_reviews_count
         },
         "enquiries": enquiry_list,
         "trips": trip_list,
@@ -925,6 +953,9 @@ def save_owner_package(request, payload: SavePackageIn):
                 meals=day.get('meals', 'All Meals'),
                 stay_type=day.get('stay_type', 'Camp / Homestay')
             )
+
+    # bulk_create and queryset deletes above do not send model signals
+    invalidate_public_cache()
 
     return {
         "success": True,

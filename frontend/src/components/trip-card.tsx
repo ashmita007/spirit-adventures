@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Heart, Star, Clock, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import { Trip } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
+import { smartCase } from "@/lib/readable-text";
 import { canPlayPreviews, cardVideoUrl, isVideoUrl } from "@/lib/media";
 
 interface TripCardProps {
@@ -255,7 +256,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
               href={`/trips/${trip.slug}`}
               className="hover:text-brand-ocean focus-visible:outline-none transition-colors"
             >
-              {trip.title}
+              {smartCase(trip.title)}
             </Link>
           </h3>
 

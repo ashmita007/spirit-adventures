@@ -32,9 +32,16 @@ def serialize_enquiry(e: Enquiry, include_comments: bool = True) -> dict:
     tour_name = e.tour_package.name if e.tour_package else (e.custom_tour_name or "Custom Expedition")
     sp_name = e.sales_person.display_name if e.sales_person else "Unassigned"
     
+    # Lists prefetch comments (see ENQUIRY_LIST): sort those rows here. Re-filtering or
+    # re-ordering the relation would run a new query for every lead.
+    if 'comments' in getattr(e, '_prefetched_objects_cache', {}):
+        comments = sorted(e.comments.all(), key=lambda c: c.created_at, reverse=True)
+    else:
+        comments = list(e.comments.select_related('author').order_by('-created_at'))
+
     comments_list = []
     if include_comments:
-        for c in e.comments.all().select_related('author').order_by('-created_at'):
+        for c in comments:
             author_str = c.author.display_name if c.author else "Team Member"
             comments_list.append({
                 "id": c.id,
@@ -72,7 +79,7 @@ def serialize_enquiry(e: Enquiry, include_comments: bool = True) -> dict:
         "source": getattr(e, "source", "manual") or "manual",
         "created_at": e.created_at,
         "updated_at": e.updated_at,
-        "comments_count": e.comments.count(),
+        "comments_count": len(comments),
         "comments": comments_list,
     }
 
@@ -93,7 +100,7 @@ def list_enquiries(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
 ):
-    qs = Enquiry.objects.select_related('tour_package', 'sales_person').prefetch_related('comments__author').all()
+    qs = Enquiry.objects.select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     
     user = getattr(request, 'user', None)
     if user and user.is_authenticated and not user.is_manager_or_admin:
@@ -136,7 +143,7 @@ def list_enquiries_paginated(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
 ):
-    qs = Enquiry.objects.select_related('tour_package', 'sales_person').prefetch_related('comments__author').all()
+    qs = Enquiry.objects.select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     
     user = getattr(request, 'user', None)
     if user and user.is_authenticated and not user.is_manager_or_admin:
@@ -185,7 +192,7 @@ def list_enquiries_paginated(
 @router.get("/today-enquiries/", response=List[EnquiryOut])
 def get_today_enquiries(request):
     today = date.today()
-    qs = Enquiry.objects.filter(created_at__date=today).select_related('tour_package', 'sales_person')
+    qs = Enquiry.objects.filter(created_at__date=today).select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     qs = scope_to_user(qs, request)
     return [serialize_enquiry(e) for e in qs]
 
@@ -193,7 +200,7 @@ def get_today_enquiries(request):
 @router.get("/today-followups/", response=List[EnquiryOut])
 def get_today_followups(request, sales_person_id: Optional[int] = None):
     today = date.today()
-    qs = Enquiry.objects.filter(followup_date__lte=today).exclude(status__in=['travelled', 'cancelled']).select_related('tour_package', 'sales_person')
+    qs = Enquiry.objects.filter(followup_date__lte=today).exclude(status__in=['travelled', 'cancelled']).select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     if sales_person_id:
         qs = qs.filter(sales_person_id=sales_person_id)
     qs = scope_to_user(qs, request)
@@ -202,7 +209,7 @@ def get_today_followups(request, sales_person_id: Optional[int] = None):
 # 5. Pending Enquiries (Couspro equivalent)
 @router.get("/pending-enquiries/", response=List[EnquiryOut])
 def get_pending_enquiries(request):
-    qs = Enquiry.objects.filter(status__in=['new', 'contacted']).select_related('tour_package', 'sales_person')
+    qs = Enquiry.objects.filter(status__in=['new', 'contacted']).select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     qs = scope_to_user(qs, request)
     return [serialize_enquiry(e) for e in qs]
 
@@ -213,7 +220,7 @@ def get_today_payment_due(request):
     qs = Enquiry.objects.filter(
         balance_amount__gt=0,
         date_of_travel=today
-    ).select_related('tour_package', 'sales_person')
+    ).select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     qs = scope_to_user(qs, request)
     return [serialize_enquiry(e) for e in qs]
 
@@ -223,13 +230,13 @@ def get_past_payment_due(request):
     qs = Enquiry.objects.filter(
         balance_amount__gt=0,
         date_of_travel__lt=today
-    ).select_related('tour_package', 'sales_person')
+    ).select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     qs = scope_to_user(qs, request)
     return [serialize_enquiry(e) for e in qs]
 
 @router.get("/payment-due/all/", response=List[EnquiryOut])
 def get_all_payment_due(request):
-    qs = Enquiry.objects.filter(balance_amount__gt=0).select_related('tour_package', 'sales_person')
+    qs = Enquiry.objects.filter(balance_amount__gt=0).select_related('tour_package', 'sales_person').prefetch_related('comments__author')
     qs = scope_to_user(qs, request)
     return [serialize_enquiry(e) for e in qs]
 
