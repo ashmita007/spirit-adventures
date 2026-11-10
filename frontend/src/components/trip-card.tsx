@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Heart, Star, Clock, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import { Trip } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
+import { canPlayPreviews, cardVideoUrl } from "@/lib/media";
 
 interface TripCardProps {
   trip: Trip;
@@ -33,6 +34,8 @@ const LOCAL_VIDEO_MAP: Record<string, string> = {
 };
 
 const SAVED_KEY = "spirit_saved_trips";
+/** Window event naming the trip card whose preview is playing, so the others stop. */
+const ACTIVE_EVENT = "spirit:card-preview";
 
 function readSaved(): number[] {
   try {
@@ -59,34 +62,63 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
   };
 
   const difficultyClass = difficultyColors[trip.difficulty] || difficultyColors.MODERATE;
-  const videoSrc = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug];
+  const rawVideo = trip.hero_video_url || LOCAL_VIDEO_MAP[trip.slug] || "";
+  // Only direct video files can preview in a card (a YouTube link cannot)
+  const videoSrc = /\.(mp4|webm|mov)(\?|$)/i.test(rawVideo) ? rawVideo : "";
   const cover = trip.cover_image || FALLBACK_COVER;
 
   useEffect(() => {
     setIsLiked(readSaved().includes(trip.id));
   }, [trip.id]);
 
-  // Video preview only while a mouse hovers the card: one video decoding at a
-  // time keeps scrolling smooth. Touch devices just show the photo.
+  // Video preview: on desktop while the mouse hovers the card; on phones and
+  // tablets when the card settles in the middle of the screen. Only one card
+  // plays at a time, using a ~640px / 600 kbps rendition.
   useEffect(() => {
     const el = cardRef.current;
-    if (!el || !videoSrc) return;
-    const canHover =
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!canHover) return;
-    const enter = () => setHovering(true);
-    const leave = () => {
+    if (!el || !videoSrc || !canPlayPreviews()) return;
+
+    const start = () => {
+      setHovering(true);
+      window.dispatchEvent(new CustomEvent(ACTIVE_EVENT, { detail: trip.id }));
+    };
+    const stop = () => {
       setHovering(false);
       setVideoReady(false);
     };
-    el.addEventListener("pointerenter", enter);
-    el.addEventListener("pointerleave", leave);
-    return () => {
-      el.removeEventListener("pointerenter", enter);
-      el.removeEventListener("pointerleave", leave);
+    const onOtherActive = (e: Event) => {
+      if ((e as CustomEvent<number>).detail !== trip.id) stop();
     };
-  }, [videoSrc]);
+    window.addEventListener(ACTIVE_EVENT, onOtherActive);
+
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      el.addEventListener("pointerenter", start);
+      el.addEventListener("pointerleave", stop);
+      return () => {
+        window.removeEventListener(ACTIVE_EVENT, onOtherActive);
+        el.removeEventListener("pointerenter", start);
+        el.removeEventListener("pointerleave", stop);
+      };
+    }
+
+    // Touch: play once the card is mostly visible inside the middle band of the
+    // screen for a moment (a fast flick past it loads nothing).
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        clearTimeout(timer);
+        if (entry.intersectionRatio >= 0.6) timer = setTimeout(start, 350);
+        else stop();
+      },
+      { rootMargin: "-15% 0px -15% 0px", threshold: [0, 0.6] }
+    );
+    io.observe(el);
+    return () => {
+      clearTimeout(timer);
+      io.disconnect();
+      window.removeEventListener(ACTIVE_EVENT, onOtherActive);
+    };
+  }, [videoSrc, trip.id]);
 
   const router = useRouter();
 
@@ -137,7 +169,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
         {videoSrc && hovering && (
           <video
             ref={videoRef}
-            src={videoSrc}
+            src={cardVideoUrl(videoSrc)}
             muted
             loop
             playsInline

@@ -54,3 +54,24 @@ export function useDeferredVideo(url: string | undefined | null): string | null 
 
   return src;
 }
+
+const CARD_VIDEO = "so_0,du_8,w_640,c_limit,q_auto:eco,vc_h264,br_600k";
+
+/**
+ * Small preview rendition for trip cards: first 8 seconds, about 640px, 600 kbps (~0.75 MB).
+ * ".../video/upload/<any transforms>/v123/x.mp4" -> ".../video/upload/w_640,.../v123/x.mp4"
+ */
+export function cardVideoUrl(url: string): string {
+  if (!url.includes("res.cloudinary.com") || !url.includes("/video/upload/")) return url;
+  const [head, rest] = url.split("/video/upload/");
+  const versioned = rest.match(/(?:^|\/)(v\d+\/.*)$/);
+  const tail = versioned ? versioned[1] : rest;
+  return `${head}/video/upload/${CARD_VIDEO}/${tail}`;
+}
+
+/** False on Data Saver, 2G links and for visitors who asked for reduced motion. */
+export function canPlayPreviews(): boolean {
+  const net = connection();
+  if (net?.saveData || /(^|-)2g$/.test(net?.effectiveType ?? "")) return false;
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
