@@ -2,7 +2,7 @@
 import type { BlogPosting, BreadcrumbList, ItemList, TouristTrip, TravelAgency, WebSite, WithContext } from "schema-dts";
 import type { BlogPost, Trip } from "./types";
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://spiritadventures.in").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.spiritadventures.in").replace(/\/$/, "");
 export const SITE_NAME = "Spirit Adventures";
 export const LOGO_URL = `${SITE_URL}/images/logo.png`;
 export const PHONE = "+91-9666567551";

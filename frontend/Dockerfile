@@ -14,7 +14,7 @@ COPY . .
 
 # Baked in at build time (Next.js inlines NEXT_PUBLIC_* and the rewrite targets)
 ARG BACKEND_URL=http://backend:8000
-ARG NEXT_PUBLIC_SITE_URL=https://spiritadventures.in
+ARG NEXT_PUBLIC_SITE_URL=https://www.spiritadventures.in
 ARG NEXT_PUBLIC_WHATSAPP_NUMBER=+919666567551
 ARG NEXT_PUBLIC_PHONE_NUMBER="+91 96665 67551"
 ARG NEXT_PUBLIC_EMAIL=info@spiritadventures.in

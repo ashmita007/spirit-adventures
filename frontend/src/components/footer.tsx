@@ -5,6 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Instagram, Youtube, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
+import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -50,7 +51,7 @@ export default function Footer() {
                 <Youtube className="w-4 h-4" />
               </a>
               <a
-                href="https://wa.me/919666567551"
+                href={whatsappUrl(pageMessage(pathname))}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

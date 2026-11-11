@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, MapPin, PhoneCall } from "lucide-react";
 import { cn, isPortalPath } from "@/lib/utils";
+import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -42,8 +43,7 @@ export default function MobileBottomNav() {
     },
   ];
 
-  const wa = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").replace(/\D/g, "");
-  const waHref = `https://wa.me/${wa}?text=${encodeURIComponent("Hi Spirit Adventures! I want to know about upcoming trips.")}`;
+  const waHref = whatsappUrl(pageMessage(pathname));
   const [first, second, third, fourth] = navItems;
 
   const renderItem = (item: (typeof navItems)[number]) => {

@@ -4,11 +4,15 @@ import { isPortalPath } from "@/lib/utils";
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { MessageCircle, X } from "lucide-react";
+import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
 export default function WhatsAppButton() {
   const pathname = usePathname();
   const [showTooltip, setShowTooltip] = useState(true);
   const [isPopped, setIsPopped] = useState(false);
+  // Read the query string on the client only (keeps pages statically renderable)
+  const [search, setSearch] = useState("");
+  useEffect(() => setSearch(window.location.search), [pathname]);
 
   // Tooltip pops in shortly after load, then tucks away so it never sits on top of content
   useEffect(() => {
@@ -25,12 +29,7 @@ export default function WhatsAppButton() {
     return null;
   }
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551";
-  const cleanNumber = whatsappNumber.replace(/\D/g, "");
-  const defaultMessage = encodeURIComponent(
-    "Hi Spirit Adventures! 🌲 I want to enquire about upcoming trips and customized adventure packages."
-  );
-  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${defaultMessage}`;
+  const whatsappHref = whatsappUrl(pageMessage(pathname, search));
 
   return (
     <div className={`${onTripPage ? "hidden lg:flex" : "hidden md:flex"} fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-4 sm:bottom-7 sm:right-7 z-40 flex-col items-end pointer-events-none select-none`}>
@@ -39,7 +38,7 @@ export default function WhatsAppButton() {
         <div className="pointer-events-auto mb-2 hidden sm:flex items-center space-x-2 bg-white/95 backdrop-blur-md text-slate-800 px-3.5 py-2 rounded-2xl shadow-xl border border-emerald-100 text-xs font-semibold animate-bounce-subtle duration-1000">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           <a
-            href={whatsappUrl}
+            href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-emerald-600 transition flex items-center space-x-1"
@@ -62,7 +61,7 @@ export default function WhatsAppButton() {
         <span aria-hidden className="absolute -inset-1 rounded-full bg-[#25D366]/30 animate-ping [animation-duration:2.4s] pointer-events-none motion-reduce:hidden" />
 
         <a
-          href={whatsappUrl}
+          href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with Spirit Adventures on WhatsApp"

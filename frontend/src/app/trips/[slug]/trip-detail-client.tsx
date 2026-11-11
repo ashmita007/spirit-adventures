@@ -16,6 +16,7 @@ import EnquiryModal from "@/components/enquiry-modal";
 import Lightbox from "@/components/lightbox";
 import { isVideoUrl, useDeferredVideo } from "@/lib/media";
 import { tripDrop, tripFaqs, tripPickup, tripSeason } from "@/lib/trip-faqs";
+import { whatsappUrl, pageMessage, tripMessage } from "@/lib/whatsapp";
 
 interface TripDetailClientProps {
   trip: Trip;
@@ -49,7 +50,6 @@ const DESTINATION_VIDEO_MAP: Record<string, string> = {
   manali: "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341160/spirit_adventures/hero/mountain_trek.mp4",
 };
 
-const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551").replace(/\D/g, "");
 
 /**
  * The Trip model ships placeholder defaults ("Dehradun / Base Camp", "Dec - Apr").
@@ -113,9 +113,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
     ? trip.gallery_images.map((g) => ({ url: g.image_url, caption: g.caption, title: trip.title }))
     : [{ url: trip.cover_image, caption: trip.title, title: trip.title }];
 
-  const whatsappMessage = encodeURIComponent(
-    `Hi Spirit Adventures! I'm interested in the ${trip.title} (${trip.duration_label}). Can you share upcoming batch dates?`
-  );
+  const whatsappHref = whatsappUrl(tripMessage(trip));
 
   return (
     <div className="min-h-dvh bg-white">
@@ -424,7 +422,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                 </button>
 
                 <a
-                  href={`https://wa.me/${WHATSAPP}?text=${whatsappMessage}`}
+                  href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-sm transition"
@@ -543,7 +541,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
 
           <div className="flex items-center gap-2">
             <a
-              href={`https://wa.me/${WHATSAPP}?text=${whatsappMessage}`}
+              href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Ask on WhatsApp"

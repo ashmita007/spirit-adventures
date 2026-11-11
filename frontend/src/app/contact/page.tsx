@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { Phone, Mail, MapPin, MessageCircle, Instagram, Youtube, Clock, ShieldCheck } from "lucide-react";
 import ContactForm from "./contact-form";
 import PageHero from "@/components/page-hero";
+import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
@@ -36,7 +37,7 @@ export default function ContactPage() {
 
               <div className="space-y-4 text-sm">
                 <a
-                  href={`https://wa.me/${whatsappNumber.replace(/\D/g, "")}`}
+                  href={whatsappUrl(pageMessage("/contact"))}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-3 p-3.5 rounded-2xl bg-white/10 hover:bg-emerald-600 transition text-slate-200 hover:text-white"

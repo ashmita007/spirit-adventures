@@ -5,6 +5,7 @@ import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Heart, Phone, Compass, Mountain, MapPin, Image as ImageIcon, BookOpen, MessageCircle } from "lucide-react";
 import { cn, isPortalPath } from "@/lib/utils";
+import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -184,7 +185,7 @@ export default function Navbar() {
 
             <div className="pt-6 border-t border-slate-100 space-y-3">
               <a
-                href="https://wa.me/919666567551?text=Hi%20Spirit%20Adventures%2C%20I%20would%20like%20to%20know%20more%20about%20your%20upcoming%20trips."
+                href={whatsappUrl(pageMessage(pathname))}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center space-x-2 w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 transition"
