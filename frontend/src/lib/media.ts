@@ -30,8 +30,12 @@ export function pickVideoUrl(url: string, clip = ""): string | null {
 }
 
 /**
- * Returns the video URL to mount, only after the page has finished loading so the
- * video never competes with the HTML, CSS, fonts and hero poster. Null until then.
+ * Returns the video URL to mount. Null on the server and for the first moment in the browser,
+ * so the poster image (already requested by the HTML) always gets a head start.
+ *
+ * It used to wait for the window "load" event, which only fires after every image, font and
+ * script on the page has finished. On long trip pages that left the video waiting for seconds.
+ * Now it starts as soon as the browser has a free moment, at most 1.2 s after the page appears.
  */
 /** `clip` is an extra Cloudinary trim, e.g. "du_11" to send only the first 11 seconds. */
 export function useDeferredVideo(url: string | undefined | null, clip = ""): string | null {
@@ -52,10 +56,12 @@ export function useDeferredVideo(url: string | undefined | null, clip = ""): str
         cancelled = true;
       };
     }
-    window.addEventListener("load", start, { once: true });
+    const idle = typeof window.requestIdleCallback === "function";
+    const handle = idle ? window.requestIdleCallback(start, { timeout: 1200 }) : window.setTimeout(start, 300);
     return () => {
       cancelled = true;
-      window.removeEventListener("load", start);
+      if (idle) window.cancelIdleCallback(handle);
+      else window.clearTimeout(handle);
     };
   }, [url, clip]);
 

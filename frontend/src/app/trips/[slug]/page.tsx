@@ -13,6 +13,14 @@ import TripDetailClient from "./trip-detail-client";
 import JsonLd from "@/components/json-ld";
 import { tripJsonLd, breadcrumbJsonLd, tripMetaTitle, tripMetaDescription, tripDisplayName } from "@/lib/seo";
 
+// Build each trip page once and reuse it for every visitor for 2 minutes, instead of
+// rendering it again on every request. Pages are built on first visit (none at deploy time,
+// because the backend is not running during the build).
+export const revalidate = 120;
+export function generateStaticParams() {
+  return [];
+}
+
 interface TripPageProps {
   params: Promise<{ slug: string }>;
 }
