@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Select } from "@/components/ui/select";
 
 interface TablePaginationProps {
   currentPage: number;
@@ -62,7 +63,7 @@ export function TablePagination({
         </span>
         <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200">
           <label htmlFor="pageSizeSelect" className="text-slate-500">Per page:</label>
-          <select
+          <Select
             id="pageSizeSelect"
             value={pageSize}
             onChange={(e) => {
@@ -76,7 +77,7 @@ export function TablePagination({
                 {opt}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

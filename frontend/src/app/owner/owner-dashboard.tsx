@@ -16,6 +16,7 @@ import {
 import { OwnerOverviewData, OwnerEnquiry, updateEnquiryStatus, updateTripConfig, TripSummary } from "@/lib/api";
 import { Trip, TripItinerary } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 
 interface OwnerDashboardProps {
   initialData: OwnerOverviewData;
@@ -740,7 +741,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
               {/* Priority, Destination & Stage Filters */}
               <div className="flex items-center space-x-2 overflow-x-auto w-full md:w-auto">
-                <select
+                <Select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
                   className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200 focus:outline-none focus:border-brand-ocean cursor-pointer"
@@ -749,9 +750,9 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   <option value="HIGH">High Priority (VIP)</option>
                   <option value="MEDIUM">Medium</option>
                   <option value="LOW">Low</option>
-                </select>
+                </Select>
 
-                <select
+                <Select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200 focus:outline-none focus:border-brand-ocean cursor-pointer"
@@ -763,9 +764,9 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   <option value="PAYMENT_PENDING">Payment Pending</option>
                   <option value="CONVERTED">Confirmed & Paid</option>
                   <option value="CLOSED">Closed / Cold</option>
-                </select>
+                </Select>
 
-                <select
+                <Select
                   value={selectedDestinationFilter}
                   onChange={(e) => setSelectedDestinationFilter(e.target.value)}
                   className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200 focus:outline-none focus:border-brand-ocean cursor-pointer"
@@ -779,7 +780,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                   <option value="Wayanad">Wayanad</option>
                   <option value="Ladakh">Ladakh</option>
                   <option value="Kedarkantha">Kedarkantha</option>
-                </select>
+                </Select>
               </div>
             </div>
 
@@ -941,7 +942,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                             {formatCurrency(lead.trip_price * (lead.travelers_count || 1))}
                           </td>
                           <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
-                            <select
+                            <Select
                               value={lead.status}
                               onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                               className="px-2.5 py-1 rounded-lg text-[10px] font-black border border-slate-700 bg-slate-900 text-white focus:outline-none cursor-pointer"
@@ -952,7 +953,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                               <option value="PAYMENT_PENDING">PAYMENT PENDING</option>
                               <option value="CONVERTED">CONVERTED (PAID)</option>
                               <option value="CLOSED">CLOSED</option>
-                            </select>
+                            </Select>
                           </td>
                           <td className="py-3 px-4">
                             <span className={cn(
@@ -1339,7 +1340,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                 <div>
                   <label className="block font-bold text-[10px] text-slate-400 mb-1">Trip Package Interest</label>
-                  <select
+                  <Select
                     value={newLeadForm.trip_title}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, trip_title: e.target.value })}
                     className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-brand-ocean cursor-pointer"
@@ -1347,7 +1348,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                     {data.trips.map(t => (
                       <option key={t.id} value={t.title}>{t.title} ({t.destination_name})</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
@@ -1363,7 +1364,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
 
                 <div>
                   <label className="block font-bold text-[10px] text-slate-400 mb-1">Priority Level</label>
-                  <select
+                  <Select
                     value={newLeadForm.priority}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, priority: e.target.value as any })}
                     className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none cursor-pointer"
@@ -1371,7 +1372,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                     <option value="HIGH">High Priority (VIP)</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="LOW">Low</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
@@ -1785,7 +1786,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                     <label className="block text-xs font-bold text-slate-400 mb-1">
                       Destination Region
                     </label>
-                    <select
+                    <Select
                       value={editingTrip.destination_name || "Gokarna, Karnataka"}
                       onChange={(e) => setEditingTrip({ ...editingTrip, destination_name: e.target.value })}
                       className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-ocean cursor-pointer"
@@ -1798,14 +1799,14 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                       <option value="Wayanad, Kerala">Wayanad, Kerala (Chembra Heart Lake)</option>
                       <option value="Ladakh, Himalayas">Ladakh, Himalayas (Motorcycle Odyssey)</option>
                       <option value="Uttarakhand, Himalayas">Uttarakhand, Himalayas (Kedarkantha)</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1">
                       Difficulty Level
                     </label>
-                    <select
+                    <Select
                       value={editingTrip.difficulty}
                       onChange={(e) => setEditingTrip({ ...editingTrip, difficulty: e.target.value as any })}
                       className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none cursor-pointer"
@@ -1814,7 +1815,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                       <option value="MODERATE">MODERATE</option>
                       <option value="CHALLENGING">CHALLENGING</option>
                       <option value="DIFFICULT">DIFFICULT</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div>
@@ -1876,7 +1877,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                     <label className="block text-xs font-bold text-brand-sky mb-1.5">
                       Select Local Looping Video (Card & Banner Background)
                     </label>
-                    <select
+                    <Select
                       value={editingTrip.hero_video_url || ""}
                       onChange={(e) => {
                         const selected = AVAILABLE_LOCAL_VIDEOS.find((v) => v.value === e.target.value);
@@ -1893,7 +1894,7 @@ export default function OwnerDashboard({ initialData }: OwnerDashboardProps) {
                           {vid.label} [{vid.region}]: {vid.value}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {editingTrip.hero_video_url && (

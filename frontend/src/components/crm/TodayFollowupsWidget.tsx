@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Phone, Calendar, Clock, MessageSquare, ChevronRight, User, CheckCircle2, Send } from 'lucide-react';
 import { Enquiry } from '@/lib/crm/types';
 import { api } from '@/lib/crm/api';
+import { Select } from "@/components/ui/select";
 
 interface TodayFollowupsWidgetProps {
   followups: Enquiry[];
@@ -116,7 +117,7 @@ export const TodayFollowupsWidget: React.FC<TodayFollowupsWidgetProps> = ({
                       className="pt-2 border-t border-slate-200 space-y-2"
                     >
                       <div className="flex gap-2">
-                        <select
+                        <Select
                           value={callStatus}
                           onChange={(e) => setCallStatus(e.target.value)}
                           className="bg-white border border-slate-300 rounded-md px-2 py-1 text-[11px] text-slate-800 font-medium focus:outline-none focus:border-[#0A6FAE]"
@@ -127,7 +128,7 @@ export const TodayFollowupsWidget: React.FC<TodayFollowupsWidgetProps> = ({
                           <option value="busy">Busy</option>
                           <option value="callback_requested">Callback Later</option>
                           <option value="booked">Confirmed Booked</option>
-                        </select>
+                        </Select>
                         <input
                           type="text"
                           required

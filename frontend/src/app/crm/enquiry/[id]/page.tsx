@@ -29,6 +29,7 @@ import {
 import { Enquiry, EnquiryComment } from '@/lib/crm/types';
 import { api } from '@/lib/crm/api';
 import { useAuth } from '@/components/crm/auth-context';
+import { Select } from "@/components/ui/select";
 
 export default function EnquiryProfilePage() {
   const auth = useAuth();
@@ -576,7 +577,7 @@ export default function EnquiryProfilePage() {
                   <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Call / Follow-up Status
                   </label>
-                  <select
+                  <Select
                     value={callStatus}
                     onChange={(e) => setCallStatus(e.target.value)}
                     className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-hidden focus:border-[#062B49]"
@@ -590,7 +591,7 @@ export default function EnquiryProfilePage() {
                     <option value="advance_collected">Advance Collected</option>
                     <option value="payment_followup">Payment Followup</option>
                     <option value="general_note">General Note</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="md:col-span-3">
@@ -719,7 +720,7 @@ export default function EnquiryProfilePage() {
               <div className="p-5 space-y-4 text-sm">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Status</label>
-                  <select
+                  <Select
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-hidden focus:border-[#062B49]"
@@ -729,7 +730,7 @@ export default function EnquiryProfilePage() {
                     <option value="booked">Booked / Advance Received</option>
                     <option value="travelled">Travelled / Completed</option>
                     <option value="cancelled">Cancelled / Dropout</option>
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
@@ -811,7 +812,7 @@ export default function EnquiryProfilePage() {
                   <label className="block font-semibold text-slate-700 mb-1">
                     Payment Mode
                   </label>
-                  <select
+                  <Select
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-hidden focus:border-[#062B49]"
@@ -821,7 +822,7 @@ export default function EnquiryProfilePage() {
                     <option value="bank_transfer">Bank Transfer (NEFT/IMPS)</option>
                     <option value="card">Credit / Debit Card</option>
                     <option value="cheque">Cheque</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>

@@ -11,6 +11,7 @@ import {
 import { OwnerOverviewData, OwnerEnquiry, updateEnquiryStatus } from "@/lib/api";
 import { formatCurrency, cn } from "@/lib/utils";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { Select } from "@/components/ui/select";
 
 const PIPELINE_STAGES: Array<{
   key: OwnerEnquiry["status"];
@@ -322,7 +323,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
         </div>
 
         <div className="grid grid-cols-2 gap-2 w-full md:flex md:items-center md:w-auto">
-          <select
+          <Select
             value={priorityFilter}
             onChange={(e) => handlePriorityFilterChange(e.target.value)}
             aria-label="Filter by priority" className="w-full md:w-auto py-2.5 md:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm md:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
@@ -331,9 +332,9 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
             <option value="HIGH">High (VIP)</option>
             <option value="MEDIUM">Medium</option>
             <option value="LOW">Low</option>
-          </select>
+          </Select>
 
-          <select
+          <Select
             value={statusFilter}
             onChange={(e) => handleStatusFilterChange(e.target.value)}
             aria-label="Filter by stage" className="w-full md:w-auto py-2.5 md:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm md:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
@@ -345,9 +346,9 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
             <option value="PAYMENT_PENDING">Payment Pending</option>
             <option value="CONVERTED">Confirmed & Paid</option>
             <option value="CLOSED">Closed / Cold</option>
-          </select>
+          </Select>
 
-          <select
+          <Select
             value={destinationFilter}
             onChange={(e) => handleDestinationFilterChange(e.target.value)}
             aria-label="Filter by destination" className="col-span-2 w-full md:w-auto py-2.5 md:py-2 pl-3 bg-slate-50 border border-slate-200 rounded-xl text-sm md:text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-ocean"
@@ -362,7 +363,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
             <option value="Wayanad">Wayanad</option>
             <option value="Ladakh">Ladakh</option>
             <option value="Kedarkantha">Kedarkantha</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -393,7 +394,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </p>
               </button>
               <div className="flex items-center gap-2">
-                <select
+                <Select
                   value={lead.status}
                   aria-label={`Stage for ${lead.full_name}`}
                   onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
@@ -412,7 +413,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                   <option value="PAYMENT_PENDING">Payment pending</option>
                   <option value="CONVERTED">Confirmed (paid)</option>
                   <option value="CLOSED">Closed</option>
-                </select>
+                </Select>
                 <button type="button" onClick={() => openWhatsAppLead(lead, "itinerary")} aria-label={`WhatsApp ${lead.full_name}`} className="p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
                   <MessageCircle className="w-4 h-4" />
                 </button>
@@ -475,7 +476,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                     {lead.trip_price ? formatCurrency(lead.trip_price * (lead.travelers_count || 1)) : <span className="text-slate-400 font-medium">Not priced</span>}
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                    <select
+                    <Select
                       value={lead.status}
                       onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                       className={cn(
@@ -493,7 +494,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                       <option value="PAYMENT_PENDING">Payment pending</option>
                       <option value="CONVERTED">Confirmed (paid)</option>
                       <option value="CLOSED">Closed</option>
-                    </select>
+                    </Select>
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className={cn(
@@ -625,7 +626,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
 
                 <div>
                   <label className="block font-bold text-[10px] text-slate-600 mb-1">Trip Package</label>
-                  <select
+                  <Select
                     value={newLeadForm.trip_title}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, trip_title: e.target.value })}
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-ocean cursor-pointer"
@@ -633,7 +634,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                     {data.trips.map(t => (
                       <option key={t.id} value={t.title}>{t.title} ({t.destination_name})</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
@@ -649,7 +650,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
 
                 <div>
                   <label className="block font-bold text-[10px] text-slate-600 mb-1">Priority</label>
-                  <select
+                  <Select
                     value={newLeadForm.priority}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, priority: e.target.value as any })}
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none cursor-pointer"
@@ -657,7 +658,7 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                     <option value="HIGH">High Priority (VIP)</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="LOW">Low</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>

@@ -14,6 +14,7 @@ import { OwnerOverviewData, TripSummary, updateTripConfig } from "@/lib/api";
 import { Trip, TripItinerary } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { Select } from "@/components/ui/select";
 
 const AVAILABLE_LOCAL_VIDEOS = [
   { label: "Dandeli Kali River Rafting", value: "https://res.cloudinary.com/xvxaicfe/video/upload/f_auto,q_auto/v1790341176/spirit_adventures/shorts/dandeli_rafting.mp4", poster: "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg", region: "Karnataka" },
@@ -780,7 +781,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     <label className="block text-xs font-bold text-slate-600 mb-1">
                       Difficulty Level
                     </label>
-                    <select
+                    <Select
                       value={editingTrip.difficulty}
                       onChange={(e) => setEditingTrip({ ...editingTrip, difficulty: e.target.value as any })}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none cursor-pointer"
@@ -789,7 +790,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                       <option value="MODERATE">MODERATE</option>
                       <option value="CHALLENGING">CHALLENGING</option>
                       <option value="DIFFICULT">DIFFICULT</option>
-                    </select>
+                    </Select>
                   </div>
 
                   <div>
@@ -877,7 +878,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                     <label className="block text-xs font-bold text-brand-ocean mb-1.5">
                       Select Local Looping Video (Card & Banner Background)
                     </label>
-                    <select
+                    <Select
                       value={editingTrip.hero_video_url || ""}
                       onChange={(e) => {
                         const selected = AVAILABLE_LOCAL_VIDEOS.find((v) => v.value === e.target.value);
@@ -898,7 +899,7 @@ export default function PackagesClientPage({ initialData }: { initialData: Owner
                           {vid.label} [{vid.region}]: {vid.value}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">

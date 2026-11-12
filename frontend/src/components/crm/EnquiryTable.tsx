@@ -33,6 +33,7 @@ import {
 import { Enquiry, User, EnquiryComment } from '@/lib/crm/types';
 import { api } from '@/lib/crm/api';
 import { useAuth } from '@/components/crm/auth-context';
+import { Select } from "@/components/ui/select";
 
 interface EnquiryTableProps {
   enquiries: Enquiry[];
@@ -279,7 +280,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
 
           {/* Accommodation & Salesperson Dropdowns */}
           <div className="flex items-center gap-2">
-            <select
+            <Select
               value={accommodationFilter}
               onChange={(e) => setAccommodationFilter(e.target.value)}
               className="bg-slate-50 border border-slate-200 text-xs rounded-lg px-3 py-2 text-slate-700 font-medium focus:outline-none focus:border-[#0A6FAE]"
@@ -288,7 +289,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
               <option value="sharing">Sharing Room</option>
               <option value="private_room">Private Room</option>
               <option value="tent">Tent / Camping</option>
-            </select>
+            </Select>
 
             {auth.isSalesPerson ? (
               <div className="bg-emerald-50 border border-emerald-200 text-xs rounded-lg px-3 py-2 text-emerald-800 font-bold flex items-center gap-1.5 shadow-2xs">
@@ -296,7 +297,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                 <span>Assigned to: {auth.user?.display_name || 'You'}</span>
               </div>
             ) : (
-              <select
+              <Select
                 value={salespersonFilter}
                 onChange={(e) => setSalespersonFilter(e.target.value)}
                 className="bg-slate-50 border border-slate-200 text-xs rounded-lg px-3 py-2 text-slate-700 font-medium focus:outline-none focus:border-[#0A6FAE]"
@@ -307,7 +308,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                     {sp.display_name}
                   </option>
                 ))}
-              </select>
+              </Select>
             )}
           </div>
         </div>
@@ -691,7 +692,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
             {onPerPageChange && (
               <div className="flex items-center gap-1.5 text-slate-500 font-medium">
                 <span>Show</span>
-                <select
+                <Select
                   value={perPage}
                   onChange={(e) => onPerPageChange(Number(e.target.value))}
                   className="bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-700 focus:outline-none focus:border-[#0A6FAE]"
@@ -701,7 +702,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                   <option value={100}>100</option>
-                </select>
+                </Select>
                 <span>entries</span>
               </div>
             )}
@@ -844,7 +845,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Select New Status
                 </label>
-                <select
+                <Select
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-[#0A6FAE]"
@@ -854,7 +855,7 @@ export const EnquiryTable: React.FC<EnquiryTableProps> = ({
                   <option value="booked">Joined / Booked</option>
                   <option value="travelled">Travelled</option>
                   <option value="cancelled">Dropout / Cancelled</option>
-                </select>
+                </Select>
               </div>
 
               <div>

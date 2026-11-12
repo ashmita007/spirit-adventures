@@ -26,6 +26,7 @@ import {
 import { Enquiry } from '@/lib/crm/types';
 import { api } from '@/lib/crm/api';
 import { useAuth } from '@/components/crm/auth-context';
+import { Select } from "@/components/ui/select";
 
 interface EnquiryDetailDrawerProps {
   enquiryId: number | null;
@@ -433,7 +434,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                   <form onSubmit={handleAddComment} className="mb-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
                       <div>
-                        <select
+                        <Select
                           value={callStatus}
                           onChange={(e) => setCallStatus(e.target.value)}
                           className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded text-xs text-slate-800 focus:outline-hidden focus:border-[#062B49]"
@@ -447,7 +448,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                           <option value="advance_collected">Advance Collected</option>
                           <option value="payment_followup">Payment Followup</option>
                           <option value="general_note">General Note</option>
-                        </select>
+                        </Select>
                       </div>
 
                       <div className="md:col-span-2">
@@ -546,7 +547,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
             <form onSubmit={handleUpdateStatus} className="p-4 space-y-3 text-xs">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Status</label>
-                <select
+                <Select
                   value={statusVal}
                   onChange={(e) => setStatusVal(e.target.value)}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded text-slate-800"
@@ -556,7 +557,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                   <option value="booked">Booked</option>
                   <option value="travelled">Travelled</option>
                   <option value="cancelled">Cancelled</option>
-                </select>
+                </Select>
               </div>
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Note (Optional)</label>
@@ -614,7 +615,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
               </div>
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Payment Mode</label>
-                <select
+                <Select
                   value={payMode}
                   onChange={(e) => setPayMode(e.target.value)}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded"
@@ -623,7 +624,7 @@ export const EnquiryDetailDrawer: React.FC<EnquiryDetailDrawerProps> = ({
                   <option value="cash">Cash</option>
                   <option value="bank_transfer">Bank Transfer</option>
                   <option value="card">Card</option>
-                </select>
+                </Select>
               </div>
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Note</label>

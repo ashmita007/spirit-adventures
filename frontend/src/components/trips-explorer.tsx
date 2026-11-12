@@ -12,6 +12,7 @@ import {
 import TripCard from "@/components/trip-card";
 import { Trip, Destination, Category } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 
 interface TripsExplorerProps {
   initialTrips: Trip[];
@@ -226,7 +227,7 @@ export default function TripsExplorer({
             <label htmlFor="f-dest" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold text-slate-500 mb-1">
               Destination
             </label>
-            <select
+            <Select
               id="f-dest"
               value={destination}
               onChange={handleDestinationChange}
@@ -238,7 +239,7 @@ export default function TripsExplorer({
                   {d.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Difficulty Dropdown */}
@@ -246,7 +247,7 @@ export default function TripsExplorer({
             <label htmlFor="f-diff" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold text-slate-500 mb-1">
               Difficulty
             </label>
-            <select
+            <Select
               id="f-diff"
               value={difficulty}
               onChange={handleDifficultyChange}
@@ -256,7 +257,7 @@ export default function TripsExplorer({
               <option value="easy">Easy / Beginners</option>
               <option value="moderate">Moderate</option>
               <option value="challenging">Challenging / High Altitude</option>
-            </select>
+            </Select>
           </div>
 
           {/* Sort By Dropdown */}
@@ -264,7 +265,7 @@ export default function TripsExplorer({
             <label htmlFor="f-sort" className="sr-only sm:not-sr-only sm:block text-[11px] font-bold text-slate-500 mb-1">
               Sort By
             </label>
-            <select
+            <Select
               id="f-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -275,7 +276,7 @@ export default function TripsExplorer({
               <option value="price_desc">Price: High to Low</option>
               <option value="duration_asc">Duration: Shortest First</option>
               <option value="rating">Highest Rated</option>
-            </select>
+            </Select>
           </div>
         </div>
       </div>

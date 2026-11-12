@@ -8,6 +8,7 @@ import {
   Activity, AlertTriangle, Check, Sliders, Zap, Database
 } from "lucide-react";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { Select } from "@/components/ui/select";
 
 interface CronJob {
   id: string;
@@ -438,28 +439,28 @@ export default function OwnerSettingsPage() {
               <Star className="w-3.5 h-3.5 text-amber-500" />
               <span>Minimum Star Filter for Public Display</span>
             </label>
-            <select
+            <Select
               defaultValue="5"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-ocean cursor-pointer"
             >
               <option value="5">5.0 Stars Only (Recommended)</option>
               <option value="4">4.0 Stars and Above</option>
               <option value="3">3.0 Stars and Above</option>
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="block text-xs font-bold text-slate-600 mb-1.5">
               Sync Frequency
             </label>
-            <select
+            <Select
               defaultValue="realtime"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-ocean cursor-pointer"
             >
               <option value="realtime">Realtime Webhook Trigger</option>
               <option value="hourly">Hourly Automated Cron</option>
               <option value="daily">Daily Midnight Sync</option>
-            </select>
+            </Select>
           </div>
         </div>
 

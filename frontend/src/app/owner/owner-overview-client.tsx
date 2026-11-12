@@ -13,6 +13,7 @@ import {
 import { OwnerOverviewData, OwnerEnquiry, updateEnquiryStatus } from "@/lib/api";
 import { formatCurrency, cn } from "@/lib/utils";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { Select } from "@/components/ui/select";
 
 const PIPELINE_STAGES: Array<{
   key: OwnerEnquiry["status"];
@@ -316,7 +317,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
             </div>
 
             {/* Stage Filter */}
-            <select
+            <Select
               value={stageFilter}
               onChange={(e) => {
                 setStageFilter(e.target.value);
@@ -331,7 +332,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
               <option value="PAYMENT_PENDING">Payment pending</option>
               <option value="CONVERTED">Confirmed (paid)</option>
               <option value="CLOSED">Closed</option>
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -413,7 +414,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                     </td>
 
                     <td className="py-4 px-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                      <select
+                      <Select
                         value={lead.status}
                         onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
                         className={cn(
@@ -431,7 +432,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                         <option value="PAYMENT_PENDING">Payment pending</option>
                         <option value="CONVERTED">Confirmed (paid)</option>
                         <option value="CLOSED">CLOSED</option>
-                      </select>
+                      </Select>
                     </td>
 
                     <td className="py-4 px-4 whitespace-nowrap">
@@ -725,7 +726,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Adventure Package *</label>
-                <select
+                <Select
                   value={newLeadForm.trip_title}
                   onChange={(e) => setNewLeadForm({ ...newLeadForm, trip_title: e.target.value })}
                   className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none cursor-pointer"
@@ -735,7 +736,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                       {t.title} (₹{t.price.toLocaleString("en-IN")})
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -763,7 +764,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Priority</label>
-                  <select
+                  <Select
                     value={newLeadForm.priority}
                     onChange={(e) => setNewLeadForm({ ...newLeadForm, priority: e.target.value as any })}
                     className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none cursor-pointer"
@@ -771,7 +772,7 @@ export default function OwnerOverviewClient({ initialData }: { initialData: Owne
                     <option value="HIGH">High (VIP)</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="LOW">Low</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 

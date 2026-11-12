@@ -183,32 +183,61 @@ html { scroll-behavior: smooth; }
   }
 }
 
-/* Dropdowns: one look on every page (site, owner portal, CRM). Native <select> keeps the
-   phone's own picker and full keyboard support; only the closed control is restyled.
-   `select:not(...)` outranks single utility classes, so padding-right always leaves room
-   for the arrow even when a component sets px-3. */
-select:not([multiple]):not([size]) {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.65rem center;
-  background-size: 1.05em;
-  padding-right: 2.1rem;
-  max-width: 100%;
+/* Dropdowns: every dropdown is components/ui/select.tsx. Closed it is a button that takes
+   the old <select> classes; open it is a bottom sheet on phones and a popover on desktop. */
+:where(.sa-select) {
+  display: inline-block;
   min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: left;
   cursor: pointer;
 }
-select:disabled {
+.sa-select:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
-/* The open list: readable on every OS (Windows draws it with the control's colours) */
-select option {
-  color: #0f172a;
-  background-color: #ffffff;
+@keyframes sa-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes sa-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sa-pop-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.sa-sheet { animation: sa-sheet-up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.sa-fade { animation: sa-fade-in 0.18s ease-out; }
+.sa-pop { animation: sa-pop-in 0.12s ease-out; }
+
+/* Dialogs, drawers and pickers: the page behind must not scroll or slide while one is open. */
+html { scrollbar-gutter: stable; }
+html:has(.fixed.inset-0:is(.z-50, .z-60, .z-\[60\], .z-\[70\]), .sa-overlay) {
+  overflow: hidden;
+}
+.fixed.inset-0:is(.z-50, .z-60, .z-\[60\], .z-\[70\]) {
+  overscroll-behavior: contain;
+}
+/* A scrolling dialog panel scrolls up and down only: nothing inside can drag it sideways. */
+.fixed.inset-0 :where(.overflow-y-auto) {
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Fields never push a form wider than the screen. iOS gives date and time fields a fixed
+   minimum width that overflows two-column forms; draw them like every other field. */
+input, textarea {
+  max-width: 100%;
+  min-width: 0;
+}
+input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 2.6em;
+}
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+/* A full-screen overlay covers the screen exactly. Page spacing (space-y-*) used to push
+   dialogs down by a gap and leave a strip of page showing above them. */
+.fixed.inset-0 {
+  margin: 0 !important;
+}
+/* The backdrop only fades in. Sliding the whole screen made forms look like they jump. */
+.fixed.inset-0.animate-fade-in {
+  animation: sa-fade-in 0.2s ease-out;
 }
