@@ -1,3 +1,4 @@
+import { OFFICES } from "./offices";
 /** Shared SEO constants and JSON-LD builders. */
 import type { BlogPosting, BreadcrumbList, ItemList, TouristTrip, TravelAgency, WebSite, WithContext } from "schema-dts";
 import type { BlogPost, Trip } from "./types";
@@ -25,14 +26,14 @@ export function organizationJsonLd(): WithContext<TravelAgency> {
     telephone: PHONE,
     email: EMAIL,
     priceRange: "₹₹",
-    address: {
+    address: OFFICES.map((o) => ({
       "@type": "PostalAddress",
-      streetAddress: "Vasantha Sai Apts, Opp. Rishi Towers, KPHB",
-      addressLocality: "Kukatpally, Hyderabad",
-      addressRegion: "Telangana",
-      postalCode: "500085",
+      streetAddress: o.street,
+      addressLocality: o.locality,
+      addressRegion: o.region,
+      postalCode: o.postalCode,
       addressCountry: "IN",
-    },
+    })),
     areaServed: ["Karnataka", "Kerala", "Tamil Nadu", "Goa", "Uttarakhand", "Ladakh", "Himachal Pradesh", "Kashmir"],
     contactPoint: {
       "@type": "ContactPoint",

@@ -3,6 +3,7 @@ import { isPortalPath } from "@/lib/utils";
 
 import React from "react";
 import Link from "next/link";
+import { OFFICES, PHONES, mapOpenUrl } from "@/lib/offices";
 import { usePathname } from "next/navigation";
 import { Compass, Instagram, Youtube, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
@@ -78,25 +79,26 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-brand-sky">Official HQ</h4>
             <ul className="space-y-2.5 text-sm text-slate-300">
-              <li className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-brand-sky flex-shrink-0" />
-                <a href="tel:+919666567551" className="hover:text-white">+91 96665 67551</a>
-              </li>
+              {PHONES.map((ph) => (
+                <li key={ph.city} className="flex items-center space-x-2">
+                  <Phone className="w-4 h-4 text-brand-sky flex-shrink-0" />
+                  <a href={`tel:${ph.tel}`} className="hover:text-white">
+                    <span className="text-xs text-slate-400">{ph.city}:</span> {ph.display}
+                  </a>
+                </li>
+              ))}
               <li className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-brand-sky flex-shrink-0" />
                 <a href="mailto:info@spiritadventures.in" className="hover:text-white">info@spiritadventures.in</a>
               </li>
-              <li className="flex items-start space-x-2">
-                <MapPin className="w-4 h-4 text-brand-sky flex-shrink-0 mt-0.5" />
-                <a 
-                  href="https://maps.app.goo.gl/4N6qZD9KAyb6pBA19" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="hover:text-white text-xs leading-relaxed"
-                >
-                  Vasantha Sai Apts, Opp. Rishi Towers, KPHB, Kukatpally, Hyderabad - 500085
-                </a>
-              </li>
+              {OFFICES.map((o) => (
+                <li key={o.city} className="flex items-start space-x-2">
+                  <MapPin className="w-4 h-4 text-brand-sky flex-shrink-0 mt-0.5" />
+                  <a href={mapOpenUrl(o)} target="_blank" rel="noopener noreferrer" className="hover:text-white text-xs leading-relaxed">
+                    <span className="font-semibold">{o.city}:</span> {o.short}
+                  </a>
+                </li>
+              ))}
               <li className="pt-2">
                 <Link
                   href="/contact"

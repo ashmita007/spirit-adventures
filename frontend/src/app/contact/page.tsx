@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { Phone, Mail, MapPin, MessageCircle, Instagram, Youtube, Clock, ShieldCheck } from "lucide-react";
 import ContactForm from "./contact-form";
 import PageHero from "@/components/page-hero";
+import OfficeMaps from "@/components/office-maps";
+import { OFFICES, PHONES, mapOpenUrl } from "@/lib/offices";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -13,7 +15,6 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551";
-  const phone = process.env.NEXT_PUBLIC_PHONE_NUMBER || "+91 96665 67551";
   const email = process.env.NEXT_PUBLIC_EMAIL || "info@spiritadventures.in";
 
   return (
@@ -49,16 +50,19 @@ export default function ContactPage() {
                   </div>
                 </a>
 
-                <a
-                  href={`tel:${whatsappNumber}`}
-                  className="flex items-center space-x-3 p-3.5 rounded-2xl bg-white/10 hover:bg-brand-ocean transition text-slate-200 hover:text-white"
-                >
-                  <Phone className="w-5 h-5 text-brand-sky" />
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 block">Phone Support</span>
-                    <span className="font-semibold">{phone}</span>
-                  </div>
-                </a>
+                {PHONES.map((ph) => (
+                  <a
+                    key={ph.city}
+                    href={`tel:${ph.tel}`}
+                    className="flex items-center space-x-3 p-3.5 rounded-2xl bg-white/10 hover:bg-brand-ocean transition text-slate-200 hover:text-white"
+                  >
+                    <Phone className="w-5 h-5 text-brand-sky" />
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 block">{ph.city} phone</span>
+                      <span className="font-semibold">{ph.display}</span>
+                    </div>
+                  </a>
+                ))}
 
                 <a
                   href={`mailto:${email}`}
@@ -73,17 +77,14 @@ export default function ContactPage() {
               </div>
 
               <div className="pt-4 border-t border-white/10 space-y-3 text-xs text-slate-300">
-                <div className="flex items-start space-x-2.5">
-                  <MapPin className="w-4 h-4 text-brand-sky flex-shrink-0 mt-0.5" />
-                  <a 
-                    href="https://maps.app.goo.gl/4N6qZD9KAyb6pBA19" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="hover:text-white leading-relaxed"
-                  >
-                    Vasantha Sai Apartments, Opposite Rishi Towers, KPHB, Kukatpally, Hyderabad, Telangana - 500085
-                  </a>
-                </div>
+                {OFFICES.map((o) => (
+                  <div key={o.city} className="flex items-start space-x-2.5">
+                    <MapPin className="w-4 h-4 text-brand-sky flex-shrink-0 mt-0.5" />
+                    <a href={mapOpenUrl(o)} target="_blank" rel="noopener noreferrer" className="hover:text-white leading-relaxed">
+                      <span className="font-semibold text-white">{o.city}:</span> {o.address}
+                    </a>
+                  </div>
+                ))}
                 <div className="flex items-center space-x-2.5">
                   <Clock className="w-4 h-4 text-brand-sky flex-shrink-0" />
                   <span>Desk hours: 9 AM to 9 PM IST, Monday to Sunday</span>
@@ -122,6 +123,8 @@ export default function ContactPage() {
             <ContactForm />
           </div>
         </div>
+
+        <OfficeMaps />
       </div>
     </div>
   );
