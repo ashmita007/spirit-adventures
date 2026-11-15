@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import WhatsAppButton from "@/components/whatsapp-button";
+import LeadPopup from "@/components/lead-popup";
 import MobileBottomNav from "@/components/mobile-nav";
 import MotionProvider from "@/components/motion/motion-provider";
 import MediaGovernor from "@/components/motion/media-governor";
@@ -104,6 +105,7 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
         <Footer />
         <WhatsAppButton />
+        <LeadPopup />
         <MobileBottomNav />
         <MotionProvider />
         <MediaGovernor />
