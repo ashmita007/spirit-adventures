@@ -37,3 +37,10 @@ services:
         value: "hello@spiritadventures.in"
       - key: SUPPORT_PHONE
         value: "+91 96665 67551"
+      # Business mailbox for lead alert emails + the owner-portal Inbox (StackCP / 20i).
+      # Set the password in the dashboard. Note: Render FREE instances block outbound
+      # SMTP (465/587), so sending needs a paid instance; reading (IMAP 993) works on free.
+      - key: MAIL_ADDRESS
+        value: "info@spiritadventures.in"
+      - key: MAIL_PASSWORD
+        sync: false

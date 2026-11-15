@@ -4,6 +4,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from . import crm
+from .lead_alerts import send_lead_alert
 from .cache import invalidate_public_cache
 from .models import (
     BlogPost, Category, Destination, Enquiry, FAQ, GalleryImage, Review,
@@ -15,6 +16,7 @@ from .models import (
 def enquiry_to_crm(sender, instance, created, raw=False, **kwargs):
     if created and not raw:
         transaction.on_commit(lambda: crm.push_enquiry(instance))
+        transaction.on_commit(lambda: send_lead_alert(instance))
 
 
 @receiver(post_save, sender=Trip)

@@ -1040,6 +1040,11 @@ from .media import router as owner_media_router  # noqa: E402
 
 api.add_router("/owner", owner_media_router)
 
+# ----------------- Owner Inbox (business mailbox over IMAP/SMTP): /api/v1/owner/mail/... -----------------
+from .inbox import router as owner_inbox_router  # noqa: E402
+
+api.add_router("/owner/mail", owner_inbox_router)
+
 
 # ----------------- Built-in sales CRM: /api/v1/crm/... -----------------
 from crm.accounts.api import router as crm_accounts_router  # noqa: E402

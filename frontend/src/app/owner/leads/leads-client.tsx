@@ -771,7 +771,17 @@ export default function LeadsClientPage({ initialData }: { initialData: OwnerOve
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 font-semibold">Email</span>
-                  <span className="font-bold text-slate-900">{selectedLead.email}</span>
+                  {selectedLead.email ? (
+                    <a
+                      href={`/owner/inbox?to=${encodeURIComponent(selectedLead.email)}&subject=${encodeURIComponent("Your Spirit Adventures trip")}`}
+                      className="font-bold text-brand-ocean hover:underline"
+                      title="Write an email from info@spiritadventures.in"
+                    >
+                      {selectedLead.email} ✉
+                    </a>
+                  ) : (
+                    <span className="text-slate-400">Not given</span>
+                  )}
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 font-semibold">Group Size</span>

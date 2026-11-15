@@ -237,3 +237,30 @@ CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME') or (_cld.hostname if 
 CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY') or (_cld.username if _cld else '')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET') or (_cld.password if _cld else '')
 CLOUDINARY_FOLDER = os.getenv('CLOUDINARY_FOLDER', 'spirit_adventures')
+
+
+# ----------------- Email (StackCP / 20i mailbox) -----------------
+# Lead alerts and the owner-portal Inbox use one real mailbox, e.g. info@spiritadventures.in.
+# Set MAIL_PASSWORD as a secret in the Render dashboard; without it, email features stay off
+# and the site keeps working normally.
+MAIL_ADDRESS = os.getenv('MAIL_ADDRESS', 'info@spiritadventures.in')
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', '')
+MAIL_DISPLAY_NAME = os.getenv('MAIL_DISPLAY_NAME', 'Spirit Adventures')
+MAIL_ENABLED = bool(MAIL_ADDRESS and MAIL_PASSWORD)
+
+EMAIL_HOST = os.getenv('MAIL_SMTP_HOST', 'smtp.stackmail.com')
+EMAIL_PORT = int(os.getenv('MAIL_SMTP_PORT', '465'))
+EMAIL_USE_SSL = EMAIL_PORT == 465
+EMAIL_USE_TLS = EMAIL_PORT == 587
+EMAIL_HOST_USER = MAIL_ADDRESS
+EMAIL_HOST_PASSWORD = MAIL_PASSWORD
+EMAIL_TIMEOUT = 20
+DEFAULT_FROM_EMAIL = f'{MAIL_DISPLAY_NAME} <{MAIL_ADDRESS}>'
+SERVER_EMAIL = MAIL_ADDRESS
+if not MAIL_ENABLED:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+MAIL_IMAP_HOST = os.getenv('MAIL_IMAP_HOST', 'imap.stackmail.com')
+MAIL_IMAP_PORT = int(os.getenv('MAIL_IMAP_PORT', '993'))
+# Comma-separated list of who gets an email for every new website lead.
+LEAD_ALERT_EMAILS = [e.strip() for e in os.getenv('LEAD_ALERT_EMAILS', MAIL_ADDRESS).split(',') if e.strip()]

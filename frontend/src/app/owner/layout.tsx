@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, Users, Mountain, BarChart3, Settings, 
   Compass, Eye, ExternalLink, Menu, X, CheckCircle2, ChevronRight,
-  ShieldCheck, PhoneCall, Sparkles, LogOut, BookOpen, Briefcase, Image as ImageIcon
+  ShieldCheck, PhoneCall, Sparkles, LogOut, BookOpen, Briefcase, Image as ImageIcon, Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ownerFetch } from "@/lib/owner-fetch";
@@ -40,6 +40,12 @@ export default function OwnerLayout({
       name: "Leads",
       href: "/owner/leads",
       icon: Users,
+      exact: false,
+    },
+    {
+      name: "Inbox",
+      href: "/owner/inbox",
+      icon: Mail,
       exact: false,
     },
     {
