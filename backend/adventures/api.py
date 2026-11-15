@@ -448,14 +448,16 @@ def create_enquiry(request, payload: EnquiryIn):
             status=400,
         )
 
-    if not full_name or not phone or not email:
-        return bad_request("Please provide full name, phone number, and email address.", "fields")
+    # Name and mobile are required; email is optional (the site popup asks for it but doesn't insist).
+    if not full_name or not phone:
+        return bad_request("Please provide your name and mobile number.", "fields")
     if len(full_name) > 150:
         return bad_request("Please shorten your name to 150 characters.", "full_name")
-    try:
-        validate_email(email)
-    except DjangoValidationError:
-        return bad_request("Please enter a valid email address.", "email")
+    if email:
+        try:
+            validate_email(email)
+        except DjangoValidationError:
+            return bad_request("Please enter a valid email address.", "email")
     phone_digits = re.sub(r"\D", "", phone)
     if len(phone) > 25 or not 10 <= len(phone_digits) <= 15 or not re.fullmatch(r"[\d\s+()\-]+", phone):
         return bad_request("Please enter a valid phone number (10 digits, optionally with +91).", "phone")

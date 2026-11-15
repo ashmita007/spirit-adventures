@@ -179,7 +179,7 @@ class Enquiry(models.Model):
 
     trip = models.ForeignKey(Trip, on_delete=models.SET_NULL, null=True, blank=True, related_name='enquiries')
     full_name = models.CharField(max_length=150)
-    email = models.EmailField()
+    email = models.EmailField(blank=True)
     phone = models.CharField(max_length=25)
     travel_date = models.CharField(max_length=50, blank=True, help_text="Preferred travel date or month")
     travelers_count = models.PositiveIntegerField(default=1)

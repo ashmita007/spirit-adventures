@@ -125,7 +125,7 @@ class EnquiryIn(Schema):
     trip_id: Optional[int] = None
     trip_slug: Optional[str] = None
     full_name: str
-    email: str
+    email: Optional[str] = ""
     phone: str
     travel_date: Optional[str] = ""
     travelers_count: int = 1

@@ -41,7 +41,7 @@ export default function LeadPopup() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
-  const phoneRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const uid = useId();
 
   // Show shortly after landing on any public page, every page, until submitted.
@@ -55,12 +55,12 @@ export default function LeadPopup() {
     writeStore("local", SUBMITTED_KEY, "1");
   }, []);
 
-  // Scroll lock and focus the phone field. Escape does nothing on purpose.
+  // Scroll lock and focus the name field. Escape does nothing on purpose.
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => phoneRef.current?.focus(), 50);
+    const t = window.setTimeout(() => nameRef.current?.focus(), 50);
     return () => {
       document.body.style.overflow = prev;
       window.clearTimeout(t);
@@ -74,20 +74,28 @@ export default function LeadPopup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 10 || digits.length > 15) {
+    const cleanName = name.trim().replace(/\s+/g, " ");
+    if (cleanName.replace(/[^\p{L}]/gu, "").length < 2) {
+      setError("Please enter your name.");
+      return;
+    }
+    // Accept 98765 43210, +91 98765 43210, 098765 43210 – store as the 10 digits.
+    let digits = phone.replace(/\D/g, "");
+    if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+    if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
+    if (!/^[6-9]\d{9}$/.test(digits)) {
       setError("Please enter a valid 10-digit mobile number.");
       return;
     }
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-      setError("Please enter a valid email address.");
+    if (email.trim() && !/^\S+@\S+\.\S+$/.test(email.trim())) {
+      setError("That email doesn't look right. You can also leave it empty.");
       return;
     }
     setLoading(true);
     const res = await submitEnquiry({
       trip_slug: tripSlug,
-      full_name: name.trim() || "Website visitor",
-      phone: phone.trim(),
+      full_name: cleanName,
+      phone: digits,
       email: email.trim(),
       message: `Website popup lead (page: ${pathname})`,
     });
@@ -116,10 +124,11 @@ export default function LeadPopup() {
       <div className="relative w-full max-w-md max-h-[92dvh] flex flex-col bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 animate-fade-in border border-slate-100">
         <div className="bg-brand-navy px-5 pt-6 pb-5 sm:p-6 text-white relative shrink-0">
           <h3 id={`${uid}-title`} className="font-display font-black text-xl sm:text-2xl tracking-tight leading-snug">
-            Get trip prices &amp; dates on WhatsApp
+            One quick step to continue
           </h3>
           <p className="text-sm text-sky-200 mt-1.5">
-            Leave your number and our team will call you with the best offer for your group.
+            Just your name and mobile number. It takes 10 seconds, and we&apos;ll WhatsApp you the latest prices,
+            dates and offers.
           </p>
         </div>
 
@@ -129,8 +138,8 @@ export default function LeadPopup() {
               <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h4 className="font-display font-bold text-xl text-brand-navy">Thank you!</h4>
-              <p className="text-slate-600 text-sm">We&apos;ll call or WhatsApp you shortly.</p>
+              <h4 className="font-display font-bold text-xl text-brand-navy">You&apos;re all set!</h4>
+              <p className="text-slate-600 text-sm">Thanks{name.trim() ? `, ${name.trim().split(" ")[0]}` : ""}! We&apos;ll WhatsApp you shortly. Enjoy exploring.</p>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -148,37 +157,58 @@ export default function LeadPopup() {
               )}
 
               <div>
-                <label htmlFor={`${uid}-phone`} className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Phone / WhatsApp *
+                <label htmlFor={`${uid}-name`} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Your name *
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                   <input
-                    ref={phoneRef}
-                    id={`${uid}-phone`}
-                    type="tel"
+                    ref={nameRef}
+                    id={`${uid}-name`}
+                    type="text"
                     required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="10-digit mobile number"
-                    autoComplete="tel"
-                    inputMode="tel"
-                    maxLength={20}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Rahul Kumar"
+                    autoComplete="name"
+                    autoCapitalize="words"
+                    maxLength={150}
                     className={inputCls}
                   />
                 </div>
               </div>
 
               <div>
+                <label htmlFor={`${uid}-phone`} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Mobile number (WhatsApp) *
+                </label>
+                <div className="relative">
+                  <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+                  <span className="absolute left-10 top-1/2 -translate-y-1/2 text-base sm:text-sm text-slate-500" aria-hidden="true">+91</span>
+                  <input
+                    id={`${uid}-phone`}
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/[^\d+\s-]/g, ""))}
+                    placeholder="98765 43210"
+                    autoComplete="tel-national"
+                    inputMode="numeric"
+                    maxLength={16}
+                    className={inputCls.replace("pl-10", "pl-[4.75rem]")}
+                  />
+                </div>
+              </div>
+
+              <div>
                 <label htmlFor={`${uid}-email`} className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Email *
+                  Email <span className="font-normal text-slate-500">(optional)</span>
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                   <input
                     id={`${uid}-email`}
                     type="email"
-                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
@@ -190,31 +220,12 @@ export default function LeadPopup() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor={`${uid}-name`} className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Name
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
-                  <input
-                    id={`${uid}-name`}
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your name (optional)"
-                    autoComplete="name"
-                    maxLength={150}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full mt-2 flex items-center justify-center gap-2 min-h-12 py-3.5 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-semibold text-sm uppercase tracking-wide transition shadow-lg disabled:opacity-60"
               >
-                {loading ? "Sending…" : (<><Send className="w-4 h-4" aria-hidden="true" /> Get a call back</>)}
+                {loading ? "Please wait…" : (<>Continue <Send className="w-4 h-4" aria-hidden="true" /></>)}
               </button>
               <a
                 href={whatsappUrl(`Hi Spirit Adventures, I'd like trip details and prices. (Page: ${pathname})`)}

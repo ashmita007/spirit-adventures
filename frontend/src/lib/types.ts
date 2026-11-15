@@ -136,7 +136,7 @@ export interface EnquiryPayload {
   trip_id?: number;
   trip_slug?: string;
   full_name: string;
-  email: string;
+  email?: string;
   phone: string;
   travel_date?: string;
   travelers_count?: number;
