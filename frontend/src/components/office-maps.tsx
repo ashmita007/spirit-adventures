@@ -47,7 +47,7 @@ function OfficeCard({ office }: { office: Office }) {
               id={id}
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              placeholder="e.g. Ameerpet Metro, or leave empty for your location"
+              placeholder={`e.g. ${office.city === "Bengaluru" ? "Silk Board" : "Ameerpet Metro"}, or leave empty for your location`}
               autoComplete="street-address"
               className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-ocean focus:border-transparent"
             />

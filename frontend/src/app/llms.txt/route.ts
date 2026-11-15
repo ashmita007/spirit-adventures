@@ -39,7 +39,7 @@ Prices are starting prices per person in Indian rupees; each trip page lists wha
 
 - Phone / WhatsApp: ${PHONE}
 - Email: ${EMAIL}
-- Office: KPHB, Kukatpally, Hyderabad, Telangana 500085, India
+- Offices: 274, 7th Main 6th Cross, Hongasandra, Bengaluru, Karnataka 560114, India; Vasantha Sai Apartments, Opposite Rishi Towers, KPHB, Kukatpally, Hyderabad, Telangana 500072, India
 - Last updated: ${updated}
 
 ## Trips (${trips.length}, cheapest first)

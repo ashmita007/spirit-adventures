@@ -19,19 +19,29 @@ export interface Office {
 }
 
 export const OFFICES: Office[] = [
+  // Both entries match the business listings on Google Maps (name, address, rating card in the embed).
+  {
+    city: "Bengaluru",
+    address: "274, 7th Main 6th Cross, Hongasandra, Bengaluru, Karnataka - 560114",
+    short: "274, 7th Main 6th Cross, Hongasandra, Bengaluru - 560114",
+    mapQuery: "Spirit Adventures Bengaluru, Hongasandra, Bengaluru",
+    mapsUrl: "https://www.google.com/maps/place/Spirit+Adventures+Bengaluru/@12.8984211,77.6298895,17z/data=!4m6!3m5!1s0xafbfec00bce94717:0xac8957bc19b8f487!8m2!3d12.8984211!4d77.6298895!16s%2Fg%2F11zf3ytk0r",
+    street: "274, 7th Main 6th Cross, Hongasandra",
+    locality: "Bengaluru",
+    region: "Karnataka",
+    postalCode: "560114",
+  },
   {
     city: "Hyderabad",
-    address: "Vasantha Sai Apartments, Opposite Rishi Towers, KPHB, Kukatpally, Hyderabad, Telangana - 500085",
-    short: "Vasantha Sai Apts, Opp. Rishi Towers, KPHB, Kukatpally, Hyderabad - 500085",
-    // Google knows the building as "Vasantha sai" (next to Rishi Towers); this wording drops the pin on it.
-    mapQuery: "Vasantha Sai Apartments, KPHB Colony, Kukatpally, Hyderabad",
-    mapsUrl: "https://maps.app.goo.gl/4N6qZD9KAyb6pBA19",
+    address: "Vasantha Sai Apartments, Opposite Rishi Towers, KPHB, Kukatpally, Hyderabad, Telangana - 500072",
+    short: "Vasantha Sai Apts, Opp. Rishi Towers, KPHB, Kukatpally, Hyderabad - 500072",
+    mapQuery: "Spirit Adventures, KPHB, Kukatpally, Hyderabad",
+    mapsUrl: "https://www.google.com/maps/place/Spirit+Adventures/@17.4956388,78.4031687,17z/data=!4m6!3m5!1s0x3bcb91fb8155e6af:0xd88bc4b31a75eea3!8m2!3d17.4956388!4d78.4031687!16s%2Fg%2F11wv_mb8tf",
     street: "Vasantha Sai Apts, Opp. Rishi Towers, KPHB",
     locality: "Kukatpally, Hyderabad",
     region: "Telangana",
-    postalCode: "500085",
+    postalCode: "500072",
   },
-  // Bengaluru: add here once the address is confirmed, same fields as above.
 ];
 
 export const mapEmbedUrl = (o: Office) =>

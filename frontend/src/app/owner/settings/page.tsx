@@ -513,7 +513,7 @@ export default function OwnerSettingsPage() {
           </label>
           <textarea
             rows={2}
-            defaultValue="Vasantha Sai Apartments, Opposite Rishi Towers, KPHB, Kukatpally, Hyderabad, Telangana - 500085"
+            defaultValue="Vasantha Sai Apartments, Opposite Rishi Towers, KPHB, Kukatpally, Hyderabad, Telangana - 500072"
             className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:border-brand-ocean"
           />
         </div>

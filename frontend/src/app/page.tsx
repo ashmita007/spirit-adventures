@@ -9,6 +9,7 @@ import ReviewsCarousel from "@/components/reviews-carousel";
 import GalleryPreview from "@/components/gallery-preview";
 import { getTrips, getReviews, getGallery, getDestinations } from "@/lib/api";
 import TrustStrip from "@/components/trust-strip";
+import OfficeMaps from "@/components/office-maps";
 
 export default async function HomePage() {
   const [allTrips, reviews, galleryImages, destinations] = await Promise.all([
@@ -81,6 +82,11 @@ export default async function HomePage() {
 
       {/* 6. Nature Gallery Preview */}
       <GalleryPreview images={galleryImages} />
+
+      {/* Office map(s) with directions */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
+        <OfficeMaps />
+      </div>
 
       {/* 7. Final CTA Section: RHYTHM IN NAVY */}
       <section className="py-16 sm:py-32 bg-brand-navy text-white relative overflow-hidden">

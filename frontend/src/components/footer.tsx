@@ -3,7 +3,7 @@ import { isPortalPath } from "@/lib/utils";
 
 import React from "react";
 import Link from "next/link";
-import { OFFICES, PHONES, mapOpenUrl } from "@/lib/offices";
+import { OFFICES, PHONES, mapOpenUrl, mapEmbedUrl } from "@/lib/offices";
 import { usePathname } from "next/navigation";
 import { Compass, Instagram, Youtube, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
@@ -97,6 +97,22 @@ export default function Footer() {
                   <a href={mapOpenUrl(o)} target="_blank" rel="noopener noreferrer" className="hover:text-white text-xs leading-relaxed">
                     <span className="font-semibold">{o.city}:</span> {o.short}
                   </a>
+                </li>
+              ))}
+              {OFFICES.map((o) => (
+                <li key={`${o.city}-map`} className="pt-1">
+                  <div className="relative h-36 w-full overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                    <iframe
+                      title={`Map of the Spirit Adventures ${o.city} office`}
+                      src={mapEmbedUrl(o)}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="absolute inset-0 h-full w-full border-0"
+                    />
+                    <span className="pointer-events-none absolute bottom-2 left-2 rounded-md bg-brand-navy/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                      {o.city}
+                    </span>
+                  </div>
                 </li>
               ))}
               <li className="pt-2">
