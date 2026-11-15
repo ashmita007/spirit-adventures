@@ -2,12 +2,11 @@
 
 import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Phone, Mail, User, CheckCircle2, Send, MessageCircle } from "lucide-react";
+import { Phone, Mail, User, CheckCircle2, Send } from "lucide-react";
 import { submitEnquiry } from "@/lib/api";
-import { whatsappUrl } from "@/lib/whatsapp";
 
 // Strict gate: every visitor must leave phone + email before browsing. It cannot be
-// closed; it only goes away for good once they submit (or tap WhatsApp instead).
+// closed; it only goes away for good once they submit name + mobile.
 const SUBMITTED_KEY = "sa_lead_submitted";
 const SHOW_AFTER_MS = 1500;
 const HIDDEN_PREFIXES = ["/crm", "/owner"];
@@ -104,7 +103,7 @@ export default function LeadPopup() {
       setDone(true);
       unlock();
     } else {
-      setError(res.message || "Something went wrong. Please try again or message us on WhatsApp.");
+      setError(res.message || "Something went wrong. Please try again.");
     }
   };
 
@@ -127,7 +126,7 @@ export default function LeadPopup() {
             One quick step to continue
           </h3>
           <p className="text-sm text-sky-200 mt-1.5">
-            Just your name and mobile number. It takes 10 seconds, and we&apos;ll WhatsApp you the latest prices,
+            Just your name and mobile number. It takes 10 seconds, and our team will share the latest prices,
             dates and offers.
           </p>
         </div>
@@ -139,7 +138,7 @@ export default function LeadPopup() {
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <h4 className="font-display font-bold text-xl text-brand-navy">You&apos;re all set!</h4>
-              <p className="text-slate-600 text-sm">Thanks{name.trim() ? `, ${name.trim().split(" ")[0]}` : ""}! We&apos;ll WhatsApp you shortly. Enjoy exploring.</p>
+              <p className="text-slate-600 text-sm">Thanks{name.trim() ? `, ${name.trim().split(" ")[0]}` : ""}! Our team will contact you shortly. Enjoy exploring.</p>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -180,7 +179,7 @@ export default function LeadPopup() {
 
               <div>
                 <label htmlFor={`${uid}-phone`} className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Mobile number (WhatsApp) *
+                  Mobile number *
                 </label>
                 <div className="relative">
                   <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
@@ -227,18 +226,6 @@ export default function LeadPopup() {
               >
                 {loading ? "Please wait…" : (<>Continue <Send className="w-4 h-4" aria-hidden="true" /></>)}
               </button>
-              <a
-                href={whatsappUrl(`Hi Spirit Adventures, I'd like trip details and prices. (Page: ${pathname})`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  unlock();
-                  setOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 min-h-11 py-3 px-6 rounded-2xl border border-emerald-500 text-emerald-700 hover:bg-emerald-50 font-semibold text-sm transition"
-              >
-                <MessageCircle className="w-4 h-4" aria-hidden="true" /> Chat on WhatsApp instead
-              </a>
               <p className="text-[11px] text-center text-slate-500">We only use your details to plan your trip. No spam.</p>
             </form>
           )}
