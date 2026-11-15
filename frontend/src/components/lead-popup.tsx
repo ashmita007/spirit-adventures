@@ -2,15 +2,17 @@
 
 import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { X, Phone, Mail, User, CheckCircle2, Send } from "lucide-react";
+import { Phone, Mail, User, CheckCircle2, Send, MessageCircle } from "lucide-react";
 import { submitEnquiry } from "@/lib/api";
+import { whatsappUrl } from "@/lib/whatsapp";
 
-// Visitors who already left their number never see it again; a dismissal only
-// lasts for the current visit, so they are asked again next time they come back.
+// Strict gate: every visitor must leave phone + email before browsing. It cannot be
+// closed; it only goes away for good once they submit (or tap WhatsApp instead).
 const SUBMITTED_KEY = "sa_lead_submitted";
-const DISMISSED_KEY = "sa_lead_dismissed";
-const SHOW_AFTER_MS = 6000;
+const SHOW_AFTER_MS = 1500;
 const HIDDEN_PREFIXES = ["/crm", "/owner"];
+// Search engines and link previews must still see the page, or rankings drop.
+const BOT_UA = /bot|crawl|spider|slurp|lighthouse|facebookexternalhit|whatsapp|telegram|preview|headless/i;
 
 function readStore(store: "local" | "session", key: string): string | null {
   try {
@@ -42,54 +44,28 @@ export default function LeadPopup() {
   const phoneRef = useRef<HTMLInputElement>(null);
   const uid = useId();
 
-  const show = useCallback(() => {
-    if (readStore("local", SUBMITTED_KEY) || readStore("session", DISMISSED_KEY)) return;
-    // Don't stack on top of the trip enquiry form or any other open dialog.
-    if (document.querySelector('[role="dialog"][aria-modal="true"]')) return;
-    setOpen(true);
+  // Show shortly after landing on any public page, every page, until submitted.
+  useEffect(() => {
+    if (hidden || readStore("local", SUBMITTED_KEY) || BOT_UA.test(navigator.userAgent)) return;
+    const timer = window.setTimeout(() => setOpen(true), SHOW_AFTER_MS);
+    return () => window.clearTimeout(timer);
+  }, [hidden, pathname]);
+
+  const unlock = useCallback(() => {
+    writeStore("local", SUBMITTED_KEY, "1");
   }, []);
 
-  // Trigger: after a few seconds, after scrolling a bit, or on desktop exit intent.
-  useEffect(() => {
-    if (hidden) return;
-    if (readStore("local", SUBMITTED_KEY) || readStore("session", DISMISSED_KEY)) return;
-
-    const timer = window.setTimeout(show, SHOW_AFTER_MS);
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (max > 0 && window.scrollY / max > 0.35) show();
-    };
-    const onLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0) show();
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    document.addEventListener("mouseleave", onLeave);
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("scroll", onScroll);
-      document.removeEventListener("mouseleave", onLeave);
-    };
-  }, [hidden, show]);
-
-  const close = useCallback(() => {
-    setOpen(false);
-    if (!done) writeStore("session", DISMISSED_KEY, "1");
-  }, [done]);
-
-  // Scroll lock, Escape to close, focus the phone field.
+  // Scroll lock and focus the phone field. Escape does nothing on purpose.
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    window.addEventListener("keydown", onKey);
     const t = window.setTimeout(() => phoneRef.current?.focus(), 50);
     return () => {
       document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
       window.clearTimeout(t);
     };
-  }, [open, close]);
+  }, [open]);
 
   if (hidden || !open) return null;
 
@@ -118,7 +94,7 @@ export default function LeadPopup() {
     setLoading(false);
     if (res.success) {
       setDone(true);
-      writeStore("local", SUBMITTED_KEY, "1");
+      unlock();
     } else {
       setError(res.message || "Something went wrong. Please try again or message us on WhatsApp.");
     }
@@ -135,19 +111,11 @@ export default function LeadPopup() {
       aria-labelledby={`${uid}-title`}
       data-lead-popup
     >
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={close} />
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
 
       <div className="relative w-full max-w-md max-h-[92dvh] flex flex-col bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 animate-fade-in border border-slate-100">
         <div className="bg-brand-navy px-5 pt-6 pb-5 sm:p-6 text-white relative shrink-0">
-          <button
-            type="button"
-            onClick={close}
-            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <h3 id={`${uid}-title`} className="font-display font-black text-xl sm:text-2xl tracking-tight leading-snug pr-12">
+          <h3 id={`${uid}-title`} className="font-display font-black text-xl sm:text-2xl tracking-tight leading-snug">
             Get trip prices &amp; dates on WhatsApp
           </h3>
           <p className="text-sm text-sky-200 mt-1.5">
@@ -248,6 +216,18 @@ export default function LeadPopup() {
               >
                 {loading ? "Sending…" : (<><Send className="w-4 h-4" aria-hidden="true" /> Get a call back</>)}
               </button>
+              <a
+                href={whatsappUrl(`Hi Spirit Adventures, I'd like trip details and prices. (Page: ${pathname})`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  unlock();
+                  setOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 min-h-11 py-3 px-6 rounded-2xl border border-emerald-500 text-emerald-700 hover:bg-emerald-50 font-semibold text-sm transition"
+              >
+                <MessageCircle className="w-4 h-4" aria-hidden="true" /> Chat on WhatsApp instead
+              </a>
               <p className="text-[11px] text-center text-slate-500">We only use your details to plan your trip. No spam.</p>
             </form>
           )}
