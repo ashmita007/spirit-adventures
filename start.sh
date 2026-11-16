@@ -43,13 +43,15 @@ echo "--> Applying database migrations..."
 python "$BACKEND_DIR/manage.py" migrate --no-input
 
 # 1b. First start on a real database (DATABASE_URL set, e.g. Postgres): copy the
-#     bundled SQLite data (trips, leads, CRM users, gallery...) in once. Runs only
+#     live SQLite data (downloaded by the carry-over step above, else the bundled copy) (trips, leads, CRM users, gallery...) in once. Runs only
 #     while the database has no trips, so it never overwrites live data.
 if [ -n "${DATABASE_URL:-}" ] && [ -f "$BACKEND_DIR/db.sqlite3" ]; then
   TRIP_COUNT=$(python "$BACKEND_DIR/manage.py" shell -c "from adventures.models import Trip; print(Trip.objects.count())" 2>/dev/null | tail -1)
   if [ "$TRIP_COUNT" = "0" ]; then
     echo "--> Empty database: importing bundled SQLite data..."
     EXPORT_DIR="$(mktemp -d /tmp/sqlite-export-XXXXXX)"; EXPORT_FILE="$EXPORT_DIR/import.json"
+    # Bring the (possibly just carried-over) SQLite file up to the current schema first
+    DATABASE_URL="sqlite:///$BACKEND_DIR/db.sqlite3" python "$BACKEND_DIR/manage.py" migrate --no-input >/dev/null || true
     if DATABASE_URL="sqlite:///$BACKEND_DIR/db.sqlite3" python "$BACKEND_DIR/manage.py" dumpdata \
          --natural-foreign --natural-primary \
          -e contenttypes -e auth.permission -e admin.logentry -e sessions > "$EXPORT_FILE" \

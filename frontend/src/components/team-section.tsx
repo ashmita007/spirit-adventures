@@ -67,9 +67,12 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
 
   useGSAP(
     () => {
+      // No members -> the section isn't rendered, so there is nothing to animate
+      const node = root.current;
+      if (!node || members.length === 0) return;
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const el = root.current!;
+        const el = node;
 
         // Big outline word drifting with scroll
         gsap.fromTo(
@@ -132,7 +135,7 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
 
       // Staggered columns: alternate cards drift at different speeds while scrolling (desktop)
       mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-        const el = root.current!;
+        const el = node;
         el.querySelectorAll<HTMLElement>("[data-team-card]").forEach((card, i) => {
           gsap.fromTo(
             card.querySelector("[data-team-drift]"),
@@ -149,7 +152,7 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
       // Mouse tilt + glare (fine pointers only)
       mm.add("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
         const cleanups: (() => void)[] = [];
-        root.current!.querySelectorAll<HTMLElement>("[data-team-tilt]").forEach((card) => {
+        node.querySelectorAll<HTMLElement>("[data-team-tilt]").forEach((card) => {
           const rx = gsap.quickTo(card, "rotateX", { duration: 0.5, ease: "power3.out" });
           const ry = gsap.quickTo(card, "rotateY", { duration: 0.5, ease: "power3.out" });
           const glare = card.querySelector<HTMLElement>("[data-team-glare]");

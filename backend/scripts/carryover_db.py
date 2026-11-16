@@ -22,7 +22,7 @@ import urllib.request
 
 DB_PATH = sys.argv[1] if len(sys.argv) > 1 else "/app/backend/db.sqlite3"
 SOURCE = os.environ.get("CARRYOVER_SOURCE_URL", "https://www.spiritadventures.in").rstrip("/")
-ATTEMPTS = int(os.environ.get("CARRYOVER_ATTEMPTS", "5"))
+ATTEMPTS = int(os.environ.get("CARRYOVER_ATTEMPTS", "3"))
 
 
 def log(msg):
@@ -30,9 +30,9 @@ def log(msg):
 
 
 def main() -> int:
-    if os.environ.get("DATABASE_URL"):
-        log("DATABASE_URL is set, data already lives outside the container. Skipping.")
-        return 0
+    # With DATABASE_URL the live data lives in Postgres; the download is only used once,
+    # to fill an empty Postgres with the latest live data (start.sh), so never block on it.
+    external = bool(os.environ.get("DATABASE_URL"))
     if os.environ.get("SKIP_DB_CARRYOVER") == "1":
         log("SKIP_DB_CARRYOVER=1: starting from the database in the image.")
         return 0
@@ -41,6 +41,14 @@ def main() -> int:
         return 0
     if os.environ.get("SECRET_KEY_GENERATED") == "1":
         log("SECRET_KEY is not configured, so the live site can't be authenticated. Skipping.")
+        return 0
+
+    # Is another instance actually serving? On a deploy the old one is; after a free-plan
+    # sleep/restart nobody is (a request would just wait for this very container), so skip fast.
+    try:
+        urllib.request.urlopen(urllib.request.Request(f"{SOURCE}/api/v1/health/", headers={"User-Agent": "spirit-deploy"}), timeout=12).read()
+    except Exception as e:
+        log(f"No other instance is answering ({e}). Restart or wake-up, not a deploy: using the image database.")
         return 0
 
     token = hmac.new(os.environ["SECRET_KEY"].encode(), b"spirit-db-carryover-v1", hashlib.sha256).hexdigest()
@@ -54,7 +62,7 @@ def main() -> int:
             log(f"Downloading live database from {SOURCE} (attempt {attempt}/{ATTEMPTS})...")
             req = urllib.request.Request(url, headers={"X-Carryover-Token": token, "User-Agent": "spirit-deploy"})
             # Generous timeout: a sleeping free instance takes a while to wake up.
-            with urllib.request.urlopen(req, timeout=150) as resp, open(gz_path, "wb") as out:
+            with urllib.request.urlopen(req, timeout=90) as resp, open(gz_path, "wb") as out:
                 shutil.copyfileobj(resp, out)
             break
         except urllib.error.HTTPError as e:
@@ -67,14 +75,14 @@ def main() -> int:
             if e.code == 403:
                 log("Live site rejected the token (SECRET_KEY changed?). Refusing to start so live data is not lost.")
                 log("Fix SECRET_KEY, or set SKIP_DB_CARRYOVER=1 for one deploy if you accept starting fresh.")
-                return 1
+                return 0 if external else 1
             log(f"HTTP {e.code}")
         except Exception as e:  # network / timeout / sleeping instance
             log(f"Failed: {e}")
         if attempt == ATTEMPTS:
             log("Could not reach the live site. Refusing to start so live data is not lost.")
             log("Render keeps the old instance running. Set SKIP_DB_CARRYOVER=1 only if the old site is really gone.")
-            return 1
+            return 0 if external else 1
         time.sleep(10)
 
     with gzip.open(gz_path, "rb") as fin, open(raw_path, "wb") as fout:
