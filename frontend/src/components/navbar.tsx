@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Heart, Phone, Compass, Mountain, MapPin, Image as ImageIcon, BookOpen, MessageCircle } from "lucide-react";
 import { cn, isPortalPath } from "@/lib/utils";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
+import { PHONES } from "@/lib/offices";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -110,24 +111,37 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Right: Direct Call Actions */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <a
-                href="tel:+919666567551"
-                className="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition shadow-md bg-brand-ocean hover:bg-brand-ocean-light text-white hover:scale-105 active:scale-95"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span>966 656 7551</span>
-              </a>
+            {/* Right: both office numbers, labelled by city */}
+            <div className="flex items-center">
+              <div className="hidden sm:flex flex-col rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1.5 shadow-md">
+                {PHONES.map((ph) => (
+                  <a
+                    key={ph.tel}
+                    href={`tel:${ph.tel}`}
+                    aria-label={`Call ${ph.city} office ${ph.display}`}
+                    className="group flex items-center gap-2 leading-tight py-0.5 text-white"
+                  >
+                    <Phone className="w-3 h-3 text-brand-sky" aria-hidden="true" />
+                    <span className="w-[62px] text-[10px] font-bold uppercase tracking-wider text-white/70 group-hover:text-white">{ph.city}</span>
+                    <span className="text-xs font-bold tabular-nums group-hover:text-brand-sky transition-colors">{ph.display}</span>
+                  </a>
+                ))}
+              </div>
 
-              {/* Quick phone icon on mobile */}
-              <a
-                href="tel:+919666567551"
-                aria-label="Call Adventure Desk"
-                className="sm:hidden p-2 rounded-full text-brand-sky hover:bg-white/10 transition-colors"
-              >
-                <Phone className="w-5 h-5" />
-              </a>
+              {/* Phones: one call chip per city */}
+              <div className="flex sm:hidden items-center gap-1.5">
+                {PHONES.map((ph) => (
+                  <a
+                    key={ph.tel}
+                    href={`tel:${ph.tel}`}
+                    aria-label={`Call ${ph.city} office ${ph.display}`}
+                    className="flex items-center gap-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white active:scale-95 transition"
+                  >
+                    <Phone className="w-3 h-3 text-brand-sky" aria-hidden="true" />
+                    <span>{ph.city === "Bengaluru" ? "BLR" : ph.city === "Hyderabad" ? "HYD" : ph.city.slice(0, 3)}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -194,13 +208,17 @@ export default function Navbar() {
                 <span>WhatsApp Expert</span>
               </a>
 
-              <a
-                href="tel:+919666567551"
-                className="flex items-center justify-center space-x-2 w-full py-3 px-4 rounded-xl border border-slate-200 text-brand-navy font-medium text-sm hover:bg-slate-50 transition"
-              >
-                <Phone className="w-4 h-4" />
-                <span>+91 96665 67551</span>
-              </a>
+              {PHONES.map((ph) => (
+                <a
+                  key={ph.tel}
+                  href={`tel:${ph.tel}`}
+                  className="flex items-center justify-center space-x-2 w-full py-3 px-4 rounded-xl border border-slate-200 text-brand-navy font-medium text-sm hover:bg-slate-50 transition"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span className="text-slate-500 text-xs font-bold uppercase">{ph.city}</span>
+                  <span>{ph.display}</span>
+                </a>
+              ))}
             </div>
           </div>
         </div>

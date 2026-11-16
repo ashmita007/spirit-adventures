@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ShieldCheck, Compass, Heart, Mountain, Users, Trees, ArrowRight, MapPin, Calendar, Award, Sparkles } from "lucide-react";
 import WhyUs from "@/components/why-us";
 import PageHero from "@/components/page-hero";
+import TeamSection from "@/components/team-section";
+import { getTeam } from "@/lib/api";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/about" },
@@ -21,7 +23,8 @@ const SPECIALTIES = [
   { title: "Customized & Corporate", desc: "Bespoke itineraries, corporate team offsites, and private family holiday packages." },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const team = await getTeam();
   return (
     <div className="min-h-dvh bg-white pb-20">
       <PageHero
@@ -117,6 +120,9 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
+
+      {/* Meet the team (managed in Owner HQ → Team) */}
+      <TeamSection members={team} />
 
       {/* Why Choose Us */}
       <WhyUs />

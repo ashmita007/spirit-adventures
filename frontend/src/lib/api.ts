@@ -1,6 +1,6 @@
 import { ownerFetch } from "./owner-fetch";
 import { 
-  Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload 
+  Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload, TeamMember 
 } from "./types";
 import { FALLBACK_TRIPS as RAW_FALLBACK_TRIPS } from "./fallback-trips";
 
@@ -468,6 +468,11 @@ export async function getGallery(category?: string): Promise<GalleryImage[]> {
     ? FALLBACK_GALLERY.filter(g => g.category.toLowerCase() === category.toLowerCase()) 
     : FALLBACK_GALLERY;
   return fetchFromApi<GalleryImage[]>(`/gallery/${query}`, fallback);
+}
+
+/** Published team members for the About page. Empty when the backend is down: never invent people. */
+export async function getTeam(): Promise<TeamMember[]> {
+  return fetchFromApi<TeamMember[]>("/team/", []);
 }
 
 export async function getBlogs(): Promise<BlogPost[]> {

@@ -117,6 +117,19 @@ export interface GalleryImage {
   is_featured: boolean;
 }
 
+export interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  bio?: string;
+  photo_url?: string;
+  city?: string;
+  experience?: string;
+  instagram_url?: string;
+  linkedin_url?: string;
+  is_lead: boolean;
+}
+
 export interface BlogPost {
   id: number;
   title: string;

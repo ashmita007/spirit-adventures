@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     Destination, Category, Trip, TripImage, TripVideo,
-    TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ
+    TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ, TeamMember
 )
 
 class TripImageInline(admin.TabularInline):
@@ -235,3 +235,10 @@ class FAQAdmin(admin.ModelAdmin):
     list_filter = ('category', 'is_published', 'trip')
     search_fields = ('question', 'answer')
     list_editable = ('ordering', 'is_published')
+
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ('name', 'role', 'city', 'ordering', 'is_lead', 'is_published')
+    list_editable = ('ordering', 'is_lead', 'is_published')
+    search_fields = ('name', 'role', 'city')

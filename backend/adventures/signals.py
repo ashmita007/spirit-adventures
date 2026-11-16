@@ -8,7 +8,7 @@ from .lead_alerts import send_lead_alert
 from .cache import invalidate_public_cache
 from .models import (
     BlogPost, Category, Destination, Enquiry, FAQ, GalleryImage, Review,
-    Trip, TripImage, TripItinerary, TripVideo,
+    TeamMember, Trip, TripImage, TripItinerary, TripVideo,
 )
 
 
@@ -27,6 +27,6 @@ def trip_to_crm(sender, instance, raw=False, **kwargs):
 
 # Anything shown on the public site: drop the cached API responses when it changes
 for _model in (Destination, Category, Trip, TripImage, TripVideo, TripItinerary,
-               Review, GalleryImage, BlogPost, FAQ):
+               Review, GalleryImage, BlogPost, FAQ, TeamMember):
     post_save.connect(invalidate_public_cache, sender=_model, dispatch_uid=f"cache-save-{_model.__name__}")
     post_delete.connect(invalidate_public_cache, sender=_model, dispatch_uid=f"cache-delete-{_model.__name__}")

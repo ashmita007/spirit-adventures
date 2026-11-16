@@ -292,3 +292,25 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question
+
+
+class TeamMember(models.Model):
+    """People shown in the 'Meet the team' section of the About page (managed from Owner HQ → Team)."""
+    name = models.CharField(max_length=120)
+    role = models.CharField(max_length=120, help_text="e.g. Founder, Trip Captain, Operations")
+    bio = models.TextField(max_length=600, blank=True)
+    photo_url = models.CharField(max_length=500, blank=True)
+    city = models.CharField(max_length=80, blank=True)
+    experience = models.CharField(max_length=80, blank=True, help_text="e.g. 120+ treks led")
+    instagram_url = models.CharField(max_length=300, blank=True)
+    linkedin_url = models.CharField(max_length=300, blank=True)
+    is_lead = models.BooleanField(default=False, help_text="Show as a large leadership card")
+    ordering = models.PositiveIntegerField(default=0)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['ordering', 'created_at']
+
+    def __str__(self):
+        return f"{self.name} ({self.role})"

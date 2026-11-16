@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
 from .models import (
     Destination, Category, Trip, TripImage, TripVideo, 
-    TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ
+    TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ, TeamMember
 )
 from .schemas import (
     ApiResponse, DestinationOut, CategoryOut, TripListOut,
@@ -551,6 +551,20 @@ def list_gallery(request, category: Optional[str] = None, featured_only: Optiona
     ]
     return {"success": True, "data": data, "pagination": pagination, "message": f"Found {len(data)} gallery items"}
 
+# ----------------- Team (About page) -----------------
+@api.get("/team/", response=ApiResponse, tags=["Team"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_team")
+@cached_public()
+def list_team(request):
+    from .team import member_out
+    data = []
+    for m in TeamMember.objects.filter(is_published=True):
+        row = member_out(m)
+        row.pop("is_published", None)
+        row.pop("ordering", None)
+        data.append(row)
+    return {"success": True, "data": data, "message": f"Found {len(data)} team members"}
+
 # ----------------- Blog -----------------
 @api.get("/blog/", response=ApiResponse, tags=["Blog"])
 @rate_limit(max_requests=120, window_seconds=60, bucket_name="public_blog")
@@ -1039,6 +1053,11 @@ def get_ratelimit_stats(request):
 from .media import router as owner_media_router  # noqa: E402
 
 api.add_router("/owner", owner_media_router)
+
+# ----------------- Owner team manager: /api/v1/owner/team/... -----------------
+from .team import router as owner_team_router  # noqa: E402
+
+api.add_router("/owner", owner_team_router)
 
 # ----------------- Owner Inbox (business mailbox over IMAP/SMTP): /api/v1/owner/mail/... -----------------
 from .inbox import router as owner_inbox_router  # noqa: E402

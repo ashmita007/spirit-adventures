@@ -18,7 +18,7 @@ from .models import GalleryImage
 
 router = Router(auth=SessionAuthIsStaff(), tags=["Owner Media"])
 
-FOLDERS = {"gallery", "trips", "videos", "destinations", "blog"}
+FOLDERS = {"gallery", "trips", "videos", "destinations", "blog", "team"}
 MAX_BULK = 50
 
 
