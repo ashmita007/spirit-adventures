@@ -29,8 +29,14 @@ export INTERNAL_API_URL="http://127.0.0.1:8000/api/v1"
 #    the public dev key. Set SECRET_KEY in Render to keep logins across restarts.
 if [ -z "${SECRET_KEY:-}" ]; then
   export SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')"
+  export SECRET_KEY_GENERATED=1
   echo "--> WARNING: SECRET_KEY not set; generated a random one for this run." >&2
 fi
+
+# 0b. Keep live data across deploys: the old instance is still serving while this one
+#     starts, so pull its SQLite database before migrating (backend/scripts/carryover_db.py).
+#     A non-zero exit stops this start, and Render keeps the old instance + data live.
+python "$BACKEND_DIR/scripts/carryover_db.py" "$BACKEND_DIR/db.sqlite3"
 
 # 1. Fast database migrations
 echo "--> Applying database migrations..."

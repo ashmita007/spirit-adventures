@@ -206,6 +206,27 @@ export default function OwnerSettingsPage() {
         </button>
       </div>
 
+      {/* Database backup */}
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <Database className="w-5 h-5 text-brand-ocean mt-0.5 shrink-0" />
+          <div>
+            <h2 className="text-base font-bold text-brand-navy">Database backup</h2>
+            <p className="text-xs text-slate-500 mt-0.5 max-w-xl">
+              Leads, CRM, trips, gallery and team carry over on every deploy automatically. Download a copy now and then
+              and keep it in Google Drive, in case the server itself is ever lost.
+            </p>
+          </div>
+        </div>
+        <a
+          href="/api/v1/owner/backup/download/"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-brand-ocean text-white text-xs font-bold transition shadow-sm active:scale-[0.98] w-fit whitespace-nowrap"
+        >
+          <Database className="w-3.5 h-3.5" />
+          <span>Download backup</span>
+        </a>
+      </div>
+
       {/* 1. CRON JOBS & AUTOMATED SCHEDULES TABLE (WHITE CARD) */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">

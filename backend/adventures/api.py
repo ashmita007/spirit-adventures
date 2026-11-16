@@ -1059,6 +1059,12 @@ from .team import router as owner_team_router  # noqa: E402
 
 api.add_router("/owner", owner_team_router)
 
+# ----------------- Database carry-over between deploys + owner backup download -----------------
+from .snapshot import public_router as snapshot_public_router, owner_router as snapshot_owner_router  # noqa: E402
+
+api.add_router("/internal", snapshot_public_router)
+api.add_router("/owner", snapshot_owner_router)
+
 # ----------------- Owner Inbox (business mailbox over IMAP/SMTP): /api/v1/owner/mail/... -----------------
 from .inbox import router as owner_inbox_router  # noqa: E402
 

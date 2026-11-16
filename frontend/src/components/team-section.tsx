@@ -6,7 +6,8 @@
  * Motion (GSAP, skipped for reduced-motion visitors):
  *  - giant outlined "CREW" word drifts sideways with scroll
  *  - heading words rise in, lead cards wipe open with a clip-path while the photo settles from a zoom
- *  - crew cards flip up from a 3D tilt in a stagger; mouse tilt + glare on hover
+ *  - crew cards: clip-path wipe, photo settles from a tilted desaturated zoom, name letters rise,
+ *    light sweep; alternate columns drift at different speeds; mouse tilt + glare on hover
  * Content is never hidden by CSS, so the section stays readable if JS fails.
  */
 import React, { useRef } from "react";
@@ -106,20 +107,43 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
           });
         });
 
-        // Crew cards: 3D flip-up stagger
-        const crew = el.querySelectorAll<HTMLElement>("[data-team-card]");
-        if (crew.length) {
-          gsap.from(crew, {
-            y: 90,
-            rotateX: -35,
-            opacity: 0,
-            transformOrigin: "50% 100%",
-            duration: 1.1,
-            ease: "expo.out",
-            stagger: { each: 0.1, from: "start" },
-            scrollTrigger: { trigger: el.querySelector("[data-team-grid]"), start: "top 85%" },
-          });
-        }
+        // Crew cards: same cinematic language as the leader cards, batched so every
+        // row plays as it enters. Card wipes up, photo settles from a tilted zoom,
+        // name letters rise, then role / meta slide in, then a light sweep crosses the photo.
+        ScrollTrigger.batch(el.querySelectorAll<HTMLElement>("[data-team-card]"), {
+          start: "top 88%",
+          once: true,
+          onEnter: (cards) => {
+            cards.forEach((card, i) => {
+              const tl = gsap.timeline({ delay: i * 0.12 });
+              tl.fromTo(
+                card,
+                { clipPath: "inset(100% 0% 0% 0% round 24px)", y: 60 },
+                { clipPath: "inset(0% 0% 0% 0% round 24px)", y: 0, duration: 1.2, ease: "expo.inOut", clearProps: "clipPath" }
+              )
+                .from(card.querySelector("[data-team-cardphoto]"), { scale: 1.45, rotate: -4, filter: "saturate(0) brightness(0.6)", duration: 1.6, ease: "expo.out" }, "<0.15")
+                .from(card.querySelectorAll("[data-team-char]"), { yPercent: 120, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.025 }, "<0.45")
+                .from(card.querySelectorAll("[data-team-meta]"), { x: -24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 }, "<0.2")
+                .fromTo(card.querySelector("[data-team-sweep]"), { xPercent: -120, opacity: 1 }, { xPercent: 120, duration: 1.1, ease: "power2.inOut" }, "<");
+            });
+          },
+        });
+      });
+
+      // Staggered columns: alternate cards drift at different speeds while scrolling (desktop)
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const el = root.current!;
+        el.querySelectorAll<HTMLElement>("[data-team-card]").forEach((card, i) => {
+          gsap.fromTo(
+            card.querySelector("[data-team-drift]"),
+            { y: i % 2 ? 70 : 20 },
+            {
+              y: i % 2 ? -40 : -10,
+              ease: "none",
+              scrollTrigger: { trigger: el.querySelector("[data-team-grid]"), start: "top bottom", end: "bottom top", scrub: 0.8 },
+            }
+          );
+        });
       });
 
       // Mouse tilt + glare (fine pointers only)
@@ -241,40 +265,61 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
 
         {/* Crew */}
         {crew.length > 0 && (
-          <div data-team-grid className="grid grid-cols-1 gap-5 [perspective:1200px] sm:grid-cols-2 lg:grid-cols-4">
+          <div data-team-grid className="grid grid-cols-1 gap-5 [perspective:1200px] sm:grid-cols-2 lg:grid-cols-4 lg:pb-16">
             {crew.map((m) => (
               <div key={m.id} data-team-card className="will-change-transform">
-                <article
-                  data-team-tilt
-                  className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow duration-300 [transform-style:preserve-3d] hover:shadow-xl"
-                >
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="transition-transform duration-700 ease-out group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/10 to-transparent" />
-                    {m.city && (
-                      <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                        <MapPin className="h-3 w-3" /> {m.city}
-                      </span>
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                      <h3 className="font-display text-xl font-black uppercase leading-tight">{m.name}</h3>
-                      <p className="text-xs font-bold uppercase tracking-wider text-brand-sky">{m.role}</p>
-                      {/* Bio slides up on hover (always shown on touch screens) */}
-                      {(m.bio || m.experience || m.instagram_url || m.linkedin_url) && (
-                        <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out [@media(hover:hover)]:grid-rows-[0fr] [@media(hover:hover)]:group-hover:grid-rows-[1fr] [@media(hover:hover)]:group-focus-within:grid-rows-[1fr]">
-                          <div className="overflow-hidden">
-                            {m.experience && <p className="mt-2 text-[11px] font-semibold text-white/80">{m.experience}</p>}
-                            {m.bio && <p className="mt-1.5 line-clamp-4 text-xs leading-relaxed text-slate-200">{m.bio}</p>}
-                            <div className="mt-3">
-                              <Socials m={m} dark />
+                <div data-team-drift className="will-change-transform">
+                  <article
+                    data-team-tilt
+                    className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow duration-300 [transform-style:preserve-3d] hover:shadow-xl"
+                  >
+                    <div className="relative aspect-[4/5] overflow-hidden">
+                      <div data-team-cardphoto className="absolute inset-0 will-change-transform">
+                        <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="transition-transform duration-700 ease-out group-hover:scale-110" />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/10 to-transparent" />
+                      {/* light sweep played once on reveal */}
+                      <div
+                        data-team-sweep
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-y-0 -left-1/4 w-2/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0"
+                      />
+                      {m.city && (
+                        <span data-team-meta className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
+                          <MapPin className="h-3 w-3" /> {m.city}
+                        </span>
+                      )}
+                      <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                        <h3 className="font-display text-xl font-black uppercase leading-tight" aria-label={m.name}>
+                          {m.name.split(" ").map((word, wi, arr) => (
+                            <span key={wi} aria-hidden="true" className="inline-block overflow-hidden whitespace-nowrap align-bottom">
+                              {Array.from(word).map((ch, ci) => (
+                                <span key={ci} data-team-char className="inline-block will-change-transform">
+                                  {ch}
+                                </span>
+                              ))}
+                              {wi < arr.length - 1 ? "\u00A0" : ""}
+                            </span>
+                          ))}
+                        </h3>
+                        <p data-team-meta className="text-xs font-bold uppercase tracking-wider text-brand-sky">{m.role}</p>
+                        {/* Bio slides up on hover (always shown on touch screens) */}
+                        {(m.bio || m.experience || m.instagram_url || m.linkedin_url) && (
+                          <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out [@media(hover:hover)]:grid-rows-[0fr] [@media(hover:hover)]:group-hover:grid-rows-[1fr] [@media(hover:hover)]:group-focus-within:grid-rows-[1fr]">
+                            <div className="overflow-hidden">
+                              {m.experience && <p className="mt-2 text-[11px] font-semibold text-white/80">{m.experience}</p>}
+                              {m.bio && <p className="mt-1.5 line-clamp-4 text-xs leading-relaxed text-slate-200">{m.bio}</p>}
+                              <div className="mt-3">
+                                <Socials m={m} dark />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div data-team-glare aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0" />
-                </article>
+                    <div data-team-glare aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0" />
+                  </article>
+                </div>
               </div>
             ))}
           </div>

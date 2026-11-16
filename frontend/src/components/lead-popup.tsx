@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { Phone, Mail, User, CheckCircle2, Send } from "lucide-react";
 import { submitEnquiry } from "@/lib/api";
 
-// Strict gate: every visitor must leave phone + email before browsing. It cannot be
-// closed; it only goes away for good once they submit name + mobile.
+// Visitors browse freely for 15 seconds (counted across pages in this visit). Then the
+// popup opens and stays locked: it cannot be closed and only goes away for good once
+// they submit name + mobile.
 const SUBMITTED_KEY = "sa_lead_submitted";
-const SHOW_AFTER_MS = 1500;
+const VISIT_START_KEY = "sa_visit_started_at";
+const SHOW_AFTER_MS = 15000;
 const HIDDEN_PREFIXES = ["/crm", "/owner"];
 // Search engines and link previews must still see the page, or rankings drop.
 const BOT_UA = /bot|crawl|spider|slurp|lighthouse|facebookexternalhit|whatsapp|telegram|preview|headless/i;
@@ -43,10 +45,17 @@ export default function LeadPopup() {
   const nameRef = useRef<HTMLInputElement>(null);
   const uid = useId();
 
-  // Show shortly after landing on any public page, every page, until submitted.
+  // Show 15 s into the visit, then on every page until submitted.
   useEffect(() => {
     if (hidden || readStore("local", SUBMITTED_KEY) || BOT_UA.test(navigator.userAgent)) return;
-    const timer = window.setTimeout(() => setOpen(true), SHOW_AFTER_MS);
+    // Clock starts on the first page of the visit, so moving between pages doesn't restart it.
+    let started = Number(readStore("session", VISIT_START_KEY));
+    if (!started || started > Date.now()) {
+      started = Date.now();
+      writeStore("session", VISIT_START_KEY, String(started));
+    }
+    const wait = Math.max(0, SHOW_AFTER_MS - (Date.now() - started));
+    const timer = window.setTimeout(() => setOpen(true), wait);
     return () => window.clearTimeout(timer);
   }, [hidden, pathname]);
 
