@@ -116,6 +116,9 @@ echo "--> Next.js started with PID $NEXT_PID"
     python "$BACKEND_DIR/manage.py" seed_data >/dev/null 2>&1 || true
   fi
 
+  # Database was reset to the image copy: put Cloudinary gallery uploads back
+  python "$BACKEND_DIR/manage.py" recover_uploads --if-reset || true
+
   # Sync packages with CRM
   echo "--> Syncing packages with CRM in background..."
   python "$BACKEND_DIR/manage.py" sync_crm >/dev/null 2>&1 || true

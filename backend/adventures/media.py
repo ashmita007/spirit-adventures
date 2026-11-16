@@ -179,3 +179,19 @@ def owner_gallery_delete(request, item_id: int):
     if not deleted:
         return _err(request, "Photo not found.", 404)
     return {"success": True, "data": {"id": item_id}, "message": "Photo removed from the gallery"}
+
+
+# ----------------- Recover uploads after a database reset -----------------
+@router.post("/media/recover/")
+def media_recover(request):
+    from .recovery import recover
+    try:
+        res = recover(add_gallery=True)
+    except Exception as exc:
+        return _err(request, f"Could not read Cloudinary: {exc}", 502)
+    n = len(res["gallery_added"])
+    return {
+        "success": True,
+        "data": res,
+        "message": f"Restored {n} gallery photo(s). Found {len(res['other_uploads'])} other upload(s) to re-attach.",
+    }
