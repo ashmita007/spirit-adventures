@@ -33,6 +33,16 @@ if [ -z "${SECRET_KEY:-}" ]; then
   echo "--> WARNING: SECRET_KEY not set; generated a random one for this run." >&2
 fi
 
+# 0a. Restarts and free-plan wake-ups reset the disk to the image. Put back the newest
+#     database copy the site saved to GitHub (backend/github_db_backup.py). On a deploy
+#     the carry-over below then replaces it with the old instance's live copy.
+export GITHUB_BACKUP_REPO="${GITHUB_BACKUP_REPO:-kashichavan/spirit-adventures-backup}"
+export GITHUB_BACKUP_BRANCH="${GITHUB_BACKUP_BRANCH:-live-db}"
+if [ -z "${DATABASE_URL:-}" ]; then
+  python "$BACKEND_DIR/github_db_backup.py" restore "$BACKEND_DIR/db.sqlite3" \
+    || echo "--> WARNING: database restore from GitHub failed; using the image copy" >&2
+fi
+
 # 0b. Keep live data across deploys: the old instance is still serving while this one
 #     starts, so pull its SQLite database before migrating (backend/scripts/carryover_db.py).
 #     A non-zero exit stops this start, and Render keeps the old instance + data live.
@@ -41,6 +51,10 @@ python "$BACKEND_DIR/scripts/carryover_db.py" "$BACKEND_DIR/db.sqlite3"
 # 1. Fast database migrations
 echo "--> Applying database migrations..."
 python "$BACKEND_DIR/manage.py" migrate --no-input
+
+# 1a. Keep the catalogue clean: remove seed demo trips, merge duplicate packages.
+#     Never deletes an enquiry or a review (adventures/management/commands/clean_demo_data.py).
+python "$BACKEND_DIR/manage.py" clean_demo_data || echo "--> clean_demo_data failed" >&2
 
 # 1b. First start on a real database (DATABASE_URL set, e.g. Postgres): copy the
 #     live SQLite data (downloaded by the carry-over step above, else the bundled copy) (trips, leads, CRM users, gallery...) in once. Runs only
@@ -113,10 +127,6 @@ echo "--> Next.js started with PID $NEXT_PID"
   # Owner account from DJANGO_SUPERUSER_EMAIL / DJANGO_SUPERUSER_PASSWORD (create or update)
   python "$BACKEND_DIR/manage.py" ensure_owner || echo "--> Owner account setup FAILED" >&2
 
-  # Demo trips only on an empty database if requested
-  if [ "${SEED_DEMO_DATA:-0}" = "1" ]; then
-    python "$BACKEND_DIR/manage.py" seed_data >/dev/null 2>&1 || true
-  fi
 
   # Database was reset to the image copy: put Cloudinary gallery uploads back
   python "$BACKEND_DIR/manage.py" recover_uploads --if-reset || true

@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 import { Phone, Mail, User, CheckCircle2, Send } from "lucide-react";
 import { submitEnquiry } from "@/lib/api";
 
-// Visitors browse freely for 15 seconds (counted across pages in this visit). Then the
+// Visitors browse freely for 10 seconds (counted across pages in this visit). Then the
 // popup opens and stays locked: it cannot be closed and only goes away for good once
-// they submit name + mobile.
+// they submit name + mobile. A lead that cannot be sent (network down, server busy)
+// is kept in the browser and sent again on the next page load, so none is lost.
 const SUBMITTED_KEY = "sa_lead_submitted";
 const VISIT_START_KEY = "sa_visit_started_at";
-const SHOW_AFTER_MS = 15000;
+const SHOW_AFTER_MS = 10000;
+const PENDING_KEY = "sa_pending_leads";
 const HIDDEN_PREFIXES = ["/crm", "/owner"];
 // Search engines and link previews must still see the page, or rankings drop.
 const BOT_UA = /bot|crawl|spider|slurp|lighthouse|facebookexternalhit|whatsapp|telegram|preview|headless/i;
@@ -31,6 +33,37 @@ function writeStore(store: "local" | "session", key: string, value: string) {
   }
 }
 
+type Lead = Parameters<typeof submitEnquiry>[0];
+
+function readPending(): Lead[] {
+  try {
+    const list = JSON.parse(readStore("local", PENDING_KEY) || "[]");
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function savePending(list: Lead[]) {
+  writeStore("local", PENDING_KEY, JSON.stringify(list.slice(-5)));
+}
+
+// Send any leads that failed earlier. Keeps the ones that still fail.
+async function flushPending() {
+  const list = readPending();
+  if (!list.length) return;
+  const left: Lead[] = [];
+  for (const lead of list) {
+    try {
+      const res = await submitEnquiry(lead);
+      if (!res.success) left.push(lead);
+    } catch {
+      left.push(lead);
+    }
+  }
+  savePending(left);
+}
+
 export default function LeadPopup() {
   const pathname = usePathname() || "/";
   const hidden = HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
@@ -45,7 +78,12 @@ export default function LeadPopup() {
   const nameRef = useRef<HTMLInputElement>(null);
   const uid = useId();
 
-  // Show 15 s into the visit, then on every page until submitted.
+  // Retry leads that could not be sent before.
+  useEffect(() => {
+    flushPending();
+  }, []);
+
+  // Show 10 s into the visit, then on every page until submitted.
   useEffect(() => {
     if (hidden || readStore("local", SUBMITTED_KEY) || BOT_UA.test(navigator.userAgent)) return;
     // Clock starts on the first page of the visit, so moving between pages doesn't restart it.
@@ -100,19 +138,30 @@ export default function LeadPopup() {
       return;
     }
     setLoading(true);
-    const res = await submitEnquiry({
+    const lead: Lead = {
       trip_slug: tripSlug,
       full_name: cleanName,
       phone: digits,
       email: email.trim(),
       message: `Website popup lead (page: ${pathname})`,
-    });
+    };
+    let res: Awaited<ReturnType<typeof submitEnquiry>> | null = null;
+    try {
+      res = await submitEnquiry(lead);
+    } catch {
+      res = null;
+    }
     setLoading(false);
-    if (res.success) {
+    if (res?.success) {
+      setDone(true);
+      unlock();
+    } else if (!res || !res.message || /network|fetch|timeout|server|try again/i.test(res.message)) {
+      // Could not reach us: keep the lead and send it on the next page load.
+      savePending([...readPending(), lead]);
       setDone(true);
       unlock();
     } else {
-      setError(res.message || "Something went wrong. Please try again.");
+      setError(res.message);
     }
   };
 

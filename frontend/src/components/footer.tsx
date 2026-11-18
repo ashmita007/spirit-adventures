@@ -8,6 +8,15 @@ import { usePathname } from "next/navigation";
 import { Compass, Instagram, Youtube, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
+const POPULAR = [
+  { slug: "3d-2n-gokarna-dandeli", label: "Gokarna & Dandeli (3D 2N)" },
+  { slug: "2d-1n-coorg", label: "Coorg weekend (2D 1N)" },
+  { slug: "4d-3n-munnar-alleppey", label: "Munnar & Alleppey (4D 3N)" },
+  { slug: "4d-3n-manali", label: "Manali (4D 3N)" },
+  { slug: "5d-4n-kashmir", label: "Kashmir (5D 4N)" },
+  { slug: "gokarna-dandeli-couple-package", label: "Gokarna–Dandeli couple package" },
+];
+
 export default function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
@@ -19,9 +28,9 @@ export default function Footer() {
   return (
     <footer className="bg-brand-navy text-white pt-16 pb-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
           {/* Brand Col */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4">
             <Link href="/" className="inline-flex items-center group">
               <div className="bg-white px-4 py-2 rounded-xl shadow-xs border border-white/20 flex items-center justify-center transition-transform group-hover:scale-105">
                 <img src="/images/logo.png" alt="Spirit Adventures" width={564} height={149} loading="lazy" className="h-8 w-auto object-contain" />
@@ -63,15 +72,16 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Expeditions & Treks */}
+          {/* Popular packages (real trips only) */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-brand-sky">Expeditions</h4>
+            <h4 className="text-xs font-bold text-brand-sky">Popular packages</h4>
             <ul className="space-y-2 text-sm text-slate-300">
-              <li><Link href="/trips?category=snow" className="hover:text-white transition">Kedarkantha Winter Snow Trek</Link></li>
-              <li><Link href="/trips?category=water" className="hover:text-white transition">Dandeli White Water Rafting</Link></li>
-              <li><Link href="/trips?category=water" className="hover:text-white transition">Gokarna 5-Beach Cliff Trek</Link></li>
-              <li><Link href="/trips?category=group-trips" className="hover:text-white transition">Leh Ladakh Royal Enfield Ride</Link></li>
-              <li><Link href="/gallery" className="hover:text-white transition">Nature Photo Gallery</Link></li>
+              {POPULAR.map((t) => (
+                <li key={t.slug}>
+                  <Link href={`/trips/${t.slug}`} className="hover:text-white transition">{t.label}</Link>
+                </li>
+              ))}
+              <li><Link href="/trips" className="text-brand-sky hover:text-white transition">All packages →</Link></li>
             </ul>
           </div>
 
@@ -99,22 +109,6 @@ export default function Footer() {
                   </a>
                 </li>
               ))}
-              {OFFICES.map((o) => (
-                <li key={`${o.city}-map`} className="pt-1">
-                  <div className="relative h-36 w-full overflow-hidden rounded-xl border border-white/10 bg-white/5">
-                    <iframe
-                      title={`Map of the Spirit Adventures ${o.city} office`}
-                      src={mapEmbedUrl(o)}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      className="absolute inset-0 h-full w-full border-0"
-                    />
-                    <span className="pointer-events-none absolute bottom-2 left-2 rounded-md bg-brand-navy/90 px-2 py-0.5 text-[10px] font-bold text-white">
-                      {o.city}
-                    </span>
-                  </div>
-                </li>
-              ))}
               <li className="pt-2">
                 <Link
                   href="/contact"
@@ -124,6 +118,38 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
+          </div>
+
+          {/* Office maps */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-brand-sky">Find us</h4>
+            <div className="grid grid-cols-1 gap-3">
+              {OFFICES.map((o) => (
+                <a
+                  key={`${o.city}-map`}
+                  href={mapOpenUrl(o)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block overflow-hidden rounded-xl border border-white/10 bg-white/5 hover:border-brand-sky/60 transition"
+                  aria-label={`Open the ${o.city} office in Google Maps`}
+                >
+                  <div className="relative h-32 w-full">
+                    <iframe
+                      title={`Map of the Spirit Adventures ${o.city} office`}
+                      src={mapEmbedUrl(o)}
+                      loading="lazy"
+                      tabIndex={-1}
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="pointer-events-none absolute inset-0 h-full w-full border-0"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2 text-xs">
+                    <span className="font-semibold text-white">{o.city} office</span>
+                    <span className="text-brand-sky group-hover:underline">Directions →</span>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 
