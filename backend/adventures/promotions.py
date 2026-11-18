@@ -28,21 +28,22 @@ def today():
     return timezone.localdate()
 
 
-def active_theme(setting=None, day=None):
-    """The theme to show today: AUTO follows the calendar."""
+def active_theme(setting=None, live=None):
+    """
+    The theme the site shows now. AUTO: the festival of the first live offer/event
+    tagged with one, so the look changes only while there is something festive to book.
+    """
     setting = setting or SiteTheme.current()
-    day = day or today()
     if setting.theme != 'AUTO':
         return setting.theme
-    if day.month == 12 and day.day <= 27:
-        return 'CHRISTMAS'
-    if (day.month == 12 and day.day >= 28) or (day.month == 1 and day.day <= 6):
-        return 'NEWYEAR'
+    for p in (live if live is not None else live_promotions()):
+        if p.festival in ('CHRISTMAS', 'NEWYEAR'):
+            return p.festival
     return 'NONE'
 
 
-def theme_out(s: SiteTheme, public=False) -> dict:
-    active = active_theme(s)
+def theme_out(s: SiteTheme, public=False, live=None) -> dict:
+    active = active_theme(s, live)
     data = {
         "active": active,
         "banner_text": (s.banner_text or GREETINGS.get(active, "")) if active != 'NONE' else "",
@@ -57,7 +58,7 @@ def theme_out(s: SiteTheme, public=False) -> dict:
 def promo_out(p: Promotion) -> dict:
     trip = p.trip
     return {
-        "id": p.id, "kind": p.kind, "title": p.title, "description": p.description,
+        "id": p.id, "kind": p.kind, "festival": p.festival, "title": p.title, "description": p.description,
         "image_url": p.image_url or (trip.cover_image if trip else ""),
         "badge": p.badge, "trip_id": trip.id if trip else None,
         "trip_slug": trip.slug if trip else "", "trip_title": trip.title if trip else "",
@@ -86,6 +87,8 @@ def _clean(request, data: dict):
             data[k] = str(data[k]).strip()[:limit]
     if "kind" in data and data["kind"] not in ("OFFER", "EVENT"):
         return _err(request, "Choose Offer or Event.")
+    if "festival" in data and data["festival"] not in ("NONE", "CHRISTMAS", "NEWYEAR"):
+        return _err(request, "Unknown festival.")
     img = data.get("image_url")
     if img and not (img.startswith("https://") or img.startswith("/images/")):
         return _err(request, "Image links must start with https://")
@@ -123,6 +126,7 @@ def _clean(request, data: dict):
 
 class PromoIn(Schema):
     kind: str = "OFFER"
+    festival: str = "NONE"
     title: str
     description: Optional[str] = ""
     image_url: Optional[str] = ""
@@ -140,6 +144,7 @@ class PromoIn(Schema):
 
 class PromoUpdateIn(Schema):
     kind: Optional[str] = None
+    festival: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
     image_url: Optional[str] = None

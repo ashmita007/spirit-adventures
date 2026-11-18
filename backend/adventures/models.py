@@ -319,8 +319,11 @@ class TeamMember(models.Model):
 class Promotion(models.Model):
     """Events and offers shown on the home page and /offers (managed from Owner HQ → Offers)."""
     KIND_CHOICES = [('OFFER', 'Offer'), ('EVENT', 'Event')]
+    FESTIVAL_CHOICES = [('NONE', 'None'), ('CHRISTMAS', 'Christmas'), ('NEWYEAR', 'New Year')]
 
     kind = models.CharField(max_length=10, choices=KIND_CHOICES, default='OFFER')
+    festival = models.CharField(max_length=12, choices=FESTIVAL_CHOICES, default='NONE',
+                                help_text="While this is live, the site wears this festival's theme (theme set to Automatic)")
     title = models.CharField(max_length=150)
     description = models.TextField(max_length=1000, blank=True)
     image_url = models.CharField(max_length=500, blank=True)
@@ -348,9 +351,9 @@ class Promotion(models.Model):
 class SiteTheme(models.Model):
     """One row: the festive look of the public site (Owner HQ → Offers → Site theme)."""
     THEME_CHOICES = [
-        ('AUTO', 'Automatic (Christmas 1–27 Dec, New Year 28 Dec–6 Jan)'),
-        ('CHRISTMAS', 'Christmas'),
-        ('NEWYEAR', 'New Year'),
+        ('AUTO', 'Automatic: only while a festive offer or event is live'),
+        ('CHRISTMAS', 'Christmas (always on)'),
+        ('NEWYEAR', 'New Year (always on)'),
         ('NONE', 'Off'),
     ]
     theme = models.CharField(max_length=12, choices=THEME_CHOICES, default='AUTO')

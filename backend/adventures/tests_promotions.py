@@ -71,9 +71,16 @@ class PromotionApiTests(TestCase):
         self.assertEqual(theme['active'], 'NEWYEAR')
         self.assertEqual(theme['banner_text'], 'Flat 15% off')
 
-    def test_auto_theme_follows_calendar(self):
-        s = SiteTheme(theme='AUTO')
-        self.assertEqual(active_theme(s, datetime.date(2026, 12, 20)), 'CHRISTMAS')
-        self.assertEqual(active_theme(s, datetime.date(2026, 12, 31)), 'NEWYEAR')
-        self.assertEqual(active_theme(s, datetime.date(2027, 1, 3)), 'NEWYEAR')
-        self.assertEqual(active_theme(s, datetime.date(2027, 2, 1)), 'NONE')
+    def test_auto_theme_only_while_festive_offer_is_live(self):
+        s = SiteTheme.current()
+        self.assertEqual(active_theme(s), 'NONE')
+        Promotion.objects.create(title='Plain offer')
+        self.assertEqual(active_theme(s), 'NONE')
+        y = datetime.date.today() - datetime.timedelta(days=1)
+        Promotion.objects.create(title='Old xmas', festival='CHRISTMAS', ends_on=y)
+        self.assertEqual(active_theme(s), 'NONE')
+        Promotion.objects.create(title='NYE camp', kind='EVENT', festival='NEWYEAR')
+        self.assertEqual(active_theme(s), 'NEWYEAR')
+        pub = self.client.get('/api/v1/promotions/').json()['data']['theme']
+        self.assertEqual(pub['active'], 'NEWYEAR')
+        self.assertTrue(pub['banner_text'])

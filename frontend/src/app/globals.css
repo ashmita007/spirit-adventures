@@ -242,20 +242,41 @@ input::-webkit-date-and-time-value {
   animation: sa-fade-in 0.2s ease-out;
 }
 
-/* Festive theme (components/festive-theme.tsx, set from Owner HQ → Events & Offers) */
-@keyframes sa-festive-fall {
-  0% { transform: translate3d(0, -2rem, 0) rotate(0deg); }
-  100% { transform: translate3d(var(--drift, 20px), 105vh, 0) rotate(300deg); }
+/* Festive theme (components/festive-theme.tsx + festive-effects.tsx, set from Owner HQ → Events & Offers) */
+@keyframes sa-twinkle {
+  0%, 100% { opacity: 1; filter: brightness(1.15); }
+  50% { opacity: 0.35; filter: brightness(0.7); }
 }
-.sa-festive-piece {
-  animation-name: sa-festive-fall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
-  will-change: transform;
+.sa-fairy-lights {
+  background:
+    radial-gradient(circle at 50% 40%, #fde047 0 2.6px, transparent 3.4px) 0 0 / 56px 10px,
+    radial-gradient(circle at 50% 40%, #f87171 0 2.6px, transparent 3.4px) 14px 0 / 56px 10px,
+    radial-gradient(circle at 50% 40%, #4ade80 0 2.6px, transparent 3.4px) 28px 0 / 56px 10px,
+    radial-gradient(circle at 50% 40%, #60a5fa 0 2.6px, transparent 3.4px) 42px 0 / 56px 10px;
+  animation: sa-twinkle 1.6s ease-in-out infinite;
 }
-html[data-festive="christmas"] .sa-festive-accent { background-image: linear-gradient(90deg, #b91c1c, #15803d); }
+.sa-fairy-lights::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  background-position: 7px 0, 21px 0, 35px 0, 49px 0;
+  animation: sa-twinkle 1.6s ease-in-out infinite 0.8s;
+}
+@keyframes sa-shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(100%); }
+}
+.sa-shimmer { overflow: hidden; }
+.sa-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(253, 230, 138, 0.35) 50%, transparent 70%);
+  animation: sa-shimmer-sweep 3.6s ease-in-out infinite;
+}
+html[data-festive="christmas"] .sa-festive-accent { background-image: linear-gradient(90deg, #dc2626, #16a34a); }
 html[data-festive="newyear"] .sa-festive-accent { background-image: linear-gradient(90deg, #f59e0b, #ec4899); }
 @media (prefers-reduced-motion: reduce) {
-  .sa-festive-piece { display: none; }
+  .sa-fairy-lights, .sa-fairy-lights::after, .sa-shimmer::before { animation: none; }
 }

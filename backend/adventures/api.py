@@ -572,13 +572,14 @@ def list_team(request):
 def list_promotions(request):
     from .promotions import live_promotions, promo_out, theme_out
     from .models import SiteTheme
+    live = live_promotions()
     items = []
-    for p in live_promotions():
+    for p in live:
         row = promo_out(p)
         row.pop("is_published", None)
         row.pop("ordering", None)
         items.append(row)
-    return {"success": True, "data": {"items": items, "theme": theme_out(SiteTheme.current(), public=True)},
+    return {"success": True, "data": {"items": items, "theme": theme_out(SiteTheme.current(), public=True, live=live)},
             "message": f"Found {len(items)} events & offers"}
 
 # ----------------- Blog -----------------

@@ -11,9 +11,12 @@ import { ownerFetch } from "@/lib/owner-fetch";
 import { cn } from "@/lib/utils";
 import MediaUploadButton from "@/components/owner/media-upload-button";
 
+type Festival = "NONE" | "CHRISTMAS" | "NEWYEAR";
+
 interface Promo {
   id: number;
   kind: "OFFER" | "EVENT";
+  festival: Festival;
   title: string;
   description: string;
   image_url: string;
@@ -46,6 +49,7 @@ interface TripOption { id: number; title: string; slug: string }
 interface Draft {
   id?: number;
   kind: "OFFER" | "EVENT";
+  festival: Festival;
   title: string;
   description: string;
   image_url: string;
@@ -62,23 +66,23 @@ interface Draft {
 }
 
 const EMPTY: Draft = {
-  kind: "OFFER", title: "", description: "", image_url: "", badge: "", trip_id: null, price: "",
+  kind: "OFFER", festival: "NONE", title: "", description: "", image_url: "", badge: "", trip_id: null, price: "",
   original_price: "", location: "", event_date: "", starts_on: "", ends_on: "", cta_label: "Book now",
   is_published: true,
 };
 
 const THEMES: { value: Theme["theme"]; label: string; hint: string }[] = [
-  { value: "AUTO", label: "Automatic", hint: "Christmas 1–27 Dec, New Year 28 Dec–6 Jan, normal look otherwise" },
-  { value: "CHRISTMAS", label: "Christmas", hint: "Red & green strip, snowfall, festive badges" },
-  { value: "NEWYEAR", label: "New Year", hint: "Gold strip, confetti, New Year badges" },
-  { value: "NONE", label: "Off", hint: "Normal site look" },
+  { value: "AUTO", label: "Automatic", hint: "Festive look only while an offer/event tagged Christmas or New Year is live (recommended)" },
+  { value: "CHRISTMAS", label: "Christmas", hint: "Always on, even without an offer" },
+  { value: "NEWYEAR", label: "New Year", hint: "Always on, even without an offer" },
+  { value: "NONE", label: "Off", hint: "Never show the festive look" },
 ];
 
 const field =
   "w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-ocean";
 
 const toDraft = (p: Promo): Draft => ({
-  id: p.id, kind: p.kind, title: p.title, description: p.description, image_url: p.image_url,
+  id: p.id, kind: p.kind, festival: p.festival, title: p.title, description: p.description, image_url: p.image_url,
   badge: p.badge, trip_id: p.trip_id, price: p.price?.toString() ?? "",
   original_price: p.original_price?.toString() ?? "", location: p.location, event_date: p.event_date ?? "",
   starts_on: p.starts_on ?? "", ends_on: p.ends_on ?? "", cta_label: p.cta_label, is_published: p.is_published,
@@ -320,6 +324,11 @@ export default function OffersManager() {
                       {p.kind === "EVENT" ? "Event" : "Offer"}
                     </span>
                     <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", st.tone)}>{st.label}</span>
+                    {p.festival !== "NONE" && (
+                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                        {p.festival === "CHRISTMAS" ? "🎄 Christmas" : "🎉 New Year"}
+                      </span>
+                    )}
                     {p.badge && <span className="text-[11px] font-bold text-amber-600">{p.badge}</span>}
                   </div>
                   <p className="mt-1 truncate font-bold text-brand-navy">{p.title}</p>
@@ -385,6 +394,28 @@ export default function OffersManager() {
                   {k === "OFFER" ? "Offer / discount" : "Event / group trip"}
                 </button>
               ))}
+            </div>
+
+            <div className="mb-4">
+              <span className="mb-1 block text-[11px] font-bold text-slate-500">Festival theme</span>
+              <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Festival">
+                {([["NONE", "None"], ["CHRISTMAS", "🎄 Christmas"], ["NEWYEAR", "🎉 New Year"]] as const).map(([v, l]) => (
+                  <button
+                    type="button"
+                    key={v}
+                    role="radio"
+                    aria-checked={editing.festival === v}
+                    onClick={() => set("festival", v)}
+                    className={cn(
+                      "rounded-xl border py-2 text-xs font-bold transition active:scale-[0.97]",
+                      editing.festival === v ? "border-amber-400 bg-amber-50 text-brand-navy" : "border-slate-200 text-slate-500"
+                    )}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1 text-[11px] text-slate-400">While this is live, the whole website switches to this festival&apos;s look. It goes back to normal when it ends.</p>
             </div>
 
             <div className="mb-4 flex items-center gap-4">

@@ -43,10 +43,12 @@ export default async function OffersPage() {
           (group) =>
             group.list.length > 0 && (
               <section key={group.label}>
-                <h2 className="mb-6 font-display text-2xl font-black uppercase tracking-tight text-brand-navy sm:text-3xl">{group.label}</h2>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <h2 className="mb-5 font-display text-2xl font-black tracking-[-0.03em] text-brand-navy sm:mb-7 sm:text-4xl">{group.label}</h2>
+                <div data-anim="stagger" className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
                   {group.list.map((o, i) => (
-                    <OfferCard key={o.id} offer={o} priority={i < 3} />
+                    <div key={o.id} className={i === 0 && group.list.length > 2 ? "sm:col-span-2" : ""}>
+                      <OfferCard offer={o} variant={i === 0 && group.list.length > 2 ? "feature" : "compact"} priority={i < 3} />
+                    </div>
                   ))}
                 </div>
               </section>

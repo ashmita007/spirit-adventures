@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import type { SiteThemeInfo } from "@/lib/api";
 import { isPortalPath } from "@/lib/utils";
+import FestiveEffects from "@/components/festive-effects";
 
 const DISMISS_KEY = "sa_festive_banner_closed";
 const STRIP_H = "36px";
@@ -14,14 +15,10 @@ const LOOK = {
   CHRISTMAS: {
     strip: "bg-gradient-to-r from-[#7f1d1d] via-[#b91c1c] to-[#14532d] text-white",
     icon: "🎄",
-    pieces: ["❄", "❅", "❆"],
-    colors: ["#ffffff", "#e0f2fe", "#ffffff"],
   },
   NEWYEAR: {
     strip: "bg-gradient-to-r from-[#0b1736] via-[#1e1b4b] to-[#0b1736] text-amber-200",
     icon: "🎉",
-    pieces: ["✦", "●", "■", "✧"],
-    colors: ["#fbbf24", "#f472b6", "#38bdf8", "#a3e635"],
   },
 } as const;
 
@@ -58,20 +55,6 @@ export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
     };
   }, [active, portal, showStrip]);
 
-  const pieces = useMemo(() => {
-    if (!active) return [];
-    const look = LOOK[active];
-    return Array.from({ length: 22 }, (_, i) => ({
-      left: (i * 37) % 100,
-      delay: (i * 0.73) % 9,
-      duration: 9 + ((i * 1.7) % 7),
-      size: 8 + ((i * 5) % 9),
-      char: look.pieces[i % look.pieces.length],
-      color: look.colors[i % look.colors.length],
-      drift: i % 2 ? 30 : -30,
-    }));
-  }, [active]);
-
   if (!active || portal) return null;
   const look = LOOK[active];
 
@@ -87,8 +70,13 @@ export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
   return (
     <>
       {showStrip && (
-        <div className={`fixed inset-x-0 top-0 z-[55] flex h-9 items-center justify-center px-10 text-center text-[12px] font-semibold sm:text-sm ${look.strip}`}>
-          <Link href={theme.banner_link || "/offers"} className="truncate hover:underline">
+        <div className={`fixed inset-x-0 top-0 z-[55] flex h-9 items-center overflow-visible justify-center px-10 text-center text-[12px] font-semibold sm:text-sm ${look.strip}`}>
+          {active === "CHRISTMAS" ? (
+            <span aria-hidden="true" className="sa-fairy-lights pointer-events-none absolute inset-x-0 -bottom-[5px] h-2.5" />
+          ) : (
+            <span aria-hidden="true" className="sa-shimmer pointer-events-none absolute inset-0" />
+          )}
+          <Link href={theme.banner_link || "/offers"} className="relative truncate hover:underline">
             <span aria-hidden="true" className="mr-1.5">{look.icon}</span>
             {theme.banner_text}
             <span aria-hidden="true" className="ml-1.5">→</span>
@@ -99,27 +87,7 @@ export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
         </div>
       )}
 
-      {theme.snow && !calm && (
-        <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[45] overflow-hidden">
-          {pieces.map((p, i) => (
-            <span
-              key={i}
-              className="sa-festive-piece absolute -top-6 select-none"
-              style={{
-                left: `${p.left}%`,
-                fontSize: p.size,
-                color: p.color,
-                animationDelay: `${p.delay}s`,
-                animationDuration: `${p.duration}s`,
-                ["--drift" as string]: `${p.drift}px`,
-                opacity: active === "CHRISTMAS" ? 0.85 : 0.75,
-              }}
-            >
-              {p.char}
-            </span>
-          ))}
-        </div>
-      )}
+      {theme.snow && !calm && <FestiveEffects mode={active} />}
     </>
   );
 }

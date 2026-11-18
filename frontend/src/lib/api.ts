@@ -474,6 +474,7 @@ export async function getGallery(category?: string): Promise<GalleryImage[]> {
 export interface Promotion {
   id: number;
   kind: "OFFER" | "EVENT";
+  festival: "NONE" | "CHRISTMAS" | "NEWYEAR";
   title: string;
   description: string;
   image_url: string;
