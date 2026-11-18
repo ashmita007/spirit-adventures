@@ -471,6 +471,50 @@ export async function getGallery(category?: string): Promise<GalleryImage[]> {
 }
 
 /** Published team members for the About page. Empty when the backend is down: never invent people. */
+export interface Promotion {
+  id: number;
+  kind: "OFFER" | "EVENT";
+  title: string;
+  description: string;
+  image_url: string;
+  badge: string;
+  trip_id: number | null;
+  trip_slug: string;
+  trip_title: string;
+  price: number | null;
+  original_price: number | null;
+  location: string;
+  event_date: string | null;
+  starts_on: string | null;
+  ends_on: string | null;
+  cta_label: string;
+}
+
+export type FestiveTheme = "CHRISTMAS" | "NEWYEAR" | "NONE";
+
+export interface SiteThemeInfo {
+  active: FestiveTheme;
+  banner_text: string;
+  banner_link: string;
+  snow: boolean;
+}
+
+export interface PromotionsData {
+  items: Promotion[];
+  theme: SiteThemeInfo;
+}
+
+const NO_PROMOTIONS: PromotionsData = {
+  items: [],
+  theme: { active: "NONE", banner_text: "", banner_link: "/offers", snow: false },
+};
+
+/** Live events/offers and the festive theme, both set from Owner HQ → Offers. */
+export async function getPromotions(): Promise<PromotionsData> {
+  const data = await fetchFromApi<PromotionsData>("/promotions/", NO_PROMOTIONS);
+  return data && Array.isArray(data.items) && data.theme ? data : NO_PROMOTIONS;
+}
+
 export async function getTeam(): Promise<TeamMember[]> {
   return fetchFromApi<TeamMember[]>("/team/", []);
 }

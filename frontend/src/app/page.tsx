@@ -7,16 +7,18 @@ import NatureQuoteSection from "@/components/nature-quote-section";
 import WhyUs from "@/components/why-us";
 import ReviewsCarousel from "@/components/reviews-carousel";
 import GalleryPreview from "@/components/gallery-preview";
-import { getTrips, getReviews, getGallery, getDestinations } from "@/lib/api";
+import { getTrips, getReviews, getGallery, getDestinations, getPromotions } from "@/lib/api";
+import OffersSection from "@/components/offers-section";
 import TrustStrip from "@/components/trust-strip";
 import OfficeMaps from "@/components/office-maps";
 
 export default async function HomePage() {
-  const [allTrips, reviews, galleryImages, destinations] = await Promise.all([
+  const [allTrips, reviews, galleryImages, destinations, promotions] = await Promise.all([
     getTrips(),
     getReviews(true),
     getGallery(),
     getDestinations(),
+    getPromotions(),
   ]);
   // Only count destinations that actually have trips
   const destinationCount = new Set(allTrips.map((t) => t.destination_name).filter(Boolean)).size || destinations.length;
@@ -29,6 +31,9 @@ export default async function HomePage() {
       {/* 1. Cinematic Hero with Search Bar */}
       <VideoHero />
       <TrustStrip tripCount={allTrips.length} destinationCount={destinationCount} />
+
+      {/* Events & offers from Owner HQ (hidden when none are live) */}
+      <OffersSection offers={promotions.items} theme={promotions.theme.active} />
 
       {/* 2. Recent Packages & Expeditions Grid */}
       <section className="py-12 sm:py-24 bg-white relative">

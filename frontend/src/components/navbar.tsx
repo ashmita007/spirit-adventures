@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Heart, Phone, Compass, Mountain, MapPin, Image as ImageIcon, BookOpen, MessageCircle } from "lucide-react";
+import { Menu, X, Heart, Phone, Compass, Mountain, MapPin, Image as ImageIcon, BookOpen, MessageCircle, Gift } from "lucide-react";
 import { cn, isPortalPath } from "@/lib/utils";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 import { PHONES } from "@/lib/offices";
@@ -15,7 +15,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   // Pages that open with a full-bleed photo hero: navbar starts transparent
-  const hasHero = isHomePage || ["/trips", "/destinations", "/about", "/contact", "/gallery", "/blog"].includes(pathname);
+  const hasHero = isHomePage || ["/trips", "/destinations", "/about", "/contact", "/gallery", "/blog", "/offers"].includes(pathname);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +41,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Explore Packages", href: "/trips", icon: Mountain },
+    { name: "Offers", href: "/offers", icon: Gift },
     { name: "Gallery", href: "/gallery", icon: ImageIcon },
     { name: "About Us", href: "/about", icon: Compass },
     { name: "Stories", href: "/blog", icon: BookOpen },
@@ -60,7 +61,7 @@ export default function Navbar() {
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition duration-300",
+          "fixed top-[var(--festive-h,0px)] left-0 right-0 z-50 transition duration-300",
           headerBgClass
         )}
       >

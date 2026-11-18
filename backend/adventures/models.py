@@ -314,3 +314,55 @@ class TeamMember(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.role})"
+
+
+class Promotion(models.Model):
+    """Events and offers shown on the home page and /offers (managed from Owner HQ → Offers)."""
+    KIND_CHOICES = [('OFFER', 'Offer'), ('EVENT', 'Event')]
+
+    kind = models.CharField(max_length=10, choices=KIND_CHOICES, default='OFFER')
+    title = models.CharField(max_length=150)
+    description = models.TextField(max_length=1000, blank=True)
+    image_url = models.CharField(max_length=500, blank=True)
+    badge = models.CharField(max_length=40, blank=True, help_text="e.g. 20% OFF, Early bird, New Year special")
+    trip = models.ForeignKey(Trip, on_delete=models.SET_NULL, null=True, blank=True, related_name='promotions')
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    original_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    location = models.CharField(max_length=120, blank=True)
+    event_date = models.DateField(null=True, blank=True, help_text="Event day (events)")
+    starts_on = models.DateField(null=True, blank=True, help_text="Show from this day")
+    ends_on = models.DateField(null=True, blank=True, help_text="Hide after this day")
+    cta_label = models.CharField(max_length=40, blank=True, default='Book now')
+    is_published = models.BooleanField(default=True)
+    ordering = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['ordering', '-created_at']
+
+    def __str__(self):
+        return f"{self.get_kind_display()}: {self.title}"
+
+
+class SiteTheme(models.Model):
+    """One row: the festive look of the public site (Owner HQ → Offers → Site theme)."""
+    THEME_CHOICES = [
+        ('AUTO', 'Automatic (Christmas 1–27 Dec, New Year 28 Dec–6 Jan)'),
+        ('CHRISTMAS', 'Christmas'),
+        ('NEWYEAR', 'New Year'),
+        ('NONE', 'Off'),
+    ]
+    theme = models.CharField(max_length=12, choices=THEME_CHOICES, default='AUTO')
+    banner_text = models.CharField(max_length=160, blank=True, help_text="Top strip text; empty uses the theme greeting")
+    banner_link = models.CharField(max_length=300, blank=True, default='/offers')
+    snow = models.BooleanField(default=True, help_text="Falling snow / confetti effect")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Site theme: {self.theme}"
+
+    @classmethod
+    def current(cls):
+        obj = cls.objects.first()
+        return obj or cls.objects.create()

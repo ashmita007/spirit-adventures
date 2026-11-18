@@ -5,6 +5,8 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import WhatsAppButton from "@/components/whatsapp-button";
 import LeadPopup from "@/components/lead-popup";
+import FestiveTheme from "@/components/festive-theme";
+import { getPromotions } from "@/lib/api";
 import MobileBottomNav from "@/components/mobile-nav";
 import MotionProvider from "@/components/motion/motion-provider";
 import MediaGovernor from "@/components/motion/media-governor";
@@ -84,7 +86,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -101,6 +103,7 @@ export default function RootLayout({
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       </head>
       <body className="min-h-dvh flex flex-col antialiased selection:bg-brand-ocean selection:text-white pb-16 md:pb-0">
+        <FestiveTheme theme={(await getPromotions()).theme} />
         <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />

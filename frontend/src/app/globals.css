@@ -241,3 +241,21 @@ input::-webkit-date-and-time-value {
 .fixed.inset-0.animate-fade-in {
   animation: sa-fade-in 0.2s ease-out;
 }
+
+/* Festive theme (components/festive-theme.tsx, set from Owner HQ → Events & Offers) */
+@keyframes sa-festive-fall {
+  0% { transform: translate3d(0, -2rem, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--drift, 20px), 105vh, 0) rotate(300deg); }
+}
+.sa-festive-piece {
+  animation-name: sa-festive-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+  will-change: transform;
+}
+html[data-festive="christmas"] .sa-festive-accent { background-image: linear-gradient(90deg, #b91c1c, #15803d); }
+html[data-festive="newyear"] .sa-festive-accent { background-image: linear-gradient(90deg, #f59e0b, #ec4899); }
+@media (prefers-reduced-motion: reduce) {
+  .sa-festive-piece { display: none; }
+}

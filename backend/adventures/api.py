@@ -565,6 +565,22 @@ def list_team(request):
         data.append(row)
     return {"success": True, "data": data, "message": f"Found {len(data)} team members"}
 
+# ----------------- Events, offers and festive theme -----------------
+@api.get("/promotions/", response=ApiResponse, tags=["Offers"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_promotions")
+@cached_public(ttl=300)
+def list_promotions(request):
+    from .promotions import live_promotions, promo_out, theme_out
+    from .models import SiteTheme
+    items = []
+    for p in live_promotions():
+        row = promo_out(p)
+        row.pop("is_published", None)
+        row.pop("ordering", None)
+        items.append(row)
+    return {"success": True, "data": {"items": items, "theme": theme_out(SiteTheme.current(), public=True)},
+            "message": f"Found {len(items)} events & offers"}
+
 # ----------------- Blog -----------------
 @api.get("/blog/", response=ApiResponse, tags=["Blog"])
 @rate_limit(max_requests=120, window_seconds=60, bucket_name="public_blog")
@@ -1081,3 +1097,8 @@ crm_router.add_router("", crm_accounts_router)
 crm_router.add_router("", crm_enquiries_router)
 crm_router.add_router("", crm_targets_router)
 api.add_router("/crm", crm_router)
+
+# ----------------- Owner events & offers: /api/v1/owner/promotions/... -----------------
+from .promotions import router as owner_promotions_router  # noqa: E402
+
+api.add_router("/owner", owner_promotions_router)
