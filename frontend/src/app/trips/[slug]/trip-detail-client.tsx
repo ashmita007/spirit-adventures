@@ -11,8 +11,9 @@ import {
 import { Review, Trip } from "@/lib/types";
 import TripCard from "@/components/trip-card";
 import { formatCurrency, cn } from "@/lib/utils";
-import { smartCase, stripDayPrefix, stripTrailingEmoji, stripLeadingEmoji, splitStops } from "@/lib/readable-text";
+import { smartCase, stripLeadingEmoji } from "@/lib/readable-text";
 import EnquiryModal from "@/components/enquiry-modal";
+import ItineraryTimeline from "@/components/itinerary-timeline";
 import Lightbox from "@/components/lightbox";
 import { isVideoUrl, useDeferredVideo } from "@/lib/media";
 import { tripDrop, tripFaqs, tripPickup, tripSeason } from "@/lib/trip-faqs";
@@ -275,49 +276,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                   </span>
                 </div>
 
-                <ol className="relative border-l-2 border-slate-200 ml-4 space-y-8">
-                  {trip.itinerary_days.map((day, idx) => {
-                    const dayNum = day.day_number || idx + 1;
-                    const facts = [
-                      day.altitude && ["Altitude", day.altitude],
-                      day.distance && ["Distance", day.distance],
-                      day.meals && ["Meals", day.meals],
-                      day.stay_type && ["Stay", day.stay_type],
-                    ].filter(Boolean) as [string, string][];
-                    const stops = splitStops(day.description || "");
-                    return (
-                      <li key={`${dayNum}-${idx}`} className="relative pl-8">
-                        <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-brand-navy text-white text-xs font-bold ring-4 ring-white">
-                          {dayNum}
-                        </span>
-                        <p className="text-xs font-semibold text-brand-ocean">Day {dayNum}</p>
-                        <h3 className="mt-0.5 font-display font-bold text-lg text-brand-navy leading-snug">{smartCase(stripTrailingEmoji(stripDayPrefix(day.title || ""))) || `Day ${dayNum}`}</h3>
-                        {stops.length > 0 ? (
-                          <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-[15px] leading-6 text-slate-700">
-                            {stops.map((s, i) => (
-                              <li key={i} className="flex items-start gap-2.5">
-                                <span aria-hidden="true" className="w-5 shrink-0 text-center">{s.icon || "•"}</span>
-                                <span>{s.label}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : day.description ? (
-                          <p className="mt-2 max-w-[68ch] text-[16px] leading-7 text-slate-700 whitespace-pre-line">{day.description}</p>
-                        ) : null}
-                        {facts.length > 0 && (
-                          <dl className="mt-3 flex flex-wrap gap-2">
-                            {facts.map(([k, v]) => (
-                              <div key={k} className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
-                                <dt className="inline">{k}: </dt>
-                                <dd className="inline font-semibold text-slate-800">{v}</dd>
-                              </div>
-                            ))}
-                          </dl>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ol>
+                <ItineraryTimeline days={trip.itinerary_days} />
               </section>
             )}
 
