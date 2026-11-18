@@ -1,3 +1,4 @@
+import type { FestiveTheme } from "./festivals";
 import { ownerFetch } from "./owner-fetch";
 import { 
   Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload, TeamMember 
@@ -474,7 +475,7 @@ export async function getGallery(category?: string): Promise<GalleryImage[]> {
 export interface Promotion {
   id: number;
   kind: "OFFER" | "EVENT";
-  festival: "NONE" | "CHRISTMAS" | "NEWYEAR";
+  festival: FestiveTheme;
   title: string;
   description: string;
   image_url: string;
@@ -491,7 +492,7 @@ export interface Promotion {
   cta_label: string;
 }
 
-export type FestiveTheme = "CHRISTMAS" | "NEWYEAR" | "NONE";
+export type { FestiveTheme };
 
 export interface SiteThemeInfo {
   active: FestiveTheme;

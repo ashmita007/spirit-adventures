@@ -7,30 +7,29 @@ import { X } from "lucide-react";
 import type { SiteThemeInfo } from "@/lib/api";
 import { isPortalPath } from "@/lib/utils";
 import FestiveEffects from "@/components/festive-effects";
+import { FESTIVALS, type FestivalKey, type EdgeKind } from "@/lib/festivals";
+
+const EDGE_CLASS: Record<EdgeKind, string> = {
+  fairy: "sa-edge-fairy absolute inset-x-0 -bottom-[5px] h-2.5",
+  diyas: "sa-edge-diyas absolute inset-x-0 -bottom-[7px] h-3.5",
+  toran: "sa-edge-toran absolute inset-x-0 -bottom-[9px] h-3",
+  kitestring: "sa-edge-kites absolute inset-x-0 -bottom-[6px] h-3",
+  shimmer: "sa-shimmer absolute inset-0",
+};
 
 const DISMISS_KEY = "sa_festive_banner_closed";
 const STRIP_H = "36px";
 
-const LOOK = {
-  CHRISTMAS: {
-    strip: "bg-gradient-to-r from-[#7f1d1d] via-[#b91c1c] to-[#14532d] text-white",
-    icon: "🎄",
-  },
-  NEWYEAR: {
-    strip: "bg-gradient-to-r from-[#0b1736] via-[#1e1b4b] to-[#0b1736] text-amber-200",
-    icon: "🎉",
-  },
-} as const;
-
 /**
  * Festive look set from Owner HQ → Events & Offers → Website theme:
- * a top strip with the owner's message and light snowfall (Christmas) or confetti (New Year).
+ * a top strip in the festival's colours with its own edge decoration (fairy lights, diyas,
+ * mango-leaf thoranam, kite string, shimmer) and a matching canvas effect (lib/festivals.ts).
  */
 export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
   const pathname = usePathname();
   const [closed, setClosed] = useState(false);
   const [calm, setCalm] = useState(true);
-  const active = theme.active === "CHRISTMAS" || theme.active === "NEWYEAR" ? theme.active : null;
+  const active = theme.active in FESTIVALS ? (theme.active as FestivalKey) : null;
   const portal = isPortalPath(pathname);
 
   useEffect(() => {
@@ -56,7 +55,7 @@ export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
   }, [active, portal, showStrip]);
 
   if (!active || portal) return null;
-  const look = LOOK[active];
+  const look = FESTIVALS[active];
 
   const close = () => {
     setClosed(true);
@@ -71,13 +70,9 @@ export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
     <>
       {showStrip && (
         <div className={`fixed inset-x-0 top-0 z-[55] flex h-9 items-center overflow-visible justify-center px-10 text-center text-[12px] font-semibold sm:text-sm ${look.strip}`}>
-          {active === "CHRISTMAS" ? (
-            <span aria-hidden="true" className="sa-fairy-lights pointer-events-none absolute inset-x-0 -bottom-[5px] h-2.5" />
-          ) : (
-            <span aria-hidden="true" className="sa-shimmer pointer-events-none absolute inset-0" />
-          )}
+          <span aria-hidden="true" className={`pointer-events-none ${EDGE_CLASS[look.edge]}`} />
           <Link href={theme.banner_link || "/offers"} className="relative truncate hover:underline">
-            <span aria-hidden="true" className="mr-1.5">{look.icon}</span>
+            <span aria-hidden="true" className="mr-1.5">{look.emoji}</span>
             {theme.banner_text}
             <span aria-hidden="true" className="ml-1.5">→</span>
           </Link>
@@ -87,7 +82,7 @@ export default function FestiveTheme({ theme }: { theme: SiteThemeInfo }) {
         </div>
       )}
 
-      {theme.snow && !calm && <FestiveEffects mode={active} />}
+      {theme.snow && !calm && <FestiveEffects kind={look.effect} palette={look.palette} />}
     </>
   );
 }

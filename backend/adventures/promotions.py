@@ -16,7 +16,11 @@ LIMITS = {"title": 150, "description": 1000, "image_url": 500, "badge": 40, "loc
 GREETINGS = {
     'CHRISTMAS': 'Merry Christmas from Spirit Adventures! Festive trips and offers are live',
     'NEWYEAR': 'Happy New Year! Start the year with an adventure. New Year offers are live',
+    'SANKRANTI': 'Happy Sankranti! Fly higher this harvest season. Sankranti offers are live',
+    'UGADI': 'Ugadi Shubhakankshalu! A new year, a new trail. Ugadi offers are live',
+    'DIWALI': 'Happy Diwali! Light up your holidays with an adventure. Diwali offers are live',
 }
+FESTIVALS = tuple(GREETINGS)
 
 
 def _err(request, msg, status=400):
@@ -37,7 +41,7 @@ def active_theme(setting=None, live=None):
     if setting.theme != 'AUTO':
         return setting.theme
     for p in (live if live is not None else live_promotions()):
-        if p.festival in ('CHRISTMAS', 'NEWYEAR'):
+        if p.festival in FESTIVALS:
             return p.festival
     return 'NONE'
 
@@ -87,7 +91,7 @@ def _clean(request, data: dict):
             data[k] = str(data[k]).strip()[:limit]
     if "kind" in data and data["kind"] not in ("OFFER", "EVENT"):
         return _err(request, "Choose Offer or Event.")
-    if "festival" in data and data["festival"] not in ("NONE", "CHRISTMAS", "NEWYEAR"):
+    if "festival" in data and data["festival"] not in ("NONE",) + FESTIVALS:
         return _err(request, "Unknown festival.")
     img = data.get("image_url")
     if img and not (img.startswith("https://") or img.startswith("/images/")):

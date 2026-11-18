@@ -84,3 +84,18 @@ class PromotionApiTests(TestCase):
         pub = self.client.get('/api/v1/promotions/').json()['data']['theme']
         self.assertEqual(pub['active'], 'NEWYEAR')
         self.assertTrue(pub['banner_text'])
+
+    def test_every_festival_has_a_greeting_and_theme(self):
+        from adventures.promotions import FESTIVALS
+        self.assertEqual(set(FESTIVALS), {'CHRISTMAS', 'NEWYEAR', 'SANKRANTI', 'UGADI', 'DIWALI'})
+        s = SiteTheme.current()
+        p = Promotion.objects.create(title='Diwali escape', festival='DIWALI')
+        self.assertEqual(active_theme(s), 'DIWALI')
+        self.assertIn('Diwali', self.client.get('/api/v1/promotions/').json()['data']['theme']['banner_text'])
+        p.delete()
+        cache.clear()
+        self.client.force_login(self.staff)
+        r = self.post('/api/v1/owner/promotions/', {'title': 'Kite fest', 'festival': 'SANKRANTI'})
+        self.assertEqual(r.status_code, 200, r.content)
+        r = self.post('/api/v1/owner/promotions/', {'title': 'x', 'festival': 'HALLOWEEN'})
+        self.assertEqual(r.status_code, 400)

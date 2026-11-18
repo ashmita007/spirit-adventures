@@ -6,6 +6,7 @@ import type { Promotion } from "@/lib/api";
 import { cn, formatCurrency } from "@/lib/utils";
 import { whatsappUrl } from "@/lib/whatsapp";
 import OfferCountdown from "@/components/offer-countdown";
+import { festivalLook } from "@/lib/festivals";
 
 function niceDate(iso: string) {
   return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
@@ -24,12 +25,6 @@ function savePct(o: Promotion) {
     ? Math.round(((o.original_price - o.price) / o.original_price) * 100)
     : 0;
 }
-
-const FESTIVE_RING: Record<Promotion["festival"], string> = {
-  NONE: "ring-1 ring-inset ring-white/10",
-  CHRISTMAS: "ring-1 ring-inset ring-red-300/40",
-  NEWYEAR: "ring-1 ring-inset ring-amber-200/45",
-};
 
 /**
  * Event/offer card. `feature` = big image-led card (first slot); `compact` = the rest.
@@ -50,6 +45,7 @@ export default function OfferCard({
   const badge = offer.badge || (pct ? `${pct}% off` : "");
   const countdownTo = offer.kind === "EVENT" ? offer.event_date : offer.ends_on;
   const feature = variant === "feature";
+  const look = festivalLook(offer.festival);
   const Wrapper = ({ children, className }: { children: React.ReactNode; className: string }) =>
     t.external ? (
       <a href={t.href} target="_blank" rel="noopener noreferrer" className={className}>{children}</a>
@@ -65,7 +61,7 @@ export default function OfferCard({
         "transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98]",
         "hover:-translate-y-1 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_28px_60px_-24px_rgba(2,132,199,0.45)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky focus-visible:ring-offset-2",
-        FESTIVE_RING[offer.festival],
+        look ? look.ring : "ring-1 ring-inset ring-white/10",
         feature ? "min-h-[26rem] sm:min-h-[30rem]" : "min-h-[22rem] lg:min-h-[17rem]"
       )}
     >
@@ -93,11 +89,13 @@ export default function OfferCard({
       <div className="flex items-start justify-between gap-2 p-4 sm:p-5">
         <div className="flex flex-wrap gap-1.5">
           <span className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ring-1 ring-inset ring-white/20 backdrop-blur-md">
-            {offer.festival === "CHRISTMAS" ? "🎄 " : offer.festival === "NEWYEAR" ? "🎉 " : ""}
+            {look ? `${look.emoji} ` : ""}
             {offer.kind === "EVENT" ? "Event" : "Offer"}
           </span>
           {badge && (
-            <span className="sa-festive-accent rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] shadow-lg shadow-rose-900/30">
+            <span
+              style={look ? { backgroundImage: look.accent } : undefined}
+              className="rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] shadow-lg shadow-rose-900/30">
               {badge}
             </span>
           )}

@@ -10,8 +10,9 @@ import {
 import { ownerFetch } from "@/lib/owner-fetch";
 import { cn } from "@/lib/utils";
 import MediaUploadButton from "@/components/owner/media-upload-button";
+import { FESTIVALS, FESTIVAL_KEYS, festivalLook, type FestiveTheme } from "@/lib/festivals";
 
-type Festival = "NONE" | "CHRISTMAS" | "NEWYEAR";
+type Festival = FestiveTheme;
 
 interface Promo {
   id: number;
@@ -36,8 +37,8 @@ interface Promo {
 }
 
 interface Theme {
-  theme: "AUTO" | "CHRISTMAS" | "NEWYEAR" | "NONE";
-  active: "CHRISTMAS" | "NEWYEAR" | "NONE";
+  theme: "AUTO" | FestiveTheme;
+  active: FestiveTheme;
   custom_banner_text: string;
   banner_text: string;
   banner_link: string;
@@ -73,8 +74,7 @@ const EMPTY: Draft = {
 
 const THEMES: { value: Theme["theme"]; label: string; hint: string }[] = [
   { value: "AUTO", label: "Automatic", hint: "Festive look only while an offer/event tagged Christmas or New Year is live (recommended)" },
-  { value: "CHRISTMAS", label: "Christmas", hint: "Always on, even without an offer" },
-  { value: "NEWYEAR", label: "New Year", hint: "Always on, even without an offer" },
+  ...FESTIVAL_KEYS.map((k) => ({ value: k, label: `${FESTIVALS[k].emoji} ${FESTIVALS[k].name}`, hint: "Always on" })),
   { value: "NONE", label: "Off", hint: "Never show the festive look" },
 ];
 
@@ -238,13 +238,13 @@ export default function OffersManager() {
               <p className="mt-0.5 text-xs text-slate-500">
                 Showing now:{" "}
                 <span className="font-semibold text-brand-navy">
-                  {theme.active === "CHRISTMAS" ? "Christmas" : theme.active === "NEWYEAR" ? "New Year" : "Normal look"}
+                  {festivalLook(theme.active)?.name ?? "Normal look"}
                 </span>
               </p>
             </div>
             {themeSaving && <Loader2 className="h-4 w-4 animate-spin text-brand-ocean" />}
           </div>
-          <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" role="radiogroup" aria-label="Website theme">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7" role="radiogroup" aria-label="Website theme">
             {THEMES.map((t) => (
               <button
                 key={t.value}
@@ -324,9 +324,9 @@ export default function OffersManager() {
                       {p.kind === "EVENT" ? "Event" : "Offer"}
                     </span>
                     <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", st.tone)}>{st.label}</span>
-                    {p.festival !== "NONE" && (
+                    {festivalLook(p.festival) && (
                       <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-                        {p.festival === "CHRISTMAS" ? "🎄 Christmas" : "🎉 New Year"}
+                        {festivalLook(p.festival)!.emoji} {festivalLook(p.festival)!.name}
                       </span>
                     )}
                     {p.badge && <span className="text-[11px] font-bold text-amber-600">{p.badge}</span>}
@@ -398,8 +398,8 @@ export default function OffersManager() {
 
             <div className="mb-4">
               <span className="mb-1 block text-[11px] font-bold text-slate-500">Festival theme</span>
-              <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Festival">
-                {([["NONE", "None"], ["CHRISTMAS", "🎄 Christmas"], ["NEWYEAR", "🎉 New Year"]] as const).map(([v, l]) => (
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-6" role="radiogroup" aria-label="Festival">
+                {([["NONE", "None"], ...FESTIVAL_KEYS.map((k) => [k, `${FESTIVALS[k].emoji} ${FESTIVALS[k].name}`])] as [Festival, string][]).map(([v, l]) => (
                   <button
                     type="button"
                     key={v}

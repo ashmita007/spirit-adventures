@@ -6,21 +6,7 @@ import { ArrowRight } from "lucide-react";
 import type { Promotion, FestiveTheme } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import OfferCard from "@/components/offer-card";
-
-const COPY: Record<FestiveTheme, { kicker: string; title: React.ReactNode }> = {
-  CHRISTMAS: {
-    kicker: "🎄 Christmas at Spirit",
-    title: <>Festive escapes, <span className="font-serif font-normal italic text-red-200">wrapped and ready.</span></>,
-  },
-  NEWYEAR: {
-    kicker: "🎉 New Year at Spirit",
-    title: <>Ring in the year <span className="font-serif font-normal italic text-amber-200">somewhere wild.</span></>,
-  },
-  NONE: {
-    kicker: "Limited time",
-    title: <>Events & offers <span className="font-serif font-normal italic text-slate-400">worth packing for.</span></>,
-  },
-};
+import { festivalLook } from "@/lib/festivals";
 
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
@@ -33,11 +19,11 @@ const GRAIN =
 export default function OffersSection({ offers, theme }: { offers: Promotion[]; theme: FestiveTheme }) {
   const rail = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
-  const festive = theme !== "NONE";
+  const look = festivalLook(theme);
+  const festive = Boolean(look);
   // During a festival its own offers lead; otherwise keep the owner's order.
   const ordered = festive ? [...offers].sort((a, b) => Number(b.festival === theme) - Number(a.festival === theme)) : offers;
   const shown = ordered.slice(0, 5);
-  const copy = COPY[theme] ?? COPY.NONE;
 
   useEffect(() => {
     const el = rail.current;
@@ -57,24 +43,15 @@ export default function OffersSection({ offers, theme }: { offers: Promotion[]; 
   return (
     <section
       aria-labelledby="offers-heading"
-      className={cn("relative isolate overflow-hidden py-14 sm:py-24", festive ? "bg-[#07102a] text-white" : "bg-[#f6f7f9] text-brand-navy")}
+      style={look ? { backgroundColor: look.stage.bg } : undefined}
+      className={cn("relative isolate overflow-hidden py-14 sm:py-24", festive ? "text-white" : "bg-[#f6f7f9] text-brand-navy")}
     >
       {/* Atmosphere */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        {festive && (
+        {look && (
           <>
-            <div
-              className={cn(
-                "absolute -left-24 -top-24 h-80 w-80 rounded-full blur-3xl sm:h-[32rem] sm:w-[32rem]",
-                theme === "CHRISTMAS" ? "bg-red-600/25" : "bg-amber-400/20"
-              )}
-            />
-            <div
-              className={cn(
-                "absolute -bottom-32 right-0 h-80 w-80 rounded-full blur-3xl sm:h-[28rem] sm:w-[28rem]",
-                theme === "CHRISTMAS" ? "bg-emerald-500/20" : "bg-fuchsia-500/20"
-              )}
-            />
+            <div className={cn("sa-glow absolute -left-24 -top-24 h-80 w-80 rounded-full blur-3xl sm:h-[32rem] sm:w-[32rem]", look.stage.glowA)} />
+            <div className={cn("sa-glow absolute -bottom-32 right-0 h-80 w-80 rounded-full blur-3xl [animation-delay:-4s] sm:h-[28rem] sm:w-[28rem]", look.stage.glowB)} />
           </>
         )}
         <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />
@@ -84,10 +61,13 @@ export default function OffersSection({ offers, theme }: { offers: Promotion[]; 
         <div className="mb-7 flex items-end justify-between gap-4 sm:mb-12">
           <div className="max-w-2xl">
             <p data-anim="fade-up" className={cn("mb-3 text-[11px] font-extrabold uppercase tracking-[0.22em]", festive ? "text-sky-200/80" : "text-brand-ocean")}>
-              {copy.kicker}
+              {look ? look.kicker : "Limited time"}
             </p>
             <h2 id="offers-heading" data-anim="heading" className="[perspective:800px] font-display text-[2rem] font-black leading-[1.05] tracking-[-0.035em] text-balance sm:text-5xl lg:text-6xl">
-              {copy.title}
+              {look ? look.title : "Events & offers"}{" "}
+              <span className={cn("font-serif font-normal italic", look ? look.italicColor : "text-slate-400")}>
+                {look ? look.titleItalic : "worth packing for."}
+              </span>
             </h2>
           </div>
           <Link

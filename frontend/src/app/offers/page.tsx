@@ -4,6 +4,7 @@ import { Gift } from "lucide-react";
 import { getPromotions } from "@/lib/api";
 import OfferCard from "@/components/offer-card";
 import PageHero from "@/components/page-hero";
+import { festivalLook } from "@/lib/festivals";
 
 export const revalidate = 60;
 
@@ -17,12 +18,13 @@ export default async function OffersPage() {
   const { items, theme } = await getPromotions();
   const events = items.filter((i) => i.kind === "EVENT");
   const offers = items.filter((i) => i.kind === "OFFER");
-  const title = theme.active === "CHRISTMAS" ? "Christmas Events & Offers" : theme.active === "NEWYEAR" ? "New Year Events & Offers" : "Events & Offers";
+  const look = festivalLook(theme.active);
+  const title = look ? `${look.name} Events & Offers` : "Events & Offers";
 
   return (
     <div className="bg-white">
       <PageHero
-        eyebrow={theme.active === "NONE" ? "Limited time" : theme.active === "CHRISTMAS" ? "Christmas specials" : "New Year specials"}
+        eyebrow={look ? `${look.emoji} ${look.name} specials` : "Limited time"}
         title={title}
         subtitle="Limited-time prices and group departures, updated by our team."
         image={items[0]?.image_url || "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1600&q=80"}

@@ -319,7 +319,10 @@ class TeamMember(models.Model):
 class Promotion(models.Model):
     """Events and offers shown on the home page and /offers (managed from Owner HQ → Offers)."""
     KIND_CHOICES = [('OFFER', 'Offer'), ('EVENT', 'Event')]
-    FESTIVAL_CHOICES = [('NONE', 'None'), ('CHRISTMAS', 'Christmas'), ('NEWYEAR', 'New Year')]
+    FESTIVAL_CHOICES = [
+        ('NONE', 'None'), ('CHRISTMAS', 'Christmas'), ('NEWYEAR', 'New Year'),
+        ('SANKRANTI', 'Sankranti'), ('UGADI', 'Ugadi'), ('DIWALI', 'Diwali'),
+    ]
 
     kind = models.CharField(max_length=10, choices=KIND_CHOICES, default='OFFER')
     festival = models.CharField(max_length=12, choices=FESTIVAL_CHOICES, default='NONE',
@@ -354,6 +357,9 @@ class SiteTheme(models.Model):
         ('AUTO', 'Automatic: only while a festive offer or event is live'),
         ('CHRISTMAS', 'Christmas (always on)'),
         ('NEWYEAR', 'New Year (always on)'),
+        ('SANKRANTI', 'Sankranti (always on)'),
+        ('UGADI', 'Ugadi (always on)'),
+        ('DIWALI', 'Diwali (always on)'),
         ('NONE', 'Off'),
     ]
     theme = models.CharField(max_length=12, choices=THEME_CHOICES, default='AUTO')
