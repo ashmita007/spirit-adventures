@@ -36,7 +36,7 @@ export default function OfferCountdown({
       className={
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold tabular-nums tracking-tight " +
         (tone === "dark"
-          ? "bg-white/10 text-white ring-1 ring-inset ring-white/15 backdrop-blur-md"
+          ? "bg-white/10 text-white ring-1 ring-inset ring-white/15 sm:backdrop-blur-md"
           : "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-100")
       }
       aria-label={`${label} ${d} days ${h} hours`}

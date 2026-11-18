@@ -32,7 +32,34 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
     if (!ctx) return;
 
     let w = 0, h = 0, raf = 0, running = true, last = performance.now(), nextBurst = 700;
+    let lastDraw = 0, scrollingUntil = 0, skip = false;
     const small = () => window.innerWidth < 640;
+    // Phones: draw at ~30 fps, and only every other frame while the page is scrolling,
+    // so scrolling always gets the CPU first.
+    const frameGap = () => (small() ? 33 : 16);
+    // Effects belong to the first screen: fade out while scrolling into the content,
+    // and stop drawing once invisible (keeps reading calm and saves battery).
+    let visible = 1;
+    const onScroll = () => {
+      scrollingUntil = performance.now() + 180;
+      const y = window.scrollY, vh = window.innerHeight;
+      visible = Math.max(0, Math.min(1, 1 - (y - vh * 0.45) / (vh * 0.5)));
+      canvas.style.opacity = String(visible);
+    };
+    // Lantern glow drawn once to an offscreen sprite (radial gradients per frame are costly).
+    const glow = document.createElement("canvas");
+    glow.width = glow.height = 64;
+    {
+      const g = glow.getContext("2d")!;
+      const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0, "rgba(255,214,120,0.95)");
+      grad.addColorStop(0.35, "rgba(251,146,60,0.55)");
+      grad.addColorStop(1, "rgba(251,146,60,0)");
+      g.fillStyle = grad;
+      g.fillRect(0, 0, 64, 64);
+      g.fillStyle = "rgba(255,237,180,1)";
+      g.beginPath(); g.ellipse(32, 32, 5.5, 7.5, 0, 0, Math.PI * 2); g.fill();
+    }
     const colors = palette.length ? palette : ["#ffffff"];
     const flakes: Flake[] = [];
     const sparks: Spark[] = [];
@@ -75,7 +102,7 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
       const x = w * rand(0.15, 0.85);
       const y = h * rand(0.1, 0.38);
       const c1 = pick(colors), c2 = pick(colors);
-      const count = small() ? 34 : 60;
+      const count = small() ? 26 : 60;
       const speed = (small() ? 120 : 170) * (warm ? 0.9 : 1);
       for (let i = 0; i < count; i++) {
         const a = (Math.PI * 2 * i) / count + rand(0, 0.12);
@@ -87,7 +114,7 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
 
     const seed = () => {
       flakes.length = kites.length = petals.length = lanterns.length = 0;
-      const m = small() ? 0.45 : 1;
+      const m = small() ? 0.35 : 1;
       if (kind === "snow") for (let i = 0; i < 110 * m; i++) flakes.push(makeFlake(true));
       if (kind === "kites") for (let i = 0; i < (small() ? 4 : 7); i++) kites.push(makeKite(true));
       if (kind === "petals") for (let i = 0; i < 46 * m; i++) petals.push(makePetal(true));
@@ -152,7 +179,12 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
 
     const frame = (now: number) => {
       if (!running) return;
-      const dt = Math.min((now - last) / 1000, 0.05);
+      raf = requestAnimationFrame(frame);
+      if (now - lastDraw < frameGap() - 1) return;
+      if (visible === 0) { last = now; return; }
+      if (now < scrollingUntil) { skip = !skip; if (skip) return; }
+      lastDraw = now;
+      const dt = Math.min((now - last) / 1000, 0.066);
       const t = now / 1000;
       last = now;
       ctx.clearRect(0, 0, w, h);
@@ -188,15 +220,9 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
           if (l.y < -30) Object.assign(l, makeLantern(false));
           const flicker = 0.75 + Math.sin(t * 9 + l.phase) * 0.12 + Math.random() * 0.08;
           const fadeTop = Math.min(1, l.y / (h * 0.25));
-          const g = ctx.createRadialGradient(l.x, l.y, 0, l.x, l.y, l.r * 3.2);
-          g.addColorStop(0, `rgba(255,214,120,${0.95 * flicker * fadeTop})`);
-          g.addColorStop(0.35, `rgba(251,146,60,${0.55 * flicker * fadeTop})`);
-          g.addColorStop(1, "rgba(251,146,60,0)");
-          ctx.globalAlpha = 1;
-          ctx.fillStyle = g;
-          ctx.beginPath(); ctx.arc(l.x, l.y, l.r * 3.2, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = `rgba(255,237,180,${flicker * fadeTop})`;
-          ctx.beginPath(); ctx.ellipse(l.x, l.y, l.r * 0.55, l.r * 0.75, 0, 0, Math.PI * 2); ctx.fill();
+          const size = l.r * 6.4;
+          ctx.globalAlpha = Math.max(0, flicker * fadeTop);
+          ctx.drawImage(glow, l.x - size / 2, l.y - size / 2, size, size);
         }
       }
 
@@ -233,7 +259,6 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
       }
 
       ctx.globalAlpha = 1;
-      raf = requestAnimationFrame(frame);
     };
 
     const onVisibility = () => {
@@ -245,10 +270,13 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
 
     resize();
     seed();
+    onScroll();
     raf = requestAnimationFrame(frame);
     window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
+      window.removeEventListener("scroll", onScroll);
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
@@ -256,5 +284,5 @@ export default function FestiveEffects({ kind, palette }: { kind: EffectKind; pa
     };
   }, [kind, palette]);
 
-  return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 z-[45]" />;
+  return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 z-[45] transition-opacity duration-300" />;
 }

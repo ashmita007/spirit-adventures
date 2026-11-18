@@ -317,5 +317,6 @@ input::-webkit-date-and-time-value {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.9; }
   50% { transform: translate3d(40px, 24px, 0) scale(1.12); opacity: 1; }
 }
-.sa-glow { animation: sa-glow-drift 9s ease-in-out infinite; }
+/* Big blurred layers are expensive on phones: animate them only on tablet/desktop */
+@media (min-width: 768px) { .sa-glow { animation: sa-glow-drift 9s ease-in-out infinite; will-change: transform; } }
 @media (prefers-reduced-motion: reduce) { .sa-glow { animation: none; } }

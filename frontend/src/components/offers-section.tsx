@@ -50,8 +50,8 @@ export default function OffersSection({ offers, theme }: { offers: Promotion[]; 
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         {look && (
           <>
-            <div className={cn("sa-glow absolute -left-24 -top-24 h-80 w-80 rounded-full blur-3xl sm:h-[32rem] sm:w-[32rem]", look.stage.glowA)} />
-            <div className={cn("sa-glow absolute -bottom-32 right-0 h-80 w-80 rounded-full blur-3xl [animation-delay:-4s] sm:h-[28rem] sm:w-[28rem]", look.stage.glowB)} />
+            <div className={cn("sa-glow absolute -left-24 -top-24 h-80 w-80 rounded-full blur-2xl sm:blur-3xl sm:h-[32rem] sm:w-[32rem]", look.stage.glowA)} />
+            <div className={cn("sa-glow absolute -bottom-32 right-0 h-80 w-80 rounded-full blur-2xl sm:blur-3xl [animation-delay:-4s] sm:h-[28rem] sm:w-[28rem]", look.stage.glowB)} />
           </>
         )}
         <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />

@@ -88,7 +88,7 @@ export default function OfferCard({
       {/* Top row */}
       <div className="flex items-start justify-between gap-2 p-4 sm:p-5">
         <div className="flex flex-wrap gap-1.5">
-          <span className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ring-1 ring-inset ring-white/20 backdrop-blur-md">
+          <span className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ring-1 ring-inset ring-white/20 sm:backdrop-blur-md">
             {look ? `${look.emoji} ` : ""}
             {offer.kind === "EVENT" ? "Event" : "Offer"}
           </span>
@@ -100,7 +100,7 @@ export default function OfferCard({
             </span>
           )}
         </div>
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 ring-1 ring-inset ring-white/20 backdrop-blur-md transition duration-500 group-hover:rotate-45 group-hover:bg-white group-hover:text-brand-navy">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 ring-1 ring-inset ring-white/20 sm:backdrop-blur-md transition duration-500 group-hover:rotate-45 group-hover:bg-white group-hover:text-brand-navy">
           <ArrowUpRight className="h-4 w-4" />
         </span>
       </div>

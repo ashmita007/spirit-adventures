@@ -75,7 +75,7 @@ export default function LeadPopup() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
-  const nameRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
   const uid = useId();
 
   // Retry leads that could not be sent before.
@@ -101,12 +101,12 @@ export default function LeadPopup() {
     writeStore("local", SUBMITTED_KEY, "1");
   }, []);
 
-  // Scroll lock and focus the name field. Escape does nothing on purpose.
+  // Scroll lock and focus the mobile number (the one thing every visitor must give). Escape does nothing on purpose.
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => nameRef.current?.focus(), 50);
+    const t = window.setTimeout(() => phoneRef.current?.focus(), 50);
     return () => {
       document.body.style.overflow = prev;
       window.clearTimeout(t);
@@ -120,17 +120,17 @@ export default function LeadPopup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const cleanName = name.trim().replace(/\s+/g, " ");
-    if (cleanName.replace(/[^\p{L}]/gu, "").length < 2) {
-      setError("Please enter your name.");
-      return;
-    }
     // Accept 98765 43210, +91 98765 43210, 098765 43210 – store as the 10 digits.
     let digits = phone.replace(/\D/g, "");
     if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
     if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
     if (!/^[6-9]\d{9}$/.test(digits)) {
       setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    const cleanName = name.trim().replace(/\s+/g, " ");
+    if (cleanName.replace(/[^\p{L}]/gu, "").length < 2) {
+      setError("Please enter your name.");
       return;
     }
     if (email.trim() && !/^\S+@\S+\.\S+$/.test(email.trim())) {
@@ -155,7 +155,7 @@ export default function LeadPopup() {
     if (res?.success) {
       setDone(true);
       unlock();
-    } else if (!res || !res.message || /network|fetch|timeout|server|try again/i.test(res.message)) {
+    } else if (!res || !res.message || /network|fetch|timeout|server|try again|too many|wait/i.test(res.message)) {
       // Could not reach us: keep the lead and send it on the next page load.
       savePending([...readPending(), lead]);
       setDone(true);
@@ -184,7 +184,7 @@ export default function LeadPopup() {
             One quick step to continue
           </h3>
           <p className="text-sm text-sky-200 mt-1.5">
-            Just your name and mobile number. It takes 10 seconds, and our team will share the latest prices,
+            Your mobile number and name. It takes 10 seconds, and our team will share the latest prices,
             dates and offers.
           </p>
         </div>
@@ -214,28 +214,6 @@ export default function LeadPopup() {
               )}
 
               <div>
-                <label htmlFor={`${uid}-name`} className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Your name *
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
-                  <input
-                    ref={nameRef}
-                    id={`${uid}-name`}
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Rahul Kumar"
-                    autoComplete="name"
-                    autoCapitalize="words"
-                    maxLength={150}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-
-              <div>
                 <label htmlFor={`${uid}-phone`} className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Mobile number *
                 </label>
@@ -243,6 +221,7 @@ export default function LeadPopup() {
                   <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                   <span className="absolute left-10 top-1/2 -translate-y-1/2 text-base sm:text-sm text-slate-500" aria-hidden="true">+91</span>
                   <input
+                    ref={phoneRef}
                     id={`${uid}-phone`}
                     type="tel"
                     required
@@ -253,6 +232,27 @@ export default function LeadPopup() {
                     inputMode="numeric"
                     maxLength={16}
                     className={inputCls.replace("pl-10", "pl-[4.75rem]")}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor={`${uid}-name`} className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Your name *
+                </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+                  <input
+                    id={`${uid}-name`}
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Rahul Kumar"
+                    autoComplete="name"
+                    autoCapitalize="words"
+                    maxLength={150}
+                    className={inputCls}
                   />
                 </div>
               </div>
