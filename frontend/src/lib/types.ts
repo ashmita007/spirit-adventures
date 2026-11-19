@@ -108,13 +108,16 @@ export interface Trip {
 }
 
 export interface GalleryImage {
-  id: number;
+  /** Gallery items use a number; photos taken from trips use "cover-<id>" / "photo-<id>". */
+  id: number | string;
   title: string;
   category: string;
   image_url: string;
   caption?: string;
   location?: string;
-  is_featured: boolean;
+  is_featured?: boolean;
+  /** Set on photos that come from a trip, so the gallery can link to it. */
+  trip_slug?: string;
 }
 
 export interface TeamMember {
@@ -155,3 +158,38 @@ export interface EnquiryPayload {
   travelers_count?: number;
   message?: string;
 }
+
+/** Landing page sections the owner can hide (Owner HQ → Landing page). */
+export const HOME_SECTIONS = [
+  { key: "offers", label: "Offers and events" },
+  { key: "packages", label: "Trip packages" },
+  { key: "destinations", label: "Moving destinations band" },
+  { key: "how", label: "How a trip works" },
+  { key: "quote", label: "Mountain quote with film" },
+  { key: "why", label: "Why travel with us" },
+  { key: "reviews", label: "Reviews" },
+  { key: "gallery", label: "Moments gallery and reels" },
+  { key: "maps", label: "Office maps" },
+  { key: "social", label: "Instagram and YouTube" },
+] as const;
+
+export type HomeSectionKey = (typeof HOME_SECTIONS)[number]["key"];
+
+export interface HeroVideo {
+  video_url: string;
+  poster_url: string;
+}
+
+/** Owner-editable landing page content. Empty values mean "use the built-in default". */
+export interface SiteContent {
+  instagram_url: string;
+  youtube_url: string;
+  hero_words: string[];
+  hero_subtitle: string;
+  hero_videos: HeroVideo[];
+  home_trip_ids: number[];
+  quote_image_url: string;
+  cta_image_url: string;
+  hidden_sections: HomeSectionKey[];
+}
+

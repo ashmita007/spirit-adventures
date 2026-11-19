@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -19,6 +19,8 @@ import TripPhotoMosaic from "@/components/trip-photo-mosaic";
 import { isVideoUrl, useDeferredVideo } from "@/lib/media";
 import { tripDrop, tripFaqs, tripPickup, tripSeason } from "@/lib/trip-faqs";
 import { whatsappUrl, pageMessage, tripMessage } from "@/lib/whatsapp";
+import { TRIP_HERO_VT } from "@/lib/view-transition";
+import CountUp from "@/components/count-up";
 
 interface TripDetailClientProps {
   trip: Trip;
@@ -76,6 +78,18 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
     { label: "Price / Person", value: formatCurrency(trip.price), highlight: true },
   ].filter((f) => f.value);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
+  // Booking bar waits until the hero photo has scrolled off screen.
+  const [pastHero, setPastHero] = useState(false);
+  useEffect(() => {
+    const hero = document.querySelector(`[data-trip-hero="${CSS.escape(trip.slug)}"]`);
+    if (!hero || typeof IntersectionObserver === "undefined") {
+      setPastHero(true);
+      return;
+    }
+    const io = new IntersectionObserver(([e]) => setPastHero(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [trip.slug]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "inclusions" | "gear" | "faqs">("overview");
   const inclusions = trip.inclusions ?? [];
@@ -120,7 +134,11 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
   return (
     <div className="min-h-dvh bg-white">
       {/* 1. Full-Width Cinematic Header Banner */}
-      <div className="relative h-[60dvh] sm:h-[70dvh] w-full bg-brand-navy overflow-hidden">
+      <div
+        data-trip-hero={trip.slug}
+        style={{ viewTransitionName: TRIP_HERO_VT }}
+        className="relative h-[60dvh] sm:h-[70dvh] w-full bg-brand-navy overflow-hidden"
+      >
         {/* Cover image is always the first paint (LCP); the video fades in over it once loaded */}
         <Image
           src={trip.cover_image}
@@ -494,12 +512,20 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
         </section>
       )}
 
-      {/* Mobile Sticky Booking Bar (replaces the bottom nav on trip pages) */}
-      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pointer-events-none">
+      {/* Mobile Sticky Booking Bar (replaces the bottom nav on trip pages).
+          Slides up once the hero photo has scrolled away; the price counts up as it arrives. */}
+      <div
+        className={cn(
+          "fixed bottom-0 inset-x-0 z-40 lg:hidden px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pointer-events-none transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+          pastHero ? "translate-y-0" : "translate-y-[130%]"
+        )}
+      >
         <div className="pointer-events-auto max-w-md mx-auto flex items-center justify-between gap-3 rounded-2xl bg-brand-navy/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-brand-navy/40 pl-4 pr-2 py-2">
           <div className="min-w-0">
             <div className="flex items-baseline gap-1.5">
-              <span className="font-display font-black text-lg text-white">{formatCurrency(trip.price)}</span>
+              <span className="font-display font-black text-lg tabular-nums text-white">
+                <CountUp value={trip.price} format={formatCurrency} run={pastHero} />
+              </span>
               {trip.original_price && (
                 <span className="text-[11px] text-slate-400 line-through">{formatCurrency(trip.original_price)}</span>
               )}

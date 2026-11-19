@@ -134,3 +134,20 @@ function splitSentences(text: string): string[] {
   // Drop a sentence-final full stop, but keep the one that ends "a.m." / "p.m.".
   return out.map((s) => (/\b[a-z]\.[a-z]\.$/i.test(s) ? s : s.replace(/\.$/, ""))).filter(Boolean);
 }
+
+/**
+ * Owner HQ sometimes types a desk number into a team member's role:
+ * "Sales Executive   Contact: 733 709 3116". Split it into a clean title and a
+ * dialable number (Indian 10-digit numbers get +91). Title casing is tidied.
+ */
+export function parseTeamRole(role: string): { title: string; phone?: { display: string; tel: string } } {
+  const raw = (role || "").replace(/\s+/g, " ").trim();
+  const m = raw.match(/^(.*?)(?:\s*[,|-]?\s*(?:contact|ph|phone|mob|mobile)\s*[:.-]?\s*)([+\d][\d\s-]{6,})$/i);
+  const titleRaw = (m ? m[1] : raw).trim();
+  const title = titleRaw.replace(/\b([a-z])/g, (c) => c.toUpperCase());
+  if (!m) return { title };
+  const digits = m[2].replace(/\D/g, "");
+  const local = digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
+  if (local.length !== 10) return { title };
+  return { title, phone: { display: `+91 ${local.slice(0, 5)} ${local.slice(5)}`, tel: `+91${local}` } };
+}

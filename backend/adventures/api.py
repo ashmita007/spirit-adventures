@@ -551,6 +551,45 @@ def list_gallery(request, category: Optional[str] = None, featured_only: Optiona
     ]
     return {"success": True, "data": data, "pagination": pagination, "message": f"Found {len(data)} gallery items"}
 
+
+_VIDEO_SUFFIXES = (".mp4", ".webm", ".mov", ".m4v", ".m3u8")
+
+
+@api.get("/gallery/trips/", response=ApiResponse, tags=["Gallery"])
+@rate_limit(max_requests=120, window_seconds=60, bucket_name="public_gallery")
+@cached_public()
+def list_trip_photos(request):
+    """Every photo uploaded to a published trip (cover first, then its gallery), for the
+    public gallery. Each URL appears once across all trips; video files are skipped."""
+    trips = (
+        Trip.objects.filter(is_published=True)
+        .select_related("destination", "category")
+        .prefetch_related("gallery_images")
+        .order_by("-is_featured", "title")
+    )
+    seen = set()
+    data = []
+
+    def add(key, url, trip):
+        clean = (url or "").strip()
+        if not clean or clean in seen or clean.split("?")[0].lower().endswith(_VIDEO_SUFFIXES):
+            return
+        seen.add(clean)
+        data.append({
+            "id": key,
+            "title": trip.title,
+            "category": trip.category.name if trip.category else "Trips",
+            "image_url": clean,
+            "location": trip.destination.name if trip.destination else "",
+            "trip_slug": trip.slug,
+        })
+
+    for trip in trips:
+        add(f"cover-{trip.id}", trip.cover_image, trip)
+        for img in trip.gallery_images.all():
+            add(f"photo-{img.id}", img.image_url, trip)
+    return {"success": True, "data": data, "message": f"Found {len(data)} trip photos"}
+
 # ----------------- Team (About page) -----------------
 @api.get("/team/", response=ApiResponse, tags=["Team"])
 @rate_limit(max_requests=120, window_seconds=60, bucket_name="public_team")
@@ -1103,3 +1142,11 @@ api.add_router("/crm", crm_router)
 from .promotions import router as owner_promotions_router  # noqa: E402
 
 api.add_router("/owner", owner_promotions_router)
+
+
+# ----------------- Landing page content: /api/v1/site/content/ + /api/v1/owner/site-content/ -----------------
+from .sitecontent import public_router as site_public_router, router as owner_site_router  # noqa: E402
+
+api.add_router("", site_public_router)
+api.add_router("/owner", owner_site_router)
+

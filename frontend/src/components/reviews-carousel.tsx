@@ -1,16 +1,60 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Star, CheckCircle, ExternalLink, Quote, Sparkles, MapPin } from "lucide-react";
 import { Review } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Small } from "@/components/mix-heading";
 
 interface ReviewsCarouselProps {
   reviews: Review[];
 }
 
+/** Stars light up one after another (CSS, driven by the section's data-reviews state). */
+function StarRow({ count, size = "w-3.5 h-3.5" }: { count: number; size?: string }) {
+  return (
+    <div className="flex text-amber-400">
+      {Array.from({ length: count }, (_, i) => (
+        <Star key={i} style={{ "--i": i } as React.CSSProperties} className={`sa-star ${size} fill-amber-400 text-amber-400`} />
+      ))}
+    </div>
+  );
+}
+
+/** A review quote whose words fade up in order when the section comes into view. */
+function QuoteWords({ text }: { text: string }) {
+  const words = text.split(/\s+/).filter(Boolean);
+  return (
+    <>
+      {words.map((w, i) => (
+        <span key={i} style={{ "--i": Math.min(i, 40) } as React.CSSProperties} className="sa-qw">
+          {w}{i < words.length - 1 ? " " : ""}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
+  // "ready" hides the words/stars (only once JS runs), "in" plays them.
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    el.dataset.reviews = "ready";
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          el.dataset.reviews = "in";
+          io.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -15% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   if (!reviews || reviews.length === 0) return null;
 
   // Two tracks of at most 6 reviews each. The marquee keyframes move by -50%,
@@ -32,7 +76,7 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   const marqueeList2 = [...track2, ...track2];
 
   return (
-    <section className="py-12 sm:py-16 bg-slate-50/70 border-y border-slate-200/70 relative overflow-hidden">
+    <section ref={sectionRef} className="py-12 sm:py-16 bg-slate-50/70 border-y border-slate-200/70 relative overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
       <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-brand-ocean/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
@@ -48,7 +92,7 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
               {/* Badge */}
 
               <h2 className="font-display font-black text-2xl sm:text-3xl text-brand-navy uppercase tracking-tight leading-tight">
-                Loved by <span data-count="500" data-count-suffix="+">500+</span> Adventurers
+                Loved <Small>by</Small> <span data-count="500" data-count-suffix="+">500+</span> Adventurers
               </h2>
               
               <p className="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
@@ -68,11 +112,7 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
                 <div>
                   <div className="flex items-center space-x-2">
                     <span className="font-display font-black text-lg text-brand-navy"><span data-count="5" data-count-decimals="1">5.0</span> / 5.0</span>
-                    <div className="flex text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
+                    <StarRow count={5} />
                   </div>
                   <p className="text-[11px] font-medium text-slate-500"><span data-count="120" data-count-suffix="+">120+</span> Verified Ratings on Google</p>
                 </div>
@@ -124,11 +164,7 @@ function ReviewCardCompact({ review, hidden = false }: { review: Review; hidden?
       <div>
         {/* Top: Stars + Trip Title Badge */}
         <div className="flex items-center justify-between gap-2 mb-2.5">
-          <div className="flex text-amber-400">
-            {[...Array(review.rating || 5)].map((_, i) => (
-              <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            ))}
-          </div>
+          <StarRow count={review.rating || 5} />
 
           {review.trip_title && (
             <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-brand-light text-brand-ocean text-[10px] font-bold border border-brand-sky/20 truncate max-w-[160px]">
@@ -140,7 +176,7 @@ function ReviewCardCompact({ review, hidden = false }: { review: Review; hidden?
 
         {/* Review snippet */}
         <p className="text-slate-700 text-xs sm:text-[13px] leading-relaxed line-clamp-3 font-normal">
-          &ldquo;{review.review_text}&rdquo;
+          &ldquo;<QuoteWords text={review.review_text} />&rdquo;
         </p>
       </div>
 

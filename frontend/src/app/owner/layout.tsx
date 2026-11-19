@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, Users, Mountain, BarChart3, Settings, 
   Compass, Eye, ExternalLink, Menu, X, CheckCircle2, ChevronRight,
-  ShieldCheck, PhoneCall, Sparkles, LogOut, BookOpen, Briefcase, Image as ImageIcon, Mail, UserRound, Gift
+  ShieldCheck, PhoneCall, Sparkles, LogOut, BookOpen, Briefcase, Image as ImageIcon, Mail, UserRound, Gift, LayoutTemplate
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ownerFetch } from "@/lib/owner-fetch";
@@ -64,6 +64,12 @@ export default function OwnerLayout({
       name: "Offers",
       href: "/owner/offers",
       icon: Gift,
+      exact: false,
+    },
+    {
+      name: "Landing page",
+      href: "/owner/homepage",
+      icon: LayoutTemplate,
       exact: false,
     },
     {

@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import DestinationCard from "@/components/destination-card";
 import { getDestinations } from "@/lib/api";
 import PageHero from "@/components/page-hero";
+import RouteMap from "@/components/route-map";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/destinations" },
@@ -25,6 +26,9 @@ export default async function DestinationsPage() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <div className="mb-12 sm:mb-16">
+          <RouteMap destinations={destinations} />
+        </div>
         <div data-anim="stagger" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {destinations.map((dest) => (
             <DestinationCard key={dest.id} destination={dest} />

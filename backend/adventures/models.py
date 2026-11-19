@@ -375,3 +375,33 @@ class SiteTheme(models.Model):
     def current(cls):
         obj = cls.objects.first()
         return obj or cls.objects.create()
+
+
+class SiteContent(models.Model):
+    """One row: owner-editable landing page content (Owner HQ → Landing page)."""
+    SECTION_KEYS = ["offers", "packages", "destinations", "how", "quote", "why", "reviews", "gallery", "maps", "social"]
+
+    instagram_url = models.CharField(max_length=300, blank=True)
+    youtube_url = models.CharField(max_length=300, blank=True)
+    hero_words = models.CharField(
+        max_length=200, blank=True,
+        help_text="Comma-separated words that roll in the hero headline; empty uses the defaults",
+    )
+    hero_subtitle = models.CharField(max_length=240, blank=True)
+    # [{"video_url": "...", "poster_url": "..."}]; empty uses the built-in hero films
+    hero_videos = models.JSONField(default=list, blank=True)
+    # Trip ids shown first on the home page, in this order; empty orders trips automatically
+    home_trip_ids = models.JSONField(default=list, blank=True)
+    quote_image_url = models.CharField(max_length=500, blank=True)
+    cta_image_url = models.CharField(max_length=500, blank=True)
+    # Section keys (from SECTION_KEYS) hidden on the home page
+    hidden_sections = models.JSONField(default=list, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "Landing page content"
+
+    @classmethod
+    def current(cls):
+        obj = cls.objects.first()
+        return obj or cls.objects.create()

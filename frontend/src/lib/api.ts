@@ -1,7 +1,7 @@
 import type { FestiveTheme } from "./festivals";
 import { ownerFetch } from "./owner-fetch";
 import { 
-  Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload, TeamMember 
+  Trip, Destination, Category, Review, GalleryImage, BlogPost, FAQ, EnquiryPayload, TeamMember, SiteContent
 } from "./types";
 import { FALLBACK_TRIPS as RAW_FALLBACK_TRIPS } from "./fallback-trips";
 
@@ -471,6 +471,12 @@ export async function getGallery(category?: string): Promise<GalleryImage[]> {
   return fetchFromApi<GalleryImage[]>(`/gallery/${query}`, fallback);
 }
 
+/** Every photo uploaded to a published trip, each URL once. Empty when the backend is down. */
+export async function getTripPhotos(): Promise<GalleryImage[]> {
+  const data = await fetchFromApi<GalleryImage[]>("/gallery/trips/", []);
+  return Array.isArray(data) ? data : [];
+}
+
 /** Published team members for the About page. Empty when the backend is down: never invent people. */
 export interface Promotion {
   id: number;
@@ -515,6 +521,24 @@ const NO_PROMOTIONS: PromotionsData = {
 export async function getPromotions(): Promise<PromotionsData> {
   const data = await fetchFromApi<PromotionsData>("/promotions/", NO_PROMOTIONS);
   return data && Array.isArray(data.items) && data.theme ? data : NO_PROMOTIONS;
+}
+
+export const EMPTY_SITE_CONTENT: SiteContent = {
+  instagram_url: "",
+  youtube_url: "",
+  hero_words: [],
+  hero_subtitle: "",
+  hero_videos: [],
+  home_trip_ids: [],
+  quote_image_url: "",
+  cta_image_url: "",
+  hidden_sections: [],
+};
+
+/** Landing page content from Owner HQ; any missing field falls back to the default. */
+export async function getSiteContent(): Promise<SiteContent> {
+  const data = await fetchFromApi<Partial<SiteContent> | null>("/site/content/", null);
+  return { ...EMPTY_SITE_CONTENT, ...(data || {}) };
 }
 
 export async function getTeam(): Promise<TeamMember[]> {

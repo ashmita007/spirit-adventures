@@ -4,14 +4,16 @@ import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Compass, Sparkles } from "lucide-react";
 import { pickVideoUrl } from "@/lib/media";
+import { Small } from "@/components/mix-heading";
 
-export default function NatureQuoteSection() {
+/** Full-width quote over a looping film; an owner photo (Owner HQ → Landing page) replaces the film. */
+export default function NatureQuoteSection({ image }: { image?: string }) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
 
-  const posterUrl = "https://res.cloudinary.com/xvxaicfe/image/upload/w_1280,c_limit,f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
-  const videoUrl = "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4";
+  const posterUrl = image || "https://res.cloudinary.com/xvxaicfe/image/upload/w_1280,c_limit,f_auto,q_auto/v1790341314/spirit_adventures/hero/maldives_travel_poster.jpg";
+  const videoUrl = image ? "" : "https://res.cloudinary.com/xvxaicfe/video/upload/w_1280,c_limit,q_auto:good,vc_h264,br_1500k/v1790341162/spirit_adventures/nature/waterfall.mp4";
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -57,7 +59,7 @@ export default function NatureQuoteSection() {
       />
 
       {/* Cinematic Looping video with subtle zoom - mounted only when scrolled into view */}
-      {inView && pickVideoUrl(videoUrl) && (
+      {inView && videoUrl && pickVideoUrl(videoUrl) && (
         <video
           ref={videoRef}
           src={pickVideoUrl(videoUrl) ?? undefined}
@@ -80,9 +82,10 @@ export default function NatureQuoteSection() {
       <div className="relative z-20 max-w-4xl mx-auto px-6 text-center text-white flex flex-col items-center">
 
         <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl md:text-7xl uppercase tracking-tight leading-[1.1] text-balance drop-shadow-2xl">
-          &ldquo;The Mountain Calls.<br />
+          &ldquo;The mountain <Small>calls.</Small>
+          <br />
           <span>
-            The Journey Begins.&rdquo;
+            The journey <Small>begins.</Small>&rdquo;
           </span>
         </h2>
 

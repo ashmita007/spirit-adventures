@@ -6,9 +6,18 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Compass, Search, Sparkles, X, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDeferredVideo } from "@/lib/media";
+import { Sticker } from "@/components/floating-sticker";
+import { Small } from "@/components/mix-heading";
+import RollingWord from "@/components/rolling-word";
+import type { HeroVideo } from "@/lib/types";
 
 interface VideoHeroProps {
   onPlanTripClick?: () => void;
+  /** Owner's rolling headline words (Owner HQ → Landing page); empty uses the defaults. */
+  words?: string[];
+  subtitle?: string;
+  /** Owner's hero films; empty uses the built-in scenes. */
+  videos?: HeroVideo[];
 }
 
 interface HeroScene {
@@ -31,7 +40,7 @@ function videoFrame(videoUrl: string, second: number) {
   return videoUrl.replace("/video/upload/", `/video/upload/so_${second},f_auto,q_auto/`).replace(/\.(mp4|mov|webm)$/i, ".jpg");
 }
 
-const HERO_SCENES: HeroScene[] = [
+const DEFAULT_SCENES: HeroScene[] = [
   ...(GOKARNA_SUNSET_URL
     ? [{ id: 0, video8kUrl: GOKARNA_SUNSET_URL, videoUrl: GOKARNA_SUNSET_URL, posterUrl: videoFrame(GOKARNA_SUNSET_URL, 18), vertical: true }]
     : []),
@@ -80,7 +89,20 @@ function cloudinaryWidth(url: string, width: number) {
   return url.replace("/upload/", `/upload/w_${width},c_limit,`);
 }
 
-export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
+const DEFAULT_WORDS = ["Adventure", "Trek", "Beach", "River", "Himalaya"];
+const DEFAULT_SUBTITLE =
+  "High-altitude Himalayan passes, South Indian river rafting, and Western Ghats jungle treks with certified expedition leaders.";
+
+/** Owner films as hero scenes; a missing poster is cut from the video itself on Cloudinary. */
+function scenesFrom(videos: HeroVideo[]): HeroScene[] {
+  return videos.map((v, i) => {
+    const poster = v.poster_url || (v.video_url.includes("res.cloudinary.com") ? videoFrame(v.video_url, 2) : "");
+    return { id: 100 + i, video8kUrl: v.video_url, videoUrl: v.video_url, posterUrl: poster };
+  });
+}
+
+export default function VideoHero({ onPlanTripClick, words, subtitle, videos }: VideoHeroProps) {
+  const HERO_SCENES = React.useMemo(() => (videos?.length ? scenesFrom(videos) : DEFAULT_SCENES), [videos]);
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -94,7 +116,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
       setCurrentSceneIndex((prev) => (prev + 1) % HERO_SCENES.length);
     }, 10000);
     return () => clearInterval(timer);
-  }, []);
+  }, [HERO_SCENES.length]);
 
   // Close suggestions if clicked outside
   useEffect(() => {
@@ -160,7 +182,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
             >
               {/* Poster: only the current and next slide are fetched (hidden slides
                   still download because they sit inside the viewport), sized to the screen */}
-              {(isActive || idx === (currentSceneIndex + 1) % HERO_SCENES.length) && (
+              {scene.posterUrl && (isActive || idx === (currentSceneIndex + 1) % HERO_SCENES.length) && (
                 <img
                   src={cloudinaryWidth(scene.posterUrl, 1280)}
                   srcSet={POSTER_WIDTHS.map((w) => `${cloudinaryWidth(scene.posterUrl, w)} ${w}w`).join(", ")}
@@ -181,7 +203,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
               {isActive && (
                 <HeroVideo
                   url={scene.videoUrl}
-                  poster={cloudinaryWidth(scene.posterUrl, 1280)}
+                  poster={scene.posterUrl ? cloudinaryWidth(scene.posterUrl, 1280) : ""}
                   vertical={scene.vertical}
                   onReady={() => setIsLoaded(true)}
                 />
@@ -197,19 +219,23 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
 
       {/* 3. Mobile-First Hero Content */}
       <div data-hero-content className="relative z-30 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-16 sm:py-32 flex flex-col items-center [perspective:900px]">
-        {/* Sleek Pill Badge */}
+        {/* Floating stickers: pop in after the title lands, bob, drag and spring back */}
+        <div className="mb-5 flex flex-wrap justify-center gap-x-3 gap-y-3 sm:mb-7">
+          <Sticker tone="sky" rotate={-6} delay={0.9}>⛰ 12–14 per batch</Sticker>
+          <Sticker tone="sun" rotate={4} delay={1.0}>🛡 Certified leaders</Sticker>
+          <Sticker rotate={-3} delay={1.1} className="hidden sm:inline-block">🌊 Treks · Rafting · Beaches</Sticker>
+        </div>
 
         {/* Impactful Heading */}
         <h1 data-hero-item="title" className="font-display font-black text-[2.6rem] sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-[1.08] drop-shadow-2xl text-balance">
-          FIND YOUR NEXT <br />
-          <span className="text-brand-sky">
-            ADVENTURE
-          </span>
+          FIND <Small>your next</Small>
+          <br />
+          <RollingWord words={words?.length ? words : DEFAULT_WORDS} className="text-brand-sky" />
         </h1>
 
         {/* Concise Subtitle */}
         <p data-hero-item className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200/90 max-w-xl font-normal leading-relaxed text-balance drop-shadow">
-          High-altitude Himalayan passes, South Indian river rafting, and Western Ghats jungle treks with certified expedition leaders.
+          {subtitle || DEFAULT_SUBTITLE}
         </p>
 
         {/* 4. Responsive Search Bar for Mobile & Desktop with Destination Suggestions */}
@@ -384,7 +410,7 @@ function HeroVideo({ url, poster, vertical, onReady }: { url: string; poster: st
   return (
     <video
       key={src}
-      poster={vertical ? undefined : poster}
+      poster={vertical || !poster ? undefined : poster}
       autoPlay
       muted
       loop

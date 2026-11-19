@@ -6,6 +6,8 @@ import PageHero from "@/components/page-hero";
 import OfficeMaps from "@/components/office-maps";
 import { OFFICES, PHONES, mapOpenUrl } from "@/lib/offices";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
+import { socialLinks } from "@/lib/social";
+import { getSiteContent } from "@/lib/api";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
@@ -13,7 +15,8 @@ export const metadata: Metadata = {
   description: "Connect directly with our adventure desk via WhatsApp, phone, or email to discuss custom itineraries and upcoming batches.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const social = socialLinks(await getSiteContent());
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919666567551";
   const email = process.env.NEXT_PUBLIC_EMAIL || "info@spiritadventures.in";
 
@@ -97,7 +100,7 @@ export default function ContactPage() {
               <span className="text-xs font-bold text-brand-navy">Follow The Trails</span>
               <div className="flex items-center space-x-3">
                 <a
-                  href="https://instagram.com"
+                  href={social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
@@ -106,7 +109,7 @@ export default function ContactPage() {
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://youtube.com"
+                  href={social.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"

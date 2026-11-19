@@ -7,6 +7,8 @@ import { cn, formatCurrency } from "@/lib/utils";
 import { whatsappUrl } from "@/lib/whatsapp";
 import OfferCountdown from "@/components/offer-countdown";
 import { festivalLook } from "@/lib/festivals";
+import { STICKER_EDGE } from "@/components/motion/spotlight";
+import Celebrate from "@/components/celebrate";
 
 function niceDate(iso: string) {
   return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
@@ -54,6 +56,7 @@ export default function OfferCard({
     );
 
   return (
+    <Celebrate festival={offer.festival} className="h-full">
     <Wrapper
       className={cn(
         "group relative isolate flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-brand-navy text-white",
@@ -104,7 +107,7 @@ export default function OfferCard({
             {badge && (
               <span
                 style={look ? { backgroundImage: look.accent } : undefined}
-                className="rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] shadow-lg shadow-rose-900/30">
+                className={`-rotate-3 rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] transition-transform duration-300 group-hover:rotate-2 group-hover:scale-110 ${STICKER_EDGE}`}>
                 {badge}
               </span>
             )}
@@ -169,5 +172,6 @@ export default function OfferCard({
         </div>
       </div>
     </Wrapper>
+    </Celebrate>
   );
 }

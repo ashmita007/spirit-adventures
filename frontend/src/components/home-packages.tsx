@@ -8,6 +8,7 @@ import { ArrowRight, CalendarDays, MapPin, Mountain } from "lucide-react";
 import TripCard from "@/components/trip-card";
 import type { Trip } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Small } from "@/components/mix-heading";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const ALL = "All";
@@ -124,7 +125,7 @@ export default function HomePackages({ trips, total }: { trips: Trip[]; total: n
                 data-anim="heading"
                 className="[perspective:800px] mt-1 font-display text-3xl font-black uppercase tracking-tight text-brand-navy sm:text-5xl"
               >
-                Pick your next trip
+                Pick <Small>your next</Small> trip
               </h2>
             </div>
 

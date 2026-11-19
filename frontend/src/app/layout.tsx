@@ -6,9 +6,11 @@ import Footer from "@/components/footer";
 import WhatsAppButton from "@/components/whatsapp-button";
 import LeadPopup from "@/components/lead-popup";
 import FestiveTheme from "@/components/festive-theme";
-import { getPromotions } from "@/lib/api";
+import { getPromotions, getSiteContent } from "@/lib/api";
+import { socialLinks } from "@/lib/social";
 import MobileBottomNav from "@/components/mobile-nav";
 import MotionProvider from "@/components/motion/motion-provider";
+import ScrollFx from "@/components/motion/scroll-fx";
 import MediaGovernor from "@/components/motion/media-governor";
 import JsonLd from "@/components/json-ld";
 import { SITE_URL, SITE_NAME, DEFAULT_DESCRIPTION, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -91,6 +93,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [promotions, siteContent] = await Promise.all([getPromotions(), getSiteContent()]);
   return (
     <html lang="en-IN" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
@@ -103,14 +106,15 @@ export default async function RootLayout({
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       </head>
       <body className="min-h-dvh flex flex-col antialiased selection:bg-brand-ocean selection:text-white pb-16 md:pb-0">
-        <FestiveTheme theme={(await getPromotions()).theme} />
+        <FestiveTheme theme={promotions.theme} />
         <Navbar />
         <main className="flex-grow">{children}</main>
-        <Footer />
+        <Footer social={socialLinks(siteContent)} />
         <WhatsAppButton />
         <LeadPopup />
         <MobileBottomNav />
         <MotionProvider />
+        <ScrollFx />
         <MediaGovernor />
       </body>
     </html>

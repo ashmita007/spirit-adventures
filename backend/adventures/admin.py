@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     Destination, Category, Trip, TripImage, TripVideo,
-    TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ, TeamMember, Promotion, SiteTheme
+    TripItinerary, Enquiry, Review, GalleryImage, BlogPost, FAQ, TeamMember, Promotion, SiteTheme, SiteContent
 )
 
 class TripImageInline(admin.TabularInline):
@@ -254,3 +254,9 @@ class PromotionAdmin(admin.ModelAdmin):
 @admin.register(SiteTheme)
 class SiteThemeAdmin(admin.ModelAdmin):
     list_display = ('theme', 'banner_text', 'snow', 'updated_at')
+
+
+@admin.register(SiteContent)
+class SiteContentAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "instagram_url", "youtube_url", "updated_at")
+

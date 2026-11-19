@@ -5,7 +5,7 @@ import { ownerFetch } from "@/lib/owner-fetch";
  * Django only signs the request (staff session required); the file itself
  * goes browser → Cloudinary, so large videos never touch our server.
  */
-export type UploadFolder = "gallery" | "trips" | "videos" | "destinations" | "blog" | "team" | "offers";
+export type UploadFolder = "gallery" | "trips" | "videos" | "destinations" | "blog" | "team" | "offers" | "home";
 export type MediaKind = "image" | "video";
 
 export const MAX_BYTES: Record<MediaKind, number> = {

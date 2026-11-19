@@ -1,14 +1,44 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, MapPin, PhoneCall } from "lucide-react";
 import { cn, isPortalPath } from "@/lib/utils";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
 
+/** True while the visitor scrolls down past the first screen; false as soon as they scroll up. */
+function useHideOnScrollDown() {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      if (Math.abs(delta) > 6) {
+        // Always visible near the top and at the very bottom of the page.
+        const atBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 80;
+        setHidden(delta > 0 && y > 240 && !atBottom);
+        lastY = y;
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+  return hidden;
+}
+
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const scrolledAway = useHideOnScrollDown();
 
   // Hide on owner dashboard so it does not collide with admin tools
   const onTripPage = /^\/trips\/[^/]+/.test(pathname || "");
@@ -66,7 +96,13 @@ export default function MobileBottomNav() {
   };
 
   return (
-    <div className={cn("md:hidden fixed bottom-0 left-0 right-0 z-40 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pointer-events-none", onTripPage && "hidden")}>
+    <div
+      className={cn(
+        "md:hidden fixed bottom-0 left-0 right-0 z-40 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pointer-events-none transition-transform duration-300 ease-out motion-reduce:transition-none",
+        scrolledAway && "translate-y-[120%] focus-within:translate-y-0",
+        onTripPage && "hidden"
+      )}
+    >
       <nav aria-label="Main" className="pointer-events-auto max-w-md mx-auto bg-brand-navy/[0.97] border border-white/15 rounded-2xl shadow-2xl px-2 py-1.5 flex items-center">
         {renderItem(first)}
         {renderItem(second)}

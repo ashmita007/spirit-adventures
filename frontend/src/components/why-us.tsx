@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Award, Compass, HeartHandshake, Mountain, ShieldCheck } from "lucide-react";
+import { Small } from "@/components/mix-heading";
 
 const PHOTO_RAFTING =
   "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg";
@@ -44,7 +45,7 @@ export default function WhyUs() {
             data-anim="heading"
             className="[perspective:800px] font-display text-3xl font-black uppercase tracking-tight text-brand-navy sm:text-5xl lg:col-span-7"
           >
-            Why travel with us
+            Why <Small>travel with</Small> us
           </h2>
           <p data-anim="fade-up" className="max-w-md text-[15px] leading-7 text-slate-600 sm:text-base lg:col-span-5 lg:justify-self-end">
             We don&apos;t run crowded tour buses. We run small groups, put safety first and respect the places we visit.

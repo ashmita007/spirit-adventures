@@ -1,25 +1,34 @@
 "use client";
 
 /**
- * "Meet the crew" on the About page. Members come from Owner HQ → Team.
+ * "Meet the team" on the About page. Members come from Owner HQ → Team.
  *
- * Motion (GSAP, skipped for reduced-motion visitors):
- *  - heading words rise in once
- *  - lead and crew cards rise as they enter, their photo develops from grey to colour,
- *    names and roles follow; nothing moves with the scroll position
- *  - hover: card lifts 2px, photo zooms 1.03 inside its frame
- * Content is never hidden by CSS, so the section stays readable if JS fails.
+ * Structure: leaders as two large cards (bio clamped, "Read more" expands it);
+ * the crew grouped by job: the sales desk (with a call button parsed from the
+ * role text) and trip organisers (with their trips-completed count).
+ *
+ * Motion (GSAP, skipped for reduced-motion visitors): heading words rise once;
+ * each card rises as it enters while its photo develops from grey to colour.
+ * Hover (CSS): card lifts 2px, photo zooms 1.03, the info panel slides up.
+ * Nothing moves with the scroll position. Content is never hidden by CSS alone.
  */
-import React, { useRef } from "react";
+import React, { useId, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { Instagram, Linkedin, MapPin, Mountain } from "lucide-react";
+import { ChevronDown, Instagram, Linkedin, MapPin, Phone } from "lucide-react";
 import type { TeamMember } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { parseTeamRole } from "@/lib/readable-text";
+import { SpinSticker, Sticker } from "@/components/floating-sticker";
+import { whatsappUrl } from "@/lib/whatsapp";
+import { SPOTLIGHT, trackSpotlight } from "@/components/motion/spotlight";
+import { Small } from "@/components/mix-heading";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+const cityName = (c?: string) => (c ? c.trim().replace(/\b([a-z])/g, (x) => x.toUpperCase()) : "");
 
 function initials(name: string) {
   return name
@@ -30,12 +39,10 @@ function initials(name: string) {
     .join("");
 }
 
-function Socials({ m, dark = false }: { m: TeamMember; dark?: boolean }) {
+function Socials({ m }: { m: TeamMember }) {
   if (!m.instagram_url && !m.linkedin_url) return null;
-  const cls = cn(
-    "inline-flex h-8 w-8 items-center justify-center rounded-full border transition active:scale-95",
-    dark ? "border-white/25 text-white hover:bg-white hover:text-brand-navy" : "border-slate-200 text-slate-600 hover:bg-brand-navy hover:text-white"
-  );
+  const cls =
+    "inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:bg-brand-navy hover:text-white active:scale-95";
   return (
     <div className="flex gap-2">
       {m.instagram_url && (
@@ -62,53 +69,189 @@ function Photo({ m, sizes, className }: { m: TeamMember; sizes: string; classNam
   );
 }
 
+function LeadCard({ m }: { m: TeamMember }) {
+  const id = useId();
+  const [open, setOpen] = useState(false);
+  const { title } = parseTeamRole(m.role);
+  const long = (m.bio || "").length > 220;
+  return (
+    <article
+      data-team-card
+      onPointerMove={trackSpotlight}
+      className="group relative grid overflow-hidden rounded-[28px] bg-white p-2 text-brand-navy shadow-[0_30px_60px_-30px_rgba(2,20,40,0.7)] transition-transform duration-300 hover:-translate-y-0.5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
+    >
+      <span aria-hidden="true" className={SPOTLIGHT} />
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-brand-light sm:aspect-auto sm:min-h-[26rem]">
+        <div data-team-photo className="absolute inset-0">
+          <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 45vw, 100vw" className="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-3 p-4 pt-5 sm:p-7">
+        <span data-team-line className="text-xs font-bold uppercase tracking-[0.2em] text-brand-ocean">{title}</span>
+        <h3 data-team-line className="font-display text-3xl font-black uppercase leading-none">{m.name}</h3>
+        {m.bio && (
+          <div data-team-line>
+            <p id={`${id}-bio`} className={cn("text-[15px] leading-7 text-slate-600", !open && long && "line-clamp-4")}>
+              {m.bio}
+            </p>
+            {long && (
+              <button
+                type="button"
+                aria-expanded={open}
+                aria-controls={`${id}-bio`}
+                onClick={() => setOpen((o) => !o)}
+                className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-ocean transition hover:text-brand-navy"
+              >
+                {open ? "Show less" : "Read more"}
+                <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", open && "rotate-180")} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        )}
+        <div data-team-line className="mt-auto flex flex-wrap items-center gap-3 pt-2 text-xs text-slate-600">
+          {m.city && (
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5 text-brand-ocean" aria-hidden="true" /> {cityName(m.city)}
+            </span>
+          )}
+          {m.experience && <span className="rounded-full bg-brand-light px-2.5 py-1 font-semibold text-brand-navy">{m.experience}</span>}
+          <Socials m={m} />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function CrewCard({ m }: { m: TeamMember }) {
+  const { title, phone } = parseTeamRole(m.role);
+  const city = cityName(m.city);
+  return (
+    <article
+      data-team-card
+      onPointerMove={trackSpotlight}
+      className="group relative flex flex-col rounded-3xl bg-white p-1.5 shadow-[0_20px_40px_-24px_rgba(2,20,40,0.7)] transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_28px_50px_-24px_rgba(2,20,40,0.8)] sm:p-2"
+    >
+      <span aria-hidden="true" className={SPOTLIGHT} />
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-brand-light">
+        <div data-team-photo className="absolute inset-0">
+          <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 33vw, 50vw" className="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+        </div>
+        {m.experience && (
+          <span data-team-meta className="absolute left-2.5 top-2.5 -rotate-6 rounded-full bg-amber-300 px-2.5 py-1 font-display text-[11px] font-black uppercase text-brand-navy shadow-[0_0_0_2px_#fff,0_6px_12px_-4px_rgba(2,20,40,0.5)] transition-transform duration-300 group-hover:rotate-0 group-hover:scale-110">
+            {m.experience.replace(/\s*trips?\s*completed/i, " trips")}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col px-2 pb-2 pt-3 sm:px-3">
+        <h4 className="font-display text-base font-black uppercase leading-tight text-brand-navy sm:text-lg">{m.name}</h4>
+        <p data-team-meta className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-brand-ocean">{title}</p>
+        {city && (
+          <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-slate-500">
+            <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {city}
+          </p>
+        )}
+        {(phone || m.instagram_url || m.linkedin_url) && (
+          <div className="mt-auto flex flex-wrap items-center gap-2 pt-3">
+            {phone && (
+              <a
+                href={`tel:${phone.tel}`}
+                aria-label={`Call ${m.name} on ${phone.display}`}
+                className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-full bg-brand-navy px-3 text-xs font-bold text-white transition hover:bg-brand-ocean active:scale-[0.97] sm:px-4 sm:text-sm"
+              >
+                <Phone className="h-4 w-4" aria-hidden="true" /> {phone.display}
+              </a>
+            )}
+            <Socials m={m} />
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function CrewGroup({ label, people }: { label: string; people: TeamMember[] }) {
+  if (people.length === 0) return null;
+  return (
+    <div>
+      <div data-team-group className="relative mb-4 flex items-baseline justify-between gap-4 pb-3 sm:mb-6">
+        <span data-team-rule aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px origin-left bg-white/20" />
+        <h3 className="font-display text-xl font-black uppercase tracking-tight text-white sm:text-2xl">{label}</h3>
+        <span className="text-sm font-semibold text-white/60">{people.length}</span>
+      </div>
+      <div data-team-grid className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+        {people.map((m) => (
+          <CrewCard key={m.id} m={m} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function TeamSection({ members }: { members: TeamMember[] }) {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
-      // No members -> the section isn't rendered, so there is nothing to animate
       const node = root.current;
       if (!node || members.length === 0) return;
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const el = node;
-        const develop = { scale: 1.12, filter: "saturate(0) brightness(0.85)", duration: 1.4, ease: "expo.out", clearProps: "filter" };
-
-        // Heading words rise once
-        gsap.from(el.querySelectorAll("[data-team-word]"), {
-          yPercent: 110,
-          opacity: 0,
-          duration: 0.9,
+        const head = node.querySelector("[data-team-head]");
+        // Ridge settles down from above as the section arrives.
+        gsap.from(node.querySelector("[data-team-ridge]"), {
+          yPercent: -60,
+          duration: 1.2,
           ease: "expo.out",
-          stagger: 0.06,
-          scrollTrigger: { trigger: el.querySelector("[data-team-head]"), start: "top 85%", once: true },
+          scrollTrigger: { trigger: node, start: "top 85%", once: true },
         });
-
-        // Lead cards: card rises, photo develops from grey to colour, text lines follow
-        el.querySelectorAll<HTMLElement>("[data-team-lead]").forEach((card) => {
+        // Heading words rise out of a blur, one after another.
+        // Filters get explicit end values: GSAP cannot interpolate towards "none".
+        gsap.fromTo(node.querySelectorAll("[data-team-word]"), { yPercent: 110, opacity: 0, filter: "blur(10px)" }, {
+          yPercent: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          ease: "expo.out",
+          stagger: 0.07,
+          clearProps: "filter",
+          scrollTrigger: { trigger: head, start: "top 85%", once: true },
+        });
+        // Group labels: the rule draws left to right, the label slides in.
+        node.querySelectorAll<HTMLElement>("[data-team-group]").forEach((g) => {
           gsap
-            .timeline({ scrollTrigger: { trigger: card, start: "top 85%", once: true } })
-            .from(card, { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", clearProps: "transform,opacity" })
-            .from(card.querySelector("[data-team-photo]"), develop, "<0.1")
-            .from(card.querySelectorAll("[data-team-line]"), { y: 24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.07 }, "<0.25");
+            .timeline({ scrollTrigger: { trigger: g, start: "top 88%", once: true } })
+            .from(g.querySelector("[data-team-rule]"), { scaleX: 0, duration: 1.1, ease: "expo.inOut" })
+            .from(g.querySelectorAll("h3, span:not([data-team-rule])"), { x: -16, opacity: 0, duration: 0.6, ease: "expo.out", stagger: 0.08 }, "<0.2");
         });
-
-        // Crew cards: each row plays as it enters. Card rises, photo develops,
-        // name letters rise, role and city follow.
-        ScrollTrigger.batch(el.querySelectorAll<HTMLElement>("[data-team-card]"), {
+        // Cards: a mask opens upward from the bottom edge while the card rises,
+        // the photo develops from grey and the text follows.
+        ScrollTrigger.batch(node.querySelectorAll<HTMLElement>("[data-team-card]"), {
           start: "top 90%",
           once: true,
-          onEnter: (cards) => {
+          onEnter: (cards) =>
             cards.forEach((card, i) => {
               gsap
-                .timeline({ delay: i * 0.1 })
-                .from(card, { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", clearProps: "transform,opacity" })
-                .from(card.querySelector("[data-team-cardphoto]"), develop, "<0.1")
-                .from(card.querySelectorAll("[data-team-char]"), { yPercent: 120, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.02 }, "<0.35")
-                .from(card.querySelectorAll("[data-team-meta]"), { y: 10, opacity: 0, duration: 0.6, ease: "expo.out", stagger: 0.06 }, "<0.2");
-            });
-          },
+                .timeline({ delay: i * 0.09 })
+                .from(card, {
+                  clipPath: "inset(100% 0% 0% 0% round 24px)",
+                  y: 48,
+                  duration: 1.1,
+                  ease: "expo.out",
+                  clearProps: "clipPath,transform",
+                })
+                .fromTo(
+                  card.querySelector("[data-team-photo]"),
+                  { scale: 1.18, filter: "saturate(0) brightness(0.9)" },
+                  { scale: 1, filter: "saturate(1) brightness(1)", duration: 1.4, ease: "expo.out", clearProps: "transform,filter" },
+                  "<"
+                )
+                .fromTo(
+                  card.querySelectorAll("[data-team-line], [data-team-meta], h4"),
+                  { y: 14, opacity: 0, filter: "blur(6px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out", stagger: 0.05, clearProps: "transform,opacity,filter" },
+                  "<0.35"
+                );
+            }),
         });
       });
     },
@@ -119,134 +262,86 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
 
   const leads = members.filter((m) => m.is_lead);
   const crew = members.filter((m) => !m.is_lead);
-  const heading = "The people behind every trip".split(" ");
+  const sales = crew.filter((m) => /sales|desk|support|planner/i.test(m.role));
+  const organisers = crew.filter((m) => !sales.includes(m));
+  // Big words with the small connecting words in amber: THE PEOPLE *behind every* TRIP.
+  const heading: { text: string; small?: boolean }[] = [
+    { text: "The" },
+    { text: "people" },
+    { text: "behind every", small: true },
+    { text: "trip" },
+  ];
+  const cities = [...new Set(members.map((m) => cityName(m.city)).filter(Boolean))].slice(0, 3);
 
   return (
-    <section ref={root} aria-labelledby="team-heading" className="relative overflow-hidden bg-brand-light py-24">
-      {/* Outline word */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-10 select-none whitespace-nowrap">
-        <span
-          className="block font-display text-[22vw] font-black uppercase leading-none text-transparent"
-          style={{ WebkitTextStroke: "1.5px rgba(14,116,144,0.14)" }}
-        >
-          Our Crew · Our Crew
-        </span>
-      </div>
-
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div data-team-head className="mx-auto mb-14 max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-sky/30 bg-white px-3 py-1 text-xs font-bold text-brand-ocean shadow-xs">
-            <Mountain className="h-3.5 w-3.5" /> Meet the team
-          </span>
-          <h2 id="team-heading" className="mt-4 font-display text-3xl font-black uppercase tracking-tight text-brand-navy sm:text-5xl">
-            {heading.map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-1 align-bottom">
-                <span data-team-word className="inline-block will-change-transform">
-                  {w}
-                  {i < heading.length - 1 ? " " : ""}
+    <section
+      ref={root}
+      aria-labelledby="team-heading"
+      className="relative isolate overflow-hidden bg-gradient-to-b from-brand-ocean via-brand-navy-light to-brand-navy pb-16 pt-24 sm:pb-24 sm:pt-36"
+    >
+      {/* Mountain ridge cut into the top edge, in the colour of the section above */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        data-team-ridge
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-14 w-full text-white sm:h-24"
+      >
+        <path
+          fill="currentColor"
+          d="M0 0h1440v38l-70 34-64-40-92 62-78-48-60 30-104-66-86 58-58-26-96 70-82-52-66 34-110-72-90 60-62-30-88 54-76-46-70 40-92-64-80 50-48-20L0 74z"
+        />
+      </svg>
+      <div aria-hidden="true" className="pointer-events-none absolute -right-32 top-24 -z-10 h-96 w-96 rounded-full bg-brand-sky/20 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -left-40 bottom-0 -z-10 h-96 w-96 rounded-full bg-brand-ocean/30 blur-3xl" />
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div data-team-head className="mb-10 grid gap-4 sm:mb-14 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-7">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-sky">Meet the team</p>
+            <h2 id="team-heading" className="mt-2 font-display text-3xl font-black uppercase tracking-tight text-white sm:text-5xl">
+              {heading.map((w, i) => (
+                <span key={i} className={cn("inline-block overflow-hidden pb-1", w.small ? "align-middle" : "align-bottom")}>
+                  <span data-team-word className="inline-block">
+                    {w.small ? <Small>{w.text}</Small> : w.text}
+                    {i < heading.length - 1 && !w.small ? "\u00A0" : ""}
+                  </span>
                 </span>
-              </span>
-            ))}
-          </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Trip captains, planners and the folks who pick up your call at midnight before a trek.
-          </p>
+              ))}
+            </h2>
+            {/* Stickers: drag them about, they spring back */}
+            <div className="mt-6 flex flex-wrap gap-x-3 gap-y-4">
+              <Sticker tone="sky" rotate={-6}>🏔 Since 2022</Sticker>
+              <Sticker tone="sun" rotate={4} delay={0.08}>⭐ 50+ destinations</Sticker>
+              <Sticker rotate={-3} delay={0.16}>🎒 {members.length} people</Sticker>
+              {cities.length > 0 && (
+                <Sticker tone="coral" rotate={5} delay={0.24}>📍 {cities.join(" · ")}</Sticker>
+              )}
+            </div>
+          </div>
+          <div className="flex items-end justify-between gap-4 lg:col-span-5 lg:flex-col lg:items-end lg:justify-self-end">
+            <p className="max-w-md text-[15px] leading-7 text-white/75 lg:text-right">
+              Trip captains, planners and the folks who pick up your call at midnight before a trek.
+            </p>
+            <SpinSticker
+              href={whatsappUrl("Hi Spirit Adventures, I'd like to talk to your team about a trip.")}
+              label="Talk to our team"
+              className="shrink-0"
+            />
+          </div>
         </div>
 
-        {/* Leadership */}
         {leads.length > 0 && (
-          <div className="mb-16 grid gap-6 lg:grid-cols-2">
+          <div className="mb-14 grid gap-5 sm:mb-20 lg:grid-cols-2">
             {leads.map((m) => (
-              <article
-                key={m.id}
-                data-team-lead
-                className="relative grid min-h-[420px] overflow-hidden rounded-[28px] bg-brand-navy text-white shadow-2xl sm:grid-cols-[1fr_1.1fr]"
-                style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15), 0 30px 60px -20px rgba(2,32,71,0.45)" }}
-              >
-                <div className="relative min-h-[280px] overflow-hidden">
-                  <div data-team-photo className="absolute inset-0">
-                    <Photo m={m} sizes="(min-width:1024px) 25vw, 100vw" />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/80 to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-brand-navy/90" />
-                </div>
-                <div className="relative flex flex-col justify-end gap-3 p-7">
-                  <span data-team-line className="text-xs font-bold uppercase tracking-[0.2em] text-brand-sky">
-                    {m.role}
-                  </span>
-                  <h3 data-team-line className="font-display text-3xl font-black uppercase leading-none">
-                    {m.name}
-                  </h3>
-                  {m.bio && (
-                    <p data-team-line className="text-sm leading-relaxed text-slate-300">
-                      {m.bio}
-                    </p>
-                  )}
-                  <div data-team-line className="flex flex-wrap items-center gap-3 pt-2 text-xs text-slate-300">
-                    {m.city && (
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="h-3.5 w-3.5 text-brand-sky" /> {m.city}
-                      </span>
-                    )}
-                    {m.experience && <span className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 font-semibold">{m.experience}</span>}
-                  </div>
-                  <div data-team-line>
-                    <Socials m={m} dark />
-                  </div>
-                </div>
-              </article>
+              <LeadCard key={m.id} m={m} />
             ))}
           </div>
         )}
 
-        {/* Crew */}
-        {crew.length > 0 && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {crew.map((m) => (
-              <div key={m.id} data-team-card>
-                  <article className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-                    <div className="relative aspect-[4/5] overflow-hidden">
-                      <div data-team-cardphoto className="absolute inset-0">
-                        <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
-                      </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/10 to-transparent" />
-                      {m.city && (
-                        <span data-team-meta className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                          <MapPin className="h-3 w-3" /> {m.city}
-                        </span>
-                      )}
-                      <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                        <h3 className="font-display text-xl font-black uppercase leading-tight" aria-label={m.name}>
-                          {m.name.split(" ").map((word, wi, arr) => (
-                            <span key={wi} aria-hidden="true" className="inline-block overflow-hidden whitespace-nowrap align-bottom">
-                              {Array.from(word).map((ch, ci) => (
-                                <span key={ci} data-team-char className="inline-block will-change-transform">
-                                  {ch}
-                                </span>
-                              ))}
-                              {wi < arr.length - 1 ? "\u00A0" : ""}
-                            </span>
-                          ))}
-                        </h3>
-                        <p data-team-meta className="text-xs font-bold uppercase tracking-wider text-brand-sky">{m.role}</p>
-                        {/* Bio slides up on hover (always shown on touch screens) */}
-                        {(m.bio || m.experience || m.instagram_url || m.linkedin_url) && (
-                          <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out [@media(hover:hover)]:grid-rows-[0fr] [@media(hover:hover)]:group-hover:grid-rows-[1fr] [@media(hover:hover)]:group-focus-within:grid-rows-[1fr]">
-                            <div className="overflow-hidden">
-                              {m.experience && <p className="mt-2 text-[11px] font-semibold text-white/80">{m.experience}</p>}
-                              {m.bio && <p className="mt-1.5 line-clamp-4 text-xs leading-relaxed text-slate-200">{m.bio}</p>}
-                              <div className="mt-3">
-                                <Socials m={m} dark />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="space-y-12 sm:space-y-16">
+          <CrewGroup label="Sales desk" people={sales} />
+          <CrewGroup label="Trip organisers" people={organisers} />
+        </div>
       </div>
     </section>
   );

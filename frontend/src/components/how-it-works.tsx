@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Small } from "@/components/mix-heading";
 
 const CDN = "https://res.cloudinary.com/xvxaicfe/image/upload/w_1600,c_limit,f_auto,q_auto";
 
@@ -66,7 +67,7 @@ export default function HowItWorks() {
             data-anim="heading"
             className="[perspective:800px] mt-1 font-display text-3xl font-black uppercase tracking-tight text-brand-navy sm:text-5xl"
           >
-            Three steps to the trail
+            Three steps <Small>to the</Small> trail
           </h2>
 
           <ol data-anim="stagger" className="mt-8 space-y-8 lg:mt-12 lg:space-y-[18svh]">

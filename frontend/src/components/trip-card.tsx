@@ -9,6 +9,8 @@ import { Trip } from "@/lib/types";
 import { formatCurrency, cn } from "@/lib/utils";
 import { smartCase } from "@/lib/readable-text";
 import { canPlayPreviews, cardVideoUrl, isVideoUrl } from "@/lib/media";
+import { isPlainClick, openTripWithTransition } from "@/lib/view-transition";
+import { SPOTLIGHT, STICKER_EDGE, trackSpotlight } from "@/components/motion/spotlight";
 
 interface TripCardProps {
   trip: Trip;
@@ -125,7 +127,15 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
     // If user clicked heart button or any interactive element, do not trigger card push
     const target = e.target as HTMLElement;
     if (target.closest("button") || target.closest("a")) return;
-    router.push(`/trips/${trip.slug}`);
+    openTrip();
+  };
+
+  // The card photo grows into the trip page's hero (falls back to a normal navigation).
+  const openTrip = () => openTripWithTransition(router, trip.slug, cardRef.current?.querySelector<HTMLElement>("[data-card-media]") ?? null);
+  const onTripLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isPlainClick(e)) return;
+    e.preventDefault();
+    openTrip();
   };
 
   const toggleSaved = (e?: React.MouseEvent) => {
@@ -141,13 +151,17 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
     <article
       ref={cardRef}
       onClick={handleCardClick}
+      onPointerMove={trackSpotlight}
       className="group relative bg-white rounded-3xl overflow-hidden border border-slate-200/70 shadow-xs hover:shadow-2xl hover:shadow-brand-navy/10 hover:border-brand-sky/40 hover:-translate-y-0.5 active:translate-y-0 transition-[box-shadow,border-color,transform] duration-300 flex flex-col h-full cursor-pointer select-none"
     >
+      <span aria-hidden="true" className={SPOTLIGHT} />
 
       {/* Top Media Container Link */}
       <Link
         href={`/trips/${trip.slug}`}
         aria-label={`View ${trip.title}`}
+        onClick={onTripLink}
+        data-card-media
         className={cn("block relative aspect-[16/10] w-full overflow-hidden bg-slate-900 z-10", !imgLoaded && "sa-shimmer")}
       >
         <Image
@@ -188,7 +202,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
         <div className="absolute top-3.5 left-3.5 right-14 flex items-center z-10 pointer-events-none">
           <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
             {trip.is_bestseller && (
-              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-brand-ocean text-white text-[10px] font-extrabold shadow-md">
+              <span className={`inline-flex -rotate-6 items-center space-x-1 rounded-full bg-amber-300 px-2.5 py-1 font-display text-[10px] font-black uppercase text-brand-navy transition-transform duration-300 group-hover:rotate-0 group-hover:scale-110 ${STICKER_EDGE}`}>
                 <Sparkles className="w-2.5 h-2.5" aria-hidden />
                 <span>Bestseller</span>
               </span>
@@ -250,6 +264,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
           <h3 className="font-display font-extrabold text-base sm:text-lg text-brand-navy leading-snug line-clamp-2 group-hover:text-brand-ocean transition-colors duration-200">
             <Link
               href={`/trips/${trip.slug}`}
+              onClick={onTripLink}
               className="hover:text-brand-ocean focus-visible:outline-none transition-colors"
             >
               {smartCase(trip.title)}
@@ -280,6 +295,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
 
           <Link
             href={`/trips/${trip.slug}`}
+            onClick={onTripLink}
             className="inline-flex min-h-11 items-center space-x-1 px-4 rounded-full bg-brand-light group-hover:bg-brand-ocean group-hover:text-white text-brand-ocean font-bold text-xs tracking-wide transition duration-200 shadow-2xs group-hover:shadow-md"
           >
             <span>Explore</span>

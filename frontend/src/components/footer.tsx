@@ -7,6 +7,8 @@ import { OFFICES, PHONES, mapOpenUrl, mapEmbedUrl } from "@/lib/offices";
 import { usePathname } from "next/navigation";
 import { Compass, Instagram, Youtube, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import { whatsappUrl, pageMessage } from "@/lib/whatsapp";
+import { socialLinks, type SocialLinks } from "@/lib/social";
+import FooterWordmark from "@/components/footer-wordmark";
 
 const POPULAR = [
   { slug: "3d-2n-gokarna-dandeli", label: "Gokarna & Dandeli (3D 2N)" },
@@ -17,7 +19,7 @@ const POPULAR = [
   { slug: "gokarna-dandeli-couple-package", label: "Gokarna–Dandeli couple package" },
 ];
 
-export default function Footer() {
+export default function Footer({ social = socialLinks() }: { social?: SocialLinks }) {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
@@ -43,7 +45,7 @@ export default function Footer() {
 
             <div className="pt-2 flex items-center space-x-3">
               <a
-                href="https://instagram.com"
+                href={social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -52,7 +54,7 @@ export default function Footer() {
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="https://youtube.com"
+                href={social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube"
@@ -152,6 +154,8 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
+        <FooterWordmark />
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 space-y-4 sm:space-y-0">

@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { getGallery } from "@/lib/api";
+import { getGallery, getTripPhotos } from "@/lib/api";
 import GalleryClient from "./gallery-client";
 import PageHero from "@/components/page-hero";
 
@@ -11,7 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  const images = await getGallery();
+  const [gallery, tripPhotos] = await Promise.all([getGallery(), getTripPhotos()]);
+  // Curated gallery photos first, then every trip photo not already shown.
+  const seen = new Set(gallery.map((g) => g.image_url));
+  const images = [...gallery, ...tripPhotos.filter((t) => !seen.has(t.image_url))];
 
   return (
     <div className="min-h-dvh bg-[#F7FBFE] pb-20">
