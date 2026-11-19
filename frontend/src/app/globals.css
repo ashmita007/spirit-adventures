@@ -362,7 +362,6 @@ input::-webkit-date-and-time-value {
   animation-delay: calc(var(--i) * 90ms + 150ms);
 }
 [data-reviews="in"] .sa-qw {
-  display: inline-block;
   animation: sa-word-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 450ms;
 }

@@ -22,14 +22,8 @@ function StarRow({ count, size = "w-3.5 h-3.5" }: { count: number; size?: string
   );
 }
 
-/** A review quote whose words fade up in order when the section comes into view. */
-/** The quote as one element that fades up after the stars (one node, not one per word). */
-function QuoteWords({ text }: { text: string }) {
-  return <span className="sa-qw">{text}</span>;
-}
-
 export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
-  // "ready" hides the words/stars (only once JS runs), "in" plays them.
+  // "ready" hides the quotes/stars (only once JS runs), "in" plays them.
   const sectionRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = sectionRef.current;
@@ -68,7 +62,7 @@ export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   const marqueeList2 = [...track2, ...track2];
 
   return (
-    <section ref={sectionRef} className="py-12 sm:py-16 bg-slate-50/70 border-y border-slate-200/70 relative overflow-hidden">
+    <section ref={sectionRef} className="py-12 sm:py-16 bg-slate-50 border-y border-slate-200/70 relative overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
       <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-brand-ocean/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
@@ -167,8 +161,9 @@ function ReviewCardCompact({ review, hidden = false }: { review: Review; hidden?
         </div>
 
         {/* Review snippet */}
-        <p className="text-slate-700 text-xs sm:text-[13px] leading-relaxed line-clamp-3 font-normal">
-          &ldquo;<QuoteWords text={review.review_text} />&rdquo;
+        {/* The whole quote fades up after the stars; it stays one block so the 3-line clamp holds. */}
+        <p className="sa-qw text-slate-700 text-xs sm:text-[13px] leading-relaxed line-clamp-3 font-normal">
+          &ldquo;{review.review_text}&rdquo;
         </p>
       </div>
 
