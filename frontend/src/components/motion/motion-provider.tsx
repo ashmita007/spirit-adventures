@@ -80,9 +80,13 @@ export default function MotionProvider() {
         {
           motion: "(prefers-reduced-motion: no-preference)",
           finePointer: "(hover: hover) and (pointer: fine)",
+          phone: "(max-width: 767px)",
         },
         (ctx) => {
-          const { motion, finePointer } = ctx.conditions as { motion: boolean; finePointer: boolean };
+          const { motion, finePointer, phone } = ctx.conditions as { motion: boolean; finePointer: boolean; phone: boolean };
+          // Phones: shorter, flatter moves (no 3D tilts or scale), started as soon as an
+          // element peeks in, so content is readable the moment a thumb scroll stops.
+          const DUR = phone ? 0.45 : 0.65;
 
           // Reading progress bar
           if (progressRef.current) {
@@ -110,19 +114,20 @@ export default function MotionProvider() {
             items.forEach((item, i) => {
               const at = i === 0 ? 0.15 : "-=0.85";
               if (item.dataset.heroItem === "title") {
-                const split = SplitText.create(item, { type: "chars,words", charsClass: "sa-char" });
-                solidifyGradient(split.chars);
+                const split = SplitText.create(item, phone ? { type: "words", wordsClass: "sa-word" } : { type: "chars,words", charsClass: "sa-char" });
+                const pieces = phone ? split.words : split.chars;
+                solidifyGradient(pieces);
                 gsap.set(item, { opacity: 1 });
                 tl.from(
-                  split.chars,
+                  pieces,
                   {
-                    yPercent: 110,
-                    rotateX: -70,
+                    yPercent: phone ? 70 : 110,
+                    rotateX: phone ? 0 : -70,
                     opacity: 0,
                     transformOrigin: "50% 100%",
                     force3D: true,
-                    stagger: { each: 0.026, from: "start" },
-                    duration: 1.1,
+                    stagger: { each: phone ? 0.07 : 0.026, from: "start" },
+                    duration: phone ? 0.8 : 1.1,
                     clearProps: "transform,opacity",
                   },
                   at
@@ -162,30 +167,35 @@ export default function MotionProvider() {
             const split = SplitText.create(el, { type: "words", wordsClass: "sa-word" });
             solidifyGradient(split.words);
             gsap.from(split.words, {
-              yPercent: 60,
+              yPercent: phone ? 40 : 60,
               opacity: 0,
-              rotateX: -35,
+              rotateX: phone ? 0 : -35,
               transformOrigin: "50% 100%",
               force3D: true,
-              duration: 0.7,
+              duration: phone ? 0.5 : 0.7,
               clearProps: "transform,opacity",
               ease: EASE,
-              stagger: 0.045,
-              scrollTrigger: { trigger: el, start: "top 95%", once: true },
+              stagger: phone ? 0.03 : 0.045,
+              scrollTrigger: { trigger: el, start: phone ? "top bottom" : "top 95%", once: true },
             });
           });
 
           // 3. Simple fade-up blocks
+          // Tailwind `transition` classes also animate opacity/transform. Left on, the
+          // browser eases toward every GSAP frame and the reveal lags and looks washed
+          // out, worst on phones. So CSS transitions are paused while GSAP animates.
+          const noCss = { transition: "none" };
           q("[data-anim='fade-up']").forEach((el) => {
+            gsap.set(el, noCss);
             gsap.from(el, {
-              y: 28,
+              y: phone ? 16 : 28,
               opacity: 0,
-              duration: 0.65,
+              duration: DUR,
               ease: EASE,
               force3D: true,
-              clearProps: "transform,opacity",
-              delay: Number(el.dataset.delay || 0),
-              scrollTrigger: { trigger: el, start: "top 96%", once: true },
+              clearProps: "transform,opacity,transition",
+              delay: phone ? 0 : Number(el.dataset.delay || 0),
+              scrollTrigger: { trigger: el, start: phone ? "top bottom" : "top 96%", once: true },
             });
           });
 
@@ -193,9 +203,9 @@ export default function MotionProvider() {
           q("[data-anim='stagger']").forEach((group) => {
             const kids = Array.from(group.children) as HTMLElement[];
             if (!kids.length) return;
-            gsap.set(kids, { opacity: 0, y: 36, scale: 0.98 });
+            gsap.set(kids, { ...noCss, opacity: 0, y: phone ? 18 : 36, scale: phone ? 1 : 0.98 });
             ScrollTrigger.batch(kids, {
-              start: "top 98%",
+              start: phone ? "top bottom" : "top 98%",
               once: true,
               interval: 0.05,
               batchMax: 6,
@@ -204,11 +214,11 @@ export default function MotionProvider() {
                   opacity: 1,
                   y: 0,
                   scale: 1,
-                  duration: 0.6,
+                  duration: DUR,
                   ease: EASE,
                   force3D: true,
-                  stagger: 0.06,
-                  clearProps: "transform",
+                  stagger: phone ? 0.05 : 0.06,
+                  clearProps: "transform,transition",
                 }),
             });
           });
@@ -232,7 +242,7 @@ export default function MotionProvider() {
           q("[data-anim='clip']").forEach((el) => {
             gsap.fromTo(
               el,
-              { scale: 0.88, opacity: 0.6 },
+              { scale: phone ? 0.94 : 0.88, opacity: phone ? 1 : 0.6 },
               {
                 scale: 1,
                 opacity: 1,
