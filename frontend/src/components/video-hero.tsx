@@ -227,19 +227,19 @@ export default function VideoHero({ onPlanTripClick, words, subtitle, videos }: 
         </div>
 
         {/* Impactful Heading */}
-        <h1 data-hero-item="title" className="font-display font-black text-[2.6rem] sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-[1.08] drop-shadow-2xl text-balance">
+        <h1 data-hero-item="title" style={{ ["--hi" as string]: 0 }} className="font-display font-black text-[2.6rem] sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-[1.08] drop-shadow-2xl text-balance">
           FIND <Small>your next</Small>
           <br />
           <RollingWord words={words?.length ? words : DEFAULT_WORDS} className="text-brand-sky" />
         </h1>
 
         {/* Concise Subtitle */}
-        <p data-hero-item className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200/90 max-w-xl font-normal leading-relaxed text-balance drop-shadow">
+        <p data-hero-item style={{ ["--hi" as string]: 1 }} className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200/90 max-w-xl font-normal leading-relaxed text-balance drop-shadow">
           {subtitle || DEFAULT_SUBTITLE}
         </p>
 
         {/* 4. Responsive Search Bar for Mobile & Desktop with Destination Suggestions */}
-        <div data-hero-item ref={searchContainerRef} className="relative z-30 w-full max-w-xl mt-6 sm:mt-8">
+        <div data-hero-item style={{ ["--hi" as string]: 2 }} ref={searchContainerRef} className="relative z-30 w-full max-w-xl mt-6 sm:mt-8">
           <form
             onSubmit={handleSearchSubmit}
             className="relative flex items-center bg-white/95 rounded-full p-1.5 sm:p-2 shadow-2xl border border-white/40 focus-within:ring-2 focus-within:ring-brand-sky focus-within:bg-white transition duration-300 z-30"
@@ -346,7 +346,7 @@ export default function VideoHero({ onPlanTripClick, words, subtitle, videos }: 
         </div>
 
         {/* Mobile-First Action Buttons */}
-        <div data-hero-item className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md sm:max-w-none sm:w-auto">
+        <div data-hero-item style={{ ["--hi" as string]: 3 }} className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md sm:max-w-none sm:w-auto">
           <Link
             data-magnetic
             href="/trips"
@@ -367,7 +367,7 @@ export default function VideoHero({ onPlanTripClick, words, subtitle, videos }: 
         </div>
 
         {/* Minimalist Scene Indicators */}
-        <div data-hero-item className="mt-6 sm:mt-8 flex items-center justify-center">
+        <div data-hero-item style={{ ["--hi" as string]: 4 }} className="mt-6 sm:mt-8 flex items-center justify-center">
           {HERO_SCENES.map((_, idx) => {
             const isActive = idx === currentSceneIndex;
             return (

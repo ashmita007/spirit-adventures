@@ -7,7 +7,7 @@ import { isPortalPath } from "@/lib/utils";
  * Mark up elements with data attributes and this provider animates them on
  * every page (and re-runs on client navigation):
  *
- *   data-anim="hero"         load timeline; children with data-hero-item animate in order
+ *   data-hero-item           hero pieces: CSS entrance from first paint (globals.css), staggered by --hi
  *   data-anim="heading"      words rise + unblur as the heading scrolls into view
  *   data-anim="fade-up"      fade + rise on enter
  *   data-anim="stagger"      direct children rise in sequence (cards, grids)
@@ -101,42 +101,7 @@ export default function MotionProvider() {
             );
           }
 
-          if (!motion) {
-            // Reduced motion: make sure nothing stays hidden, keep counters as plain numbers
-            gsap.set("[data-hero-item]", { opacity: 1 });
-            return;
-          }
-
-          // 1. Hero load timeline
-          q("[data-anim='hero']").forEach((hero) => {
-            const tl = gsap.timeline({ defaults: { ease: EASE, duration: 1.1 } });
-            const items = Array.from(hero.querySelectorAll<HTMLElement>("[data-hero-item]"));
-            items.forEach((item, i) => {
-              const at = i === 0 ? 0.15 : "-=0.85";
-              if (item.dataset.heroItem === "title") {
-                const split = SplitText.create(item, phone ? { type: "words", wordsClass: "sa-word" } : { type: "chars,words", charsClass: "sa-char" });
-                const pieces = phone ? split.words : split.chars;
-                solidifyGradient(pieces);
-                gsap.set(item, { opacity: 1 });
-                tl.from(
-                  pieces,
-                  {
-                    yPercent: phone ? 70 : 110,
-                    rotateX: phone ? 0 : -70,
-                    opacity: 0,
-                    transformOrigin: "50% 100%",
-                    force3D: true,
-                    stagger: { each: phone ? 0.07 : 0.026, from: "start" },
-                    duration: phone ? 0.8 : 1.1,
-                    clearProps: "transform,opacity",
-                  },
-                  at
-                );
-              } else {
-                tl.fromTo(item, { opacity: 0, y: 34 }, { opacity: 1, y: 0, force3D: true, clearProps: "transform" }, at);
-              }
-            });
-          });
+          if (!motion) return; // Reduced motion: counters stay plain numbers
 
           // Hero background: cinematic zoom-out + fade as you scroll past
           q("[data-hero-bg]").forEach((bg) => {
