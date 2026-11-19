@@ -45,7 +45,7 @@ export default async function OffersPage() {
           (group) =>
             group.list.length > 0 && (
               <section key={group.label}>
-                <h2 className="mb-5 font-display text-2xl font-black tracking-[-0.03em] text-brand-navy sm:mb-7 sm:text-4xl">{group.label}</h2>
+                <h2 data-anim="heading" className="[perspective:800px] mb-5 font-display text-2xl font-black tracking-[-0.03em] text-brand-navy sm:mb-7 sm:text-4xl">{group.label}</h2>
                 <div data-anim="stagger" className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
                   {group.list.map((o, i) => (
                     <div key={o.id} className={i === 0 && group.list.length > 2 ? "sm:col-span-2" : ""}>

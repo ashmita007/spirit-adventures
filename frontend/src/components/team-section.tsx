@@ -4,10 +4,10 @@
  * "Meet the crew" on the About page. Members come from Owner HQ → Team.
  *
  * Motion (GSAP, skipped for reduced-motion visitors):
- *  - giant outlined "CREW" word drifts sideways with scroll
- *  - heading words rise in, lead cards wipe open with a clip-path while the photo settles from a zoom
- *  - crew cards: clip-path wipe, photo settles from a tilted desaturated zoom, name letters rise,
- *    light sweep; alternate columns drift at different speeds; mouse tilt + glare on hover
+ *  - heading words rise in once
+ *  - lead and crew cards rise as they enter, their photo develops from grey to colour,
+ *    names and roles follow; nothing moves with the scroll position
+ *  - hover: card lifts 2px, photo zooms 1.03 inside its frame
  * Content is never hidden by CSS, so the section stays readable if JS fails.
  */
 import React, { useRef } from "react";
@@ -73,110 +73,43 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const el = node;
+        const develop = { scale: 1.12, filter: "saturate(0) brightness(0.85)", duration: 1.4, ease: "expo.out", clearProps: "filter" };
 
-        // Big outline word drifting with scroll
-        gsap.fromTo(
-          el.querySelector("[data-team-bgword]"),
-          { xPercent: 12 },
-          { xPercent: -28, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 0.6 } }
-        );
-
-        // Heading words
+        // Heading words rise once
         gsap.from(el.querySelectorAll("[data-team-word]"), {
           yPercent: 110,
-          rotate: 4,
           opacity: 0,
-          duration: 1,
+          duration: 0.9,
           ease: "expo.out",
-          stagger: 0.07,
-          scrollTrigger: { trigger: el.querySelector("[data-team-head]"), start: "top 85%" },
+          stagger: 0.06,
+          scrollTrigger: { trigger: el.querySelector("[data-team-head]"), start: "top 85%", once: true },
         });
 
-        // Lead cards: clip-path wipe + photo settles from zoom + text lines
-        el.querySelectorAll<HTMLElement>("[data-team-lead]").forEach((card, i) => {
-          const tl = gsap.timeline({ scrollTrigger: { trigger: card, start: "top 80%" } });
-          tl.from(card, {
-            clipPath: i % 2 ? "inset(0% 0% 0% 100% round 28px)" : "inset(0% 100% 0% 0% round 28px)",
-            duration: 1.3,
-            ease: "expo.inOut",
-          })
-            .from(card.querySelector("[data-team-photo]"), { scale: 1.35, duration: 1.6, ease: "expo.out" }, "<0.2")
-            .from(card.querySelectorAll("[data-team-line]"), { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, "<0.35");
-
-          gsap.to(card.querySelector("[data-team-photo]"), {
-            yPercent: -8,
-            ease: "none",
-            scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: true },
-          });
+        // Lead cards: card rises, photo develops from grey to colour, text lines follow
+        el.querySelectorAll<HTMLElement>("[data-team-lead]").forEach((card) => {
+          gsap
+            .timeline({ scrollTrigger: { trigger: card, start: "top 85%", once: true } })
+            .from(card, { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", clearProps: "transform,opacity" })
+            .from(card.querySelector("[data-team-photo]"), develop, "<0.1")
+            .from(card.querySelectorAll("[data-team-line]"), { y: 24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.07 }, "<0.25");
         });
 
-        // Crew cards: same cinematic language as the leader cards, batched so every
-        // row plays as it enters. Card wipes up, photo settles from a tilted zoom,
-        // name letters rise, then role / meta slide in, then a light sweep crosses the photo.
+        // Crew cards: each row plays as it enters. Card rises, photo develops,
+        // name letters rise, role and city follow.
         ScrollTrigger.batch(el.querySelectorAll<HTMLElement>("[data-team-card]"), {
-          start: "top 88%",
+          start: "top 90%",
           once: true,
           onEnter: (cards) => {
             cards.forEach((card, i) => {
-              const tl = gsap.timeline({ delay: i * 0.12 });
-              tl.fromTo(
-                card,
-                { clipPath: "inset(100% 0% 0% 0% round 24px)", y: 60 },
-                { clipPath: "inset(0% 0% 0% 0% round 24px)", y: 0, duration: 1.2, ease: "expo.inOut", clearProps: "clipPath" }
-              )
-                .from(card.querySelector("[data-team-cardphoto]"), { scale: 1.45, rotate: -4, filter: "saturate(0) brightness(0.6)", duration: 1.6, ease: "expo.out" }, "<0.15")
-                .from(card.querySelectorAll("[data-team-char]"), { yPercent: 120, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.025 }, "<0.45")
-                .from(card.querySelectorAll("[data-team-meta]"), { x: -24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 }, "<0.2")
-                .fromTo(card.querySelector("[data-team-sweep]"), { xPercent: -120, opacity: 1 }, { xPercent: 120, duration: 1.1, ease: "power2.inOut" }, "<");
+              gsap
+                .timeline({ delay: i * 0.1 })
+                .from(card, { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", clearProps: "transform,opacity" })
+                .from(card.querySelector("[data-team-cardphoto]"), develop, "<0.1")
+                .from(card.querySelectorAll("[data-team-char]"), { yPercent: 120, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.02 }, "<0.35")
+                .from(card.querySelectorAll("[data-team-meta]"), { y: 10, opacity: 0, duration: 0.6, ease: "expo.out", stagger: 0.06 }, "<0.2");
             });
           },
         });
-      });
-
-      // Staggered columns: alternate cards drift at different speeds while scrolling (desktop)
-      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-        const el = node;
-        el.querySelectorAll<HTMLElement>("[data-team-card]").forEach((card, i) => {
-          gsap.fromTo(
-            card.querySelector("[data-team-drift]"),
-            { y: i % 2 ? 70 : 20 },
-            {
-              y: i % 2 ? -40 : -10,
-              ease: "none",
-              scrollTrigger: { trigger: el.querySelector("[data-team-grid]"), start: "top bottom", end: "bottom top", scrub: 0.8 },
-            }
-          );
-        });
-      });
-
-      // Mouse tilt + glare (fine pointers only)
-      mm.add("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
-        const cleanups: (() => void)[] = [];
-        node.querySelectorAll<HTMLElement>("[data-team-tilt]").forEach((card) => {
-          const rx = gsap.quickTo(card, "rotateX", { duration: 0.5, ease: "power3.out" });
-          const ry = gsap.quickTo(card, "rotateY", { duration: 0.5, ease: "power3.out" });
-          const glare = card.querySelector<HTMLElement>("[data-team-glare]");
-          const move = (e: PointerEvent) => {
-            const r = card.getBoundingClientRect();
-            const px = (e.clientX - r.left) / r.width;
-            const py = (e.clientY - r.top) / r.height;
-            rx((0.5 - py) * 10);
-            ry((px - 0.5) * 12);
-            if (glare) gsap.set(glare, { opacity: 1, background: `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,0.28), transparent 55%)` });
-          };
-          const leave = () => {
-            rx(0);
-            ry(0);
-            if (glare) gsap.to(glare, { opacity: 0, duration: 0.4 });
-          };
-          card.addEventListener("pointermove", move);
-          card.addEventListener("pointerleave", leave);
-          cleanups.push(() => {
-            card.removeEventListener("pointermove", move);
-            card.removeEventListener("pointerleave", leave);
-          });
-        });
-        return () => cleanups.forEach((c) => c());
       });
     },
     { scope: root, dependencies: [members.length] }
@@ -193,8 +126,7 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
       {/* Outline word */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-10 select-none whitespace-nowrap">
         <span
-          data-team-bgword
-          className="block font-display text-[22vw] font-black uppercase leading-none text-transparent will-change-transform"
+          className="block font-display text-[22vw] font-black uppercase leading-none text-transparent"
           style={{ WebkitTextStroke: "1.5px rgba(14,116,144,0.14)" }}
         >
           Our Crew · Our Crew
@@ -232,7 +164,7 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
                 style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15), 0 30px 60px -20px rgba(2,32,71,0.45)" }}
               >
                 <div className="relative min-h-[280px] overflow-hidden">
-                  <div data-team-photo className="absolute inset-[-8%] will-change-transform">
+                  <div data-team-photo className="absolute inset-0">
                     <Photo m={m} sizes="(min-width:1024px) 25vw, 100vw" />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/80 to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-brand-navy/90" />
@@ -268,25 +200,15 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
 
         {/* Crew */}
         {crew.length > 0 && (
-          <div data-team-grid className="grid grid-cols-1 gap-5 [perspective:1200px] sm:grid-cols-2 lg:grid-cols-4 lg:pb-16">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {crew.map((m) => (
-              <div key={m.id} data-team-card className="will-change-transform">
-                <div data-team-drift className="will-change-transform">
-                  <article
-                    data-team-tilt
-                    className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow duration-300 [transform-style:preserve-3d] hover:shadow-xl"
-                  >
+              <div key={m.id} data-team-card>
+                  <article className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-xl">
                     <div className="relative aspect-[4/5] overflow-hidden">
-                      <div data-team-cardphoto className="absolute inset-0 will-change-transform">
-                        <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="transition-transform duration-700 ease-out group-hover:scale-110" />
+                      <div data-team-cardphoto className="absolute inset-0">
+                        <Photo m={m} sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/10 to-transparent" />
-                      {/* light sweep played once on reveal */}
-                      <div
-                        data-team-sweep
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-y-0 -left-1/4 w-2/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0"
-                      />
                       {m.city && (
                         <span data-team-meta className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
                           <MapPin className="h-3 w-3" /> {m.city}
@@ -320,9 +242,7 @@ export default function TeamSection({ members }: { members: TeamMember[] }) {
                         )}
                       </div>
                     </div>
-                    <div data-team-glare aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0" />
                   </article>
-                </div>
               </div>
             ))}
           </div>

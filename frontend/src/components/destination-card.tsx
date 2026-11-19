@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import { useTilt } from "@/components/motion/use-tilt";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,17 +15,14 @@ const FALLBACK_COVER =
   "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg";
 
 export default function DestinationCard({ destination }: DestinationCardProps) {
-  const ref = useRef<HTMLAnchorElement>(null);
   const [loaded, setLoaded] = useState(false);
-  useTilt(ref, 6);
   const count = destination.trip_count || 0;
 
   return (
     <Link
-      ref={ref}
       href={`/destinations/${destination.slug}`}
       className={cn(
-        "group relative block aspect-[4/5] sm:aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-brand-navy/20 transition-shadow duration-300",
+        "group relative block aspect-[4/5] sm:aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-brand-navy/20 hover:-translate-y-0.5 active:translate-y-0 transition-[box-shadow,transform] duration-300",
         !loaded && "sa-shimmer"
       )}
     >
@@ -38,11 +34,10 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
         onLoad={() => setLoaded(true)}
         sizes="(max-width: 640px) 70vw, (max-width: 1024px) 50vw, 33vw"
         className={cn(
-          "object-cover object-center group-hover:scale-110 transition-[transform,opacity] duration-700 ease-out",
+          "object-cover object-center group-hover:scale-[1.03] transition-[transform,opacity] duration-700 ease-out",
           loaded ? "opacity-100" : "opacity-0"
         )}
       />
-      <div data-tilt-glare aria-hidden className="pointer-events-none absolute inset-0 z-20 opacity-0" />
 
       {/* Atmospheric Gradients */}
       <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/30 to-black/20 group-hover:via-brand-navy/40 transition-colors duration-300" />

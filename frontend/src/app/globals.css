@@ -320,3 +320,15 @@ input::-webkit-date-and-time-value {
 /* Big blurred layers are expensive on phones: animate them only on tablet/desktop */
 @media (min-width: 768px) { .sa-glow { animation: sa-glow-drift 9s ease-in-out infinite; will-change: transform; } }
 @media (prefers-reduced-motion: reduce) { .sa-glow { animation: none; } }
+
+/* Text link underline that draws in from the left on hover / keyboard focus. */
+.sa-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+.sa-underline:hover,
+.sa-underline:focus-visible { background-size: 100% 1px; }
+@media (prefers-reduced-motion: reduce) { .sa-underline { transition: none; } }

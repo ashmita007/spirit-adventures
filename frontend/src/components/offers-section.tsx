@@ -88,23 +88,15 @@ export default function OffersSection({ offers, theme }: { offers: Promotion[]; 
           className={cn(
             "-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 no-scrollbar scroll-px-4",
             "md:mx-0 md:grid md:snap-none md:gap-5 md:overflow-visible md:px-0 md:pb-0",
-            rest.length === 0 && "md:grid-cols-1",
-            rest.length === 1 && "md:grid-cols-[1.4fr_1fr]",
-            rest.length === 2 && "md:grid-cols-[1.35fr_1fr] md:grid-rows-2",
-            rest.length >= 3 && "md:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr] lg:grid-rows-2"
+            rest.length <= 1 ? "md:grid-cols-1" : "md:grid-cols-2",
+            rest.length >= 3 && "lg:grid-cols-3"
           )}
         >
-          <div
-            className={cn(
-              "w-[88%] shrink-0 snap-start md:w-auto",
-              rest.length === 2 && "md:row-span-2",
-              rest.length >= 3 && "md:col-span-2 lg:col-span-1 lg:row-span-2"
-            )}
-          >
+          <div className={cn("w-[88%] shrink-0 snap-start md:w-auto", rest.length >= 2 && "md:col-span-2", rest.length >= 3 && "lg:col-span-3")}>
             <OfferCard offer={lead} variant="feature" priority />
           </div>
           {rest.map((o, i) => (
-            <div key={o.id} className={cn("w-[78%] shrink-0 snap-start md:w-auto", rest.length === 3 && i === 2 && "lg:col-span-2")}>
+            <div key={o.id} className="w-[78%] shrink-0 snap-start md:w-auto">
               <OfferCard offer={o} priority={i < 1} />
             </div>
           ))}

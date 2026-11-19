@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useTilt } from "@/components/motion/use-tilt";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -53,7 +52,6 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
   const [videoReady, setVideoReady] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  useTilt(cardRef);
 
   const difficultyColors = {
     EASY: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
@@ -143,10 +141,8 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
     <article
       ref={cardRef}
       onClick={handleCardClick}
-      className="group relative bg-white rounded-3xl overflow-hidden border border-slate-200/70 shadow-xs hover:shadow-2xl hover:shadow-brand-navy/10 hover:border-brand-sky/40 transition-[box-shadow,border-color] duration-300 flex flex-col h-full cursor-pointer select-none"
+      className="group relative bg-white rounded-3xl overflow-hidden border border-slate-200/70 shadow-xs hover:shadow-2xl hover:shadow-brand-navy/10 hover:border-brand-sky/40 hover:-translate-y-0.5 active:translate-y-0 transition-[box-shadow,border-color,transform] duration-300 flex flex-col h-full cursor-pointer select-none"
     >
-      {/* Moving light glare (driven by useTilt) */}
-      <div data-tilt-glare aria-hidden className="pointer-events-none absolute inset-0 z-30 opacity-0 rounded-3xl" />
 
       {/* Top Media Container Link */}
       <Link
@@ -162,7 +158,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
           sizes="(max-width: 640px) 70vw, (max-width: 1024px) 50vw, 33vw"
           onLoad={() => setImgLoaded(true)}
           className={cn(
-            "object-cover object-center pointer-events-none transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.08]",
+            "object-cover object-center pointer-events-none transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.03]",
             imgLoaded ? "opacity-100" : "opacity-0"
           )}
         />
@@ -179,7 +175,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
             aria-hidden="true"
             onPlaying={() => setVideoReady(true)}
             className={cn(
-              "absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.08]",
+              "absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.03]",
               videoReady ? "opacity-100" : "opacity-0"
             )}
           />
@@ -284,7 +280,7 @@ export default function TripCard({ trip, priority = false }: TripCardProps) {
 
           <Link
             href={`/trips/${trip.slug}`}
-            className="inline-flex items-center space-x-1 px-4 py-2 rounded-full bg-brand-light group-hover:bg-brand-ocean group-hover:text-white text-brand-ocean font-bold text-xs tracking-wide transition duration-200 shadow-2xs group-hover:shadow-md"
+            className="inline-flex min-h-11 items-center space-x-1 px-4 rounded-full bg-brand-light group-hover:bg-brand-ocean group-hover:text-white text-brand-ocean font-bold text-xs tracking-wide transition duration-200 shadow-2xs group-hover:shadow-md"
           >
             <span>Explore</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" aria-hidden />

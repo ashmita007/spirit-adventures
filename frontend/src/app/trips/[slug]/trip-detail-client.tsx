@@ -15,6 +15,7 @@ import { smartCase, stripLeadingEmoji } from "@/lib/readable-text";
 import EnquiryModal from "@/components/enquiry-modal";
 import ItineraryTimeline from "@/components/itinerary-timeline";
 import Lightbox from "@/components/lightbox";
+import TripPhotoMosaic from "@/components/trip-photo-mosaic";
 import { isVideoUrl, useDeferredVideo } from "@/lib/media";
 import { tripDrop, tripFaqs, tripPickup, tripSeason } from "@/lib/trip-faqs";
 import { whatsappUrl, pageMessage, tripMessage } from "@/lib/whatsapp";
@@ -238,16 +239,24 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
           <div className="lg:col-span-2 space-y-14 [&>section]:scroll-mt-28">
             {/* Overview */}
             <section id="overview" className="space-y-4">
-              <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
+              <h2 data-anim="heading" className="[perspective:800px] font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
                 About this trip
               </h2>
               <p className="max-w-[68ch] text-slate-700 text-[17px] leading-8 whitespace-pre-line">
                 {trip.full_description || trip.short_description}
               </p>
 
+              <div className="pt-2">
+                <TripPhotoMosaic
+                  photos={images.map((im) => ({ url: im.url, title: im.title }))}
+                  tripTitle={trip.title}
+                  onOpen={setLightboxIndex}
+                />
+              </div>
+
               {/* Pickup & Drop Details: only shown when the trip has real points */}
               {(pickup || drop) && (
-                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 p-5 rounded-2xl bg-brand-light border border-slate-100">
+                <dl data-anim="fade-up" className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 p-5 rounded-2xl bg-brand-light border border-slate-100">
                   {pickup && (
                     <div>
                       <dt className="text-xs font-semibold text-slate-500">Pickup point</dt>
@@ -268,7 +277,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             {trip.itinerary_days && trip.itinerary_days.length > 0 && (
               <section id="itinerary" className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
+                  <h2 data-anim="heading" className="[perspective:800px] font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
                     Day-by-day plan
                   </h2>
                   <span className="text-xs font-semibold text-slate-600">
@@ -283,8 +292,8 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             {/* Inclusions & Exclusions (only what the trip actually lists) */}
             {(inclusions.length > 0 || exclusions.length > 0) && (
               <section id="inclusions" className="space-y-5">
-                <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">What the price covers</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <h2 data-anim="heading" className="[perspective:800px] font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">What the price covers</h2>
+                <div data-anim="stagger" className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {inclusions.length > 0 && (
                     <div className="rounded-2xl p-5 sm:p-6 border border-emerald-200 bg-emerald-50/50">
                       <h3 className="font-display font-bold text-lg text-emerald-900 mb-4">Included</h3>
@@ -322,7 +331,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                   <Backpack aria-hidden="true" className="w-6 h-6 text-brand-ocean" />
                   <span>What to pack</span>
                 </h2>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-[15px] leading-6 text-slate-800">
+                <ul data-anim="stagger" className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-[15px] leading-6 text-slate-800">
                   {thingsToCarry.map((item, i) => (
                     <li key={i} className="flex items-start gap-2.5 border-b border-slate-100 pb-3">
                       <Check aria-hidden="true" className="w-4 h-4 text-brand-ocean flex-shrink-0 mt-1" />
@@ -336,17 +345,17 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
             {/* FAQs: native <details> so every answer is in the HTML for search engines and works by keyboard */}
             {faqs.length > 0 && (
               <section id="faqs" className="space-y-4">
-                <h2 className="font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
+                <h2 data-anim="heading" className="[perspective:800px] font-display font-bold text-2xl sm:text-[1.7rem] tracking-tight text-brand-navy">
                   {(trip.destination_name || trip.destination?.name) ? `${trip.destination_name || trip.destination?.name} trip questions` : "Questions & answers"}
                 </h2>
-                <div className="space-y-3">
+                <div data-anim="stagger" className="space-y-3">
                   {faqs.map((faq, i) => (
                     <details key={faq.id} open={i === 0} className="group border border-slate-200 rounded-2xl overflow-hidden">
                       <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left font-semibold text-brand-navy bg-white hover:bg-slate-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-ocean">
                         <h3 className="text-[15px] sm:text-base font-semibold leading-snug">{faq.question}</h3>
                         <ChevronDown aria-hidden="true" className="w-4 h-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
                       </summary>
-                      <p className="px-4 sm:px-5 pb-5 pt-0 max-w-[68ch] text-[15px] leading-7 text-slate-700">{faq.answer}</p>
+                      <p className="px-4 sm:px-5 pb-5 pt-0 max-w-[68ch] text-[15px] leading-7 text-slate-700 motion-safe:group-open:animate-[sa-pop-in_0.35s_cubic-bezier(0.16,1,0.3,1)]">{faq.answer}</p>
                     </details>
                   ))}
                 </div>
@@ -375,7 +384,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
               <div className="space-y-3 pt-2">
                 <button
                   onClick={() => setEnquiryOpen(true)}
-                  className="w-full py-4 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-base transition duration-300 shadow-lg shadow-brand-ocean/20 active:scale-[0.98]"
+                  className="w-full py-4 px-6 rounded-2xl bg-brand-ocean hover:bg-brand-ocean-light text-white font-bold text-base transition duration-300 shadow-lg shadow-brand-ocean/20 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-[0.98]"
                 >
                   Book this trip
                 </button>
@@ -384,7 +393,7 @@ export default function TripDetailClient({ trip, similar = [], reviews = [] }: T
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-sm transition"
+                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] font-semibold text-sm transition"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span className="whitespace-nowrap">Chat on WhatsApp</span>

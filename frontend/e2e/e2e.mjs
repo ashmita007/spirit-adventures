@@ -214,28 +214,25 @@ await step("Theme turns off when festive offers are hidden, back on when shown",
 });
 
 // ---------------------------------------------------------------- trip page itinerary
-await step("Trip page: itinerary accordion opens, closes, expand all", async () => {
+await step("Trip page: itinerary shows every day as numbered steps; stepper jumps between days", async () => {
   const slug = sql("select t.slug from adventures_tripitinerary i join adventures_trip t on t.id=i.trip_id group by t.id having count(*)>=3 limit 1");
+  const days = Number(sql(`select count(*) from adventures_tripitinerary i join adventures_trip t on t.id=i.trip_id where t.slug='${slug}'`));
   const ctx = await fresh();
   await skipPopup(ctx);
   const page = watch(await ctx.newPage());
   await page.goto(`${BASE}/trips/${slug}`, { waitUntil: "networkidle" });
-  const btns = page.locator("#itinerary button[aria-expanded]");
-  await btns.first().waitFor();
-  const states = async () => (await btns.evaluateAll((bs) => bs.map((b) => b.getAttribute("aria-expanded")))).join(",");
-  expect((await states()).startsWith("true,false"), `day 1 should start open: ${await states()}`);
-  await btns.nth(1).click();
-  await page.waitForTimeout(600);
-  expect((await states()).startsWith("true,true"), "day 2 did not open");
-  await btns.nth(0).click();
-  await page.waitForTimeout(600);
-  expect((await states()).startsWith("false,true"), "day 1 did not close");
-  await page.getByRole("button", { name: /Expand all/ }).click();
-  await page.waitForTimeout(700);
-  expect(!(await states()).includes("false"), "expand all left a day closed");
-  await page.getByRole("button", { name: /Collapse all/ }).click();
-  await page.waitForTimeout(700);
-  expect(!(await states()).includes("true"), "collapse all left a day open");
+  const articles = page.locator("#itinerary article");
+  await articles.first().waitFor();
+  expect((await articles.count()) === days, `expected ${days} day cards, got ${await articles.count()}`);
+  expect((await page.locator("#itinerary article li.group").count()) > 0, "no numbered steps rendered");
+  const chips = page.locator("nav[aria-label='Days of this trip'] button");
+  expect((await chips.count()) === days, "stepper should have one chip per day");
+  await chips.nth(2).click();
+  await page.waitForTimeout(1200);
+  expect((await chips.nth(2).getAttribute("aria-current")) === "step", "stepper did not mark day 3 current");
+  const top = await articles.nth(2).evaluate((el) => el.getBoundingClientRect().top);
+  const navBottom = await page.locator("nav[aria-label='Days of this trip']").evaluate((el) => el.getBoundingClientRect().bottom);
+  expect(top >= navBottom - 2 && top < 400, `day 3 not scrolled under the stepper: top ${top}, stepper ${navBottom}`);
   await ctx.close();
 });
 
@@ -338,23 +335,23 @@ await step("Mobile: offer cards swipe, position bar moves, 44px tap targets", as
   await ctx.close();
 });
 
-await step("Mobile: itinerary taps open/close, headers are 64px tap targets", async () => {
+await step("Mobile: itinerary stepper chips are 44px tap targets, Next day button walks the plan", async () => {
   const slug = sql("select t.slug from adventures_tripitinerary i join adventures_trip t on t.id=i.trip_id group by t.id having count(*)>=3 limit 1");
   const ctx = await phone();
   await skipPopup(ctx);
   const page = watch(await ctx.newPage());
   await page.goto(`${BASE}/trips/${slug}`, { waitUntil: "networkidle" });
-  const btns = page.locator("#itinerary button[aria-expanded]");
-  await btns.nth(1).scrollIntoViewIfNeeded();
-  const hs = await btns.evaluateAll((bs) => bs.map((b) => b.getBoundingClientRect().height));
-  expect(hs.every((hh) => hh >= 63), `day headers too small: ${hs}`);
-  await btns.nth(1).tap();
-  await page.waitForTimeout(700);
-  expect((await btns.nth(1).getAttribute("aria-expanded")) === "true", "tap did not open day 2");
+  const chips = page.locator("nav[aria-label='Days of this trip'] button");
+  await chips.first().scrollIntoViewIfNeeded();
+  const hs = await chips.evaluateAll((bs) => bs.map((b) => b.getBoundingClientRect().height));
+  expect(hs.every((hh) => hh >= 44), `stepper chips too small: ${hs}`);
+  const next = page.getByRole("button", { name: /^Next: Day 2/ });
+  await next.scrollIntoViewIfNeeded();
+  await next.tap();
+  await page.waitForTimeout(1200);
+  expect((await chips.nth(1).getAttribute("aria-current")) === "step", "Next did not move to day 2");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "itinerary overflows sideways on phone");
   await shot(page, "m4-itinerary");
-  await btns.nth(1).tap();
-  await page.waitForTimeout(700);
-  expect((await btns.nth(1).getAttribute("aria-expanded")) === "false", "tap did not close day 2");
   await ctx.close();
 });
 

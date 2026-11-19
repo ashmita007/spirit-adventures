@@ -57,16 +57,17 @@ export default function OfferCard({
     <Wrapper
       className={cn(
         "group relative isolate flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-brand-navy text-white",
+        feature && "md:flex-row",
         "shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_18px_40px_-22px_rgba(11,23,54,0.65)]",
         "transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98]",
-        "hover:-translate-y-1 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_28px_60px_-24px_rgba(2,132,199,0.45)]",
+        "hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_28px_60px_-24px_rgba(2,132,199,0.45)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky focus-visible:ring-offset-2",
         look ? look.ring : "ring-1 ring-inset ring-white/10"
       )}
     >
       {/* Poster: shown whole and never covered by our text, because owners often upload
           designed posters that already carry their own words. A blurred copy fills the frame. */}
-      <div className={cn("relative shrink-0 overflow-hidden bg-[#07102a]", "aspect-video")}>
+      <div className={cn("relative shrink-0 overflow-hidden bg-[#07102a]", feature ? "aspect-video md:aspect-auto md:min-h-[22rem] md:w-[58%]" : "aspect-video")}>
         {offer.image_url ? (
           <>
             <Image
@@ -83,7 +84,7 @@ export default function OfferCard({
               fill
               priority={priority}
               sizes={feature ? "(max-width: 640px) 88vw, (max-width: 1024px) 90vw, 58vw" : "(max-width: 640px) 80vw, (max-width: 1024px) 45vw, 30vw"}
-              className="object-contain transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+              className="object-contain transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
             />
           </>
         ) : (
@@ -120,7 +121,7 @@ export default function OfferCard({
       </div>
 
       {/* Copy */}
-      <div className="flex flex-1 flex-col p-4 sm:p-6">
+      <div className={cn("flex flex-1 flex-col p-4 sm:p-6", feature && "md:p-8 lg:p-10")}>
         {(offer.event_date || offer.location) && (
           <div className="mb-2 flex flex-wrap gap-x-3 gap-y-1 text-[12px] font-semibold text-sky-100/80">
             {offer.event_date && (
@@ -134,13 +135,13 @@ export default function OfferCard({
         <h3
           className={cn(
             "font-display font-black leading-[1.1] tracking-[-0.02em] text-balance",
-            feature ? "text-[1.45rem] sm:text-3xl" : "text-lg sm:text-xl"
+            feature ? "text-[1.45rem] sm:text-3xl lg:text-4xl" : "text-lg sm:text-xl"
           )}
         >
           {offer.title}
         </h3>
         {offer.description && (
-          <p className={cn("mt-1.5 text-sm leading-relaxed text-slate-300", feature ? "line-clamp-2 sm:line-clamp-3 sm:max-w-md" : "line-clamp-2")}>
+          <p className={cn("mt-1.5 text-sm leading-relaxed text-slate-300", feature ? "line-clamp-2 sm:line-clamp-4 sm:max-w-md" : "line-clamp-2")}>
             {offer.description}
           </p>
         )}

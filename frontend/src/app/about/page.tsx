@@ -37,9 +37,9 @@ export default async function AboutPage() {
       />
 
       {/* Story Section */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+          <div data-anim="clip" className="relative aspect-[4/3] sm:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
             <Image
               src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80"
               alt="Spirit Adventures Team & Mountain Expeditions"
@@ -54,12 +54,12 @@ export default async function AboutPage() {
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div data-anim="fade-up" className="space-y-6">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-light text-brand-ocean text-xs font-bold border border-brand-sky/20">
               <Sparkles className="w-3.5 h-3.5 text-brand-ocean" />
             </div>
 
-            <h2 className="font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
+            <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
               How Spirit Adventures started
             </h2>
 
@@ -81,7 +81,7 @@ export default async function AboutPage() {
                 <p className="text-[11px] text-slate-500 font-semibold mt-0.5">Founded</p>
               </div>
               <div>
-                <span className="font-display font-black text-2xl sm:text-3xl text-brand-ocean">40+</span>
+                <span className="font-display font-black text-2xl sm:text-3xl text-brand-ocean"><span data-count="40">40</span>+</span>
                 <p className="text-[11px] text-slate-500 font-semibold mt-0.5">Destinations</p>
               </div>
               <div>
@@ -93,9 +93,9 @@ export default async function AboutPage() {
         </div>
 
         {/* Specialties Grid */}
-        <div className="mt-24">
+        <div className="mt-16 sm:mt-24">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
+            <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-4xl text-brand-navy uppercase tracking-tight">
               Trips for every kind of traveller
             </h2>
             <p className="text-slate-600 text-sm mt-2">
@@ -103,9 +103,9 @@ export default async function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div data-anim="stagger" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {SPECIALTIES.map((spec, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-brand-light border border-slate-200/60 shadow-xs hover:shadow-md transition">
+              <div key={i} className="p-6 rounded-2xl bg-brand-light border border-slate-200/60 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition duration-300">
                 <span className="w-8 h-8 rounded-full bg-brand-ocean/10 text-brand-ocean flex items-center justify-center font-bold text-xs mb-4">
                   0{i + 1}
                 </span>
@@ -128,7 +128,7 @@ export default async function AboutPage() {
       <WhyUs />
 
       {/* Call to action */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center">
+      <div data-anim="fade-up" className="max-w-4xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
         <h3 className="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-brand-navy mb-4">
           Ready to plan your next trip?
         </h3>
@@ -138,14 +138,14 @@ export default async function AboutPage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/trips"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-brand-navy hover:bg-brand-ocean text-white font-bold text-xs uppercase tracking-wide transition shadow-lg"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-brand-navy hover:bg-brand-ocean text-white font-bold text-xs uppercase tracking-wide transition shadow-lg active:scale-[0.97]"
           >
             <span className="whitespace-nowrap">Explore all adventures</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/contact"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-brand-navy font-bold text-xs uppercase tracking-wide transition shadow-xs"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-brand-navy font-bold text-xs uppercase tracking-wide transition shadow-xs active:scale-[0.97]"
           >
             <span>Talk to a Trip Captain</span>
           </Link>

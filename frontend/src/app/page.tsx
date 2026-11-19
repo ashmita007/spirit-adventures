@@ -2,7 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Compass, Flame } from "lucide-react";
 import VideoHero from "@/components/video-hero";
-import TripCard from "@/components/trip-card";
+import HomePackages from "@/components/home-packages";
+import HowItWorks from "@/components/how-it-works";
+import DestinationsBand from "@/components/destinations-band";
 import NatureQuoteSection from "@/components/nature-quote-section";
 import WhyUs from "@/components/why-us";
 import ReviewsCarousel from "@/components/reviews-carousel";
@@ -23,11 +25,9 @@ export default async function HomePage() {
   // Only count destinations that actually have trips
   const destinationCount = new Set(allTrips.map((t) => t.destination_name).filter(Boolean)).size || destinations.length;
 
-  // Display 6 recent packages on the home page
-  const recentTrips = allTrips.slice(0, 6);
 
   return (
-    <div className="flex flex-col w-full overflow-hidden">
+    <div className="flex flex-col w-full overflow-x-clip">
       {/* 1. Cinematic Hero with Search Bar */}
       <VideoHero />
       <TrustStrip tripCount={allTrips.length} destinationCount={destinationCount} />
@@ -35,46 +35,14 @@ export default async function HomePage() {
       {/* Events & offers from Owner HQ (hidden when none are live) */}
       <OffersSection offers={promotions.items} theme={promotions.theme.active} />
 
-      {/* 2. Recent Packages & Expeditions Grid */}
-      <section className="py-12 sm:py-24 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-14">
-            <div>
+      {/* 2. Packages: category tabs, one featured trip, then the grid */}
+      <HomePackages trips={allTrips} total={allTrips.length} />
 
-              <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl text-brand-navy uppercase tracking-tight">
-                Recent Packages & Adventures
-              </h2>
-            </div>
+      {/* Moving band of destination names */}
+      <DestinationsBand destinations={destinations} />
 
-            <Link
-              href="/trips"
-              className="hidden sm:inline-flex mt-4 sm:mt-0 items-center space-x-2 text-xs font-extrabold uppercase tracking-wide text-brand-ocean hover:text-brand-navy transition group"
-            >
-              <span className="whitespace-nowrap">Explore all packages</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-            </Link>
-          </div>
-
-          {/* Mobile-First Grid (1 col on mobile, 2 on tablet, 3 on desktop) - 6 packages */}
-          {/* Phones: swipeable row with a peek of the next card. Tablet/desktop: grid */}
-          <div
-            data-anim="stagger"
-            className="-mx-4 px-4 flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 scroll-px-4 sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-8 sm:overflow-visible"
-          >
-            {recentTrips.map((trip, idx) => (
-              <div key={trip.id} className="w-[84%] shrink-0 snap-start sm:w-full">
-                <TripCard trip={trip} priority={idx < 2} />
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex items-center justify-between sm:hidden">
-            <span className="text-xs font-semibold text-slate-500">Swipe for more</span>
-            <Link href="/trips" className="inline-flex h-11 items-center rounded-full bg-brand-navy px-5 text-xs font-bold uppercase tracking-wide text-white active:scale-95 transition">
-              All {allTrips.length} trips
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* How a trip works: pinned chapters on desktop, stacked steps on phones */}
+      <HowItWorks />
 
       {/* 3. Nature Experience Section: Full-Width Visual Storytelling */}
       <NatureQuoteSection />

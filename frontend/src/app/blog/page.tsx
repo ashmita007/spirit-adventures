@@ -26,11 +26,11 @@ export default async function BlogPage() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div data-anim="stagger" className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {blogs.map((post) => (
             <article
               key={post.id}
-              className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between"
+              className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition duration-300 flex flex-col justify-between"
             >
               <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
                 <Image

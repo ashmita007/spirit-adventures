@@ -140,7 +140,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
       data-anim="hero"
       aria-label="Spirit Adventures"
       className={cn(
-        "relative min-h-[92dvh] sm:min-h-dvh w-full flex items-center justify-center bg-brand-navy select-none",
+        "relative min-h-[100svh] w-full flex items-center justify-center bg-brand-navy select-none",
         // While the search suggestions are open, sit above the trust strip (z-30) and let the list overflow the hero
         isFocused ? "z-40 overflow-visible" : "overflow-hidden"
       )}
@@ -341,7 +341,7 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
         </div>
 
         {/* Minimalist Scene Indicators */}
-        <div data-hero-item className="mt-8 sm:mt-10 flex items-center justify-center space-x-2 sm:space-x-3">
+        <div data-hero-item className="mt-6 sm:mt-8 flex items-center justify-center">
           {HERO_SCENES.map((_, idx) => {
             const isActive = idx === currentSceneIndex;
             return (
@@ -349,13 +349,18 @@ export default function VideoHero({ onPlanTripClick }: VideoHeroProps) {
                 key={idx}
                 onClick={() => setCurrentSceneIndex(idx)}
                 aria-label={`Switch to video background ${idx + 1}`}
-                className={cn(
-                  "h-1.5 rounded-full transition duration-500",
-                  isActive
-                    ? "w-8 sm:w-10 bg-brand-sky shadow-md shadow-sky-400/50"
-                    : "w-2.5 sm:w-3 bg-white/30 hover:bg-white/60"
-                )}
-              />
+                aria-pressed={isActive}
+                className="group/dot grid h-11 min-w-11 place-items-center px-1"
+              >
+                <span
+                  className={cn(
+                    "block h-1.5 rounded-full transition-all duration-500",
+                    isActive
+                      ? "w-8 sm:w-10 bg-brand-sky shadow-md shadow-sky-400/50"
+                      : "w-2.5 sm:w-3 bg-white/30 group-hover/dot:bg-white/60"
+                  )}
+                />
+              </button>
             );
           })}
         </div>

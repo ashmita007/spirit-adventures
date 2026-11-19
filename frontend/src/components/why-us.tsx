@@ -1,108 +1,115 @@
 import React from "react";
-import { ShieldCheck, Compass, Users, HeartHandshake, Mountain, Award, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { Award, Compass, HeartHandshake, Mountain, ShieldCheck } from "lucide-react";
 
-export default function WhyUs() {
-  const pillars = [
-    {
-      icon: Award,
-      badge: "Expertise",
-      title: "Certified Expedition Leaders",
-      description: "IMF certified guides and Wilderness First Responders (WFR) with high-altitude experience.",
-      gradient: "from-sky-500/10 to-sky-500/5",
-      iconColor: "text-blue-600",
-    },
-    {
-      icon: ShieldCheck,
-      badge: "Safety 1st",
-      title: "Medical & Safety Protocols",
-      description: "Medical oxygen cylinders, automated pulse oximeters, satellite communication, and rigid acclimatization schedules.",
-      gradient: "from-emerald-500/10 to-teal-500/10",
-      iconColor: "text-emerald-600",
-    },
-    {
-      icon: Users,
-      badge: "Community",
-      title: "Small-Group Experience",
-      description: "Strictly limited to 12-14 adventurers per batch to maintain low environmental impact, safety, and close bonding.",
-      gradient: "from-amber-500/10 to-orange-500/10",
-      iconColor: "text-amber-600",
-    },
-    {
-      icon: Compass,
-      badge: "Authenticity",
-      title: "Local Native Knowledge",
-      description: "Local trail captains who know the quieter waterfalls, stargazing ridges and village culture.",
-      gradient: "from-sky-500/10 to-cyan-500/10",
-      iconColor: "text-sky-600",
-    },
-    {
-      icon: Mountain,
-      badge: "Routes",
-      title: "Off-the-Beaten Path",
-      description: "Routes we have walked ourselves, picked for quiet trails and views, away from the crowded tourist stops.",
-      gradient: "from-teal-500/10 to-teal-500/5",
-      iconColor: "text-teal-700",
-    },
-    {
-      icon: HeartHandshake,
-      badge: "Care",
-      title: "1-on-1 Pre-Trip Support",
-      description: "Help with fitness prep, packing lists, gear rental and round-trip pickup, one person to call for all of it.",
-      gradient: "from-rose-500/10 to-rose-500/5",
-      iconColor: "text-rose-600",
-    },
-  ];
+const PHOTO_RAFTING =
+  "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341325/spirit_adventures/shorts/dandeli_rafting_poster.jpg";
+const PHOTO_COORG =
+  "https://res.cloudinary.com/xvxaicfe/image/upload/f_auto,q_auto/v1790341327/spirit_adventures/shorts/coorg_mist_poster.jpg";
 
+const TILE = "rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]";
+
+function Point({
+  icon: Icon,
+  title,
+  children,
+  className = "",
+}: {
+  icon: React.ElementType;
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <section className="py-14 sm:py-28 bg-slate-50 border-t border-slate-200/60 relative overflow-hidden">
-      {/* Background Subtle Ambient Glows */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-ocean/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-brand-sky/5 rounded-full blur-3xl pointer-events-none will-change-transform [transform:translateZ(0)]" />
+    <div className={`${TILE} flex flex-col ${className}`}>
+      <Icon className="h-6 w-6 text-brand-ocean" aria-hidden="true" />
+      <h3 className="mt-5 font-display text-lg font-bold leading-snug text-brand-navy">{title}</h3>
+      <p className="mt-2 text-[15px] leading-6 text-slate-600">{children}</p>
+    </div>
+  );
+}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
-
-          <h2 data-anim="heading" className="[perspective:800px] font-display font-black text-3xl sm:text-5xl text-brand-navy uppercase tracking-tight">
-            Why Travel With Us?
+/**
+ * "Why travel with us" as an asymmetric bento: two real trip photographs set
+ * between the points, one large type figure for group size, one dark safety tile.
+ * Tiles rise in sequence (data-anim="stagger"); photos zoom 1.03 inside their frame on hover.
+ */
+export default function WhyUs() {
+  return (
+    <section aria-labelledby="why-us-title" className="relative border-t border-slate-200/60 bg-slate-50 py-14 sm:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 grid gap-4 sm:mb-12 lg:grid-cols-12 lg:items-end">
+          <h2
+            id="why-us-title"
+            data-anim="heading"
+            className="[perspective:800px] font-display text-3xl font-black uppercase tracking-tight text-brand-navy sm:text-5xl lg:col-span-7"
+          >
+            Why travel with us
           </h2>
-
-          <p data-anim="fade-up" className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
+          <p data-anim="fade-up" className="max-w-md text-[15px] leading-7 text-slate-600 sm:text-base lg:col-span-5 lg:justify-self-end">
             We don&apos;t run crowded tour buses. We run small groups, put safety first and respect the places we visit.
           </p>
         </div>
 
-        {/* 6 Core Value Cards Grid */}
-        <div data-anim="stagger" className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
-          {pillars.map((pillar, idx) => {
-            const Icon = pillar.icon;
-            return (
-              <div
-                key={idx}
-                className="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xs hover:shadow-xl border border-slate-200/70 hover:border-brand-ocean/40 transition duration-300 hover:-translate-y-1 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3 sm:mb-6">
-                    <div className={`w-10 h-10 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl bg-gradient-to-br ${pillar.gradient} flex items-center justify-center ${pillar.iconColor} shadow-2xs group-hover:scale-110 transition-transform duration-300`}>
-                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2] transition-transform duration-500 group-hover:rotate-[-8deg]" aria-hidden />
-                    </div>
+        <div data-anim="stagger" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-12 lg:auto-rows-[minmax(14rem,auto)]">
+          {/* Lead photograph */}
+          <div className="group relative col-span-2 aspect-[4/3] overflow-hidden rounded-3xl bg-slate-200 lg:col-span-6 lg:row-span-2 lg:aspect-auto">
+            <Image
+              src={PHOTO_RAFTING}
+              alt="A Spirit Adventures group rafting on the Kali river in Dandeli"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            />
+          </div>
 
-                    <span className="hidden sm:inline text-[10px] font-extrabold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
-                      {pillar.badge}
-                    </span>
-                  </div>
+          {/* Group size, set large */}
+          <div className={`${TILE} col-span-2 flex flex-col justify-between gap-6 lg:col-span-6`}>
+            <p className="font-display text-[4.5rem] font-black leading-none tracking-[-0.04em] text-brand-navy sm:text-[6rem]">
+              12–14
+            </p>
+            <div className="max-w-md">
+              <h3 className="font-display text-lg font-bold text-brand-navy">Travellers per batch, never more</h3>
+              <p className="mt-2 text-[15px] leading-6 text-slate-600">
+                Small groups keep the trail safe, the impact low and the people you travel with close.
+              </p>
+            </div>
+          </div>
 
-                  <h3 className="font-display font-extrabold text-sm leading-snug sm:text-xl text-brand-navy mb-1.5 sm:mb-2.5 group-hover:text-brand-ocean transition-colors">
-                    {pillar.title}
-                  </h3>
+          <Point icon={Award} title="Certified expedition leaders" className="col-span-2 sm:col-span-1 lg:col-span-3">
+            IMF certified guides and Wilderness First Responders with high-altitude experience.
+          </Point>
 
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-4 sm:line-clamp-none">
-                    {pillar.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          {/* Safety, the one dark tile */}
+          <div className="col-span-2 flex flex-col rounded-3xl bg-brand-navy p-6 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] sm:col-span-1 sm:p-7 lg:col-span-3">
+            <ShieldCheck className="h-6 w-6 text-brand-sky" aria-hidden="true" />
+            <h3 className="mt-5 font-display text-lg font-bold leading-snug">Medical and safety protocols</h3>
+            <p className="mt-2 text-[15px] leading-6 text-slate-300">
+              Oxygen cylinders, pulse oximeters, satellite communication and fixed acclimatisation days.
+            </p>
+          </div>
+
+          <Point icon={Compass} title="Local trail captains" className="col-span-2 sm:col-span-1 lg:col-span-3">
+            Captains from the region who know the quieter waterfalls, stargazing ridges and village life.
+          </Point>
+
+          <div className="group relative col-span-2 aspect-[4/3] overflow-hidden rounded-3xl bg-slate-200 sm:col-span-1 sm:aspect-auto sm:min-h-[14rem] lg:col-span-3">
+            <Image
+              src={PHOTO_COORG}
+              alt="Morning mist over the Coorg hills"
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            />
+          </div>
+
+          <Point icon={Mountain} title="Routes off the usual path" className="col-span-2 sm:col-span-1 lg:col-span-3">
+            Trails we have walked ourselves, picked for quiet and views, away from crowded stops.
+          </Point>
+
+          <Point icon={HeartHandshake} title="One person before the trip" className="col-span-2 sm:col-span-1 lg:col-span-3">
+            Fitness prep, packing list, gear rental and pickup, all through one person you can call.
+          </Point>
         </div>
       </div>
     </section>

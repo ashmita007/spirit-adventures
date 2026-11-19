@@ -28,10 +28,10 @@ export default function ContactPage() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Direct Channels */}
-          <div className="space-y-8">
-            <div className="bg-brand-navy rounded-3xl p-8 text-white space-y-6 shadow-xl">
+          <div data-anim="fade-up" className="space-y-6 sm:space-y-8">
+            <div className="bg-brand-navy rounded-3xl p-6 sm:p-8 text-white space-y-6 shadow-xl">
               <h3 className="font-display font-bold text-xl uppercase tracking-wide text-brand-sky">
                 Contact details
               </h3>
@@ -41,7 +41,7 @@ export default function ContactPage() {
                   href={whatsappUrl(pageMessage("/contact"))}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-3 p-3.5 rounded-2xl bg-white/10 hover:bg-emerald-600 transition text-slate-200 hover:text-white"
+                  className="flex items-center space-x-3 p-3.5 min-h-14 rounded-2xl bg-white/10 active:scale-[0.98] hover:bg-emerald-600 transition text-slate-200 hover:text-white"
                 >
                   <MessageCircle className="w-5 h-5 text-emerald-400" />
                   <div>
@@ -54,7 +54,7 @@ export default function ContactPage() {
                   <a
                     key={ph.city}
                     href={`tel:${ph.tel}`}
-                    className="flex items-center space-x-3 p-3.5 rounded-2xl bg-white/10 hover:bg-brand-ocean transition text-slate-200 hover:text-white"
+                    className="flex items-center space-x-3 p-3.5 min-h-14 rounded-2xl bg-white/10 active:scale-[0.98] hover:bg-brand-ocean transition text-slate-200 hover:text-white"
                   >
                     <Phone className="w-5 h-5 text-brand-sky" />
                     <div>
@@ -66,12 +66,12 @@ export default function ContactPage() {
 
                 <a
                   href={`mailto:${email}`}
-                  className="flex items-center space-x-3 p-3.5 rounded-2xl bg-white/10 hover:bg-brand-ocean transition text-slate-200 hover:text-white"
+                  className="flex items-center space-x-3 p-3.5 min-h-14 rounded-2xl bg-white/10 active:scale-[0.98] hover:bg-brand-ocean transition text-slate-200 hover:text-white"
                 >
                   <Mail className="w-5 h-5 text-brand-sky" />
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 block">Email Inquiries</span>
-                    <span className="font-semibold">{email}</span>
+                    <span className="font-semibold break-all">{email}</span>
                   </div>
                 </a>
               </div>
@@ -101,7 +101,7 @@ export default function ContactPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="w-10 h-10 rounded-full bg-white text-brand-navy hover:bg-brand-ocean hover:text-white flex items-center justify-center transition shadow-sm"
+                  className="w-11 h-11 rounded-full bg-white text-brand-navy hover:bg-brand-ocean hover:text-white flex items-center justify-center transition shadow-sm"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
@@ -110,7 +110,7 @@ export default function ContactPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
-                  className="w-10 h-10 rounded-full bg-white text-brand-navy hover:bg-brand-ocean hover:text-white flex items-center justify-center transition shadow-sm"
+                  className="w-11 h-11 rounded-full bg-white text-brand-navy hover:bg-brand-ocean hover:text-white flex items-center justify-center transition shadow-sm"
                 >
                   <Youtube className="w-5 h-5" />
                 </a>
@@ -119,7 +119,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-2">
+          <div data-anim="fade-up" data-delay="0.1" className="lg:col-span-2">
             <ContactForm />
           </div>
         </div>

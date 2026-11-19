@@ -75,31 +75,31 @@ export default function Footer() {
           {/* Popular packages (real trips only) */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-brand-sky">Popular packages</h4>
-            <ul className="space-y-2 text-sm text-slate-300">
+            <ul className="space-y-0 sm:space-y-2 text-sm text-slate-300 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center sm:[&_a]:min-h-0">
               {POPULAR.map((t) => (
                 <li key={t.slug}>
-                  <Link href={`/trips/${t.slug}`} className="hover:text-white transition">{t.label}</Link>
+                  <Link href={`/trips/${t.slug}`} className="sa-underline hover:text-white">{t.label}</Link>
                 </li>
               ))}
-              <li><Link href="/trips" className="text-brand-sky hover:text-white transition">All packages →</Link></li>
+              <li><Link href="/trips" className="sa-underline text-brand-sky hover:text-white">All packages →</Link></li>
             </ul>
           </div>
 
           {/* Contact & Support */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-brand-sky">Official HQ</h4>
-            <ul className="space-y-2.5 text-sm text-slate-300">
+            <ul className="space-y-0 sm:space-y-2.5 text-sm text-slate-300 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center sm:[&_a]:min-h-0">
               {PHONES.map((ph) => (
                 <li key={ph.city} className="flex items-center space-x-2">
                   <Phone className="w-4 h-4 text-brand-sky flex-shrink-0" />
-                  <a href={`tel:${ph.tel}`} className="hover:text-white">
+                  <a href={`tel:${ph.tel}`} className="sa-underline hover:text-white">
                     <span className="text-xs text-slate-400">{ph.city}:</span> {ph.display}
                   </a>
                 </li>
               ))}
               <li className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-brand-sky flex-shrink-0" />
-                <a href="mailto:info@spiritadventures.in" className="hover:text-white">info@spiritadventures.in</a>
+                <a href="mailto:info@spiritadventures.in" className="sa-underline hover:text-white">info@spiritadventures.in</a>
               </li>
               {OFFICES.map((o) => (
                 <li key={o.city} className="flex items-start space-x-2">

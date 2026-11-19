@@ -127,7 +127,7 @@ export default async function DestinationDetailPage({ params }: DestinationPageP
       {/* Description & Adventures Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-3xl mb-12">
-          <h2 className="font-display font-bold text-xl text-brand-navy uppercase tracking-wide mb-3">
+          <h2 data-anim="heading" className="[perspective:800px] font-display font-bold text-xl text-brand-navy uppercase tracking-wide mb-3">
             About {destination.name}
           </h2>
           <p className="text-slate-700 text-base leading-relaxed">

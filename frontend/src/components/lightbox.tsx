@@ -34,7 +34,7 @@ export default function Lightbox({
   const currentImage = images[currentIndex];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div role="dialog" aria-modal="true" aria-label="Photo viewer" className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
       {/* Close button */}
       <button
         onClick={onClose}
