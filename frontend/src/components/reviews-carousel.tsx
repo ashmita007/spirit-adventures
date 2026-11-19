@@ -23,17 +23,9 @@ function StarRow({ count, size = "w-3.5 h-3.5" }: { count: number; size?: string
 }
 
 /** A review quote whose words fade up in order when the section comes into view. */
+/** The quote as one element that fades up after the stars (one node, not one per word). */
 function QuoteWords({ text }: { text: string }) {
-  const words = text.split(/\s+/).filter(Boolean);
-  return (
-    <>
-      {words.map((w, i) => (
-        <span key={i} style={{ "--i": Math.min(i, 40) } as React.CSSProperties} className="sa-qw">
-          {w}{i < words.length - 1 ? " " : ""}
-        </span>
-      ))}
-    </>
-  );
+  return <span className="sa-qw">{text}</span>;
 }
 
 export default function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {

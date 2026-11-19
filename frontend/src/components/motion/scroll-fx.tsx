@@ -10,14 +10,14 @@ import { Flag, Footprints } from "lucide-react";
  *
  * 1. Trail: a dotted trail on the right edge draws as the page scrolls; a hiker
  *    marker walks down it and reaches a flag at the end of the page.
- * 2. Speed: scroll velocity is written to `--sa-v` (0 to 1, eased back to 0) on
- *    <html>. CSS uses it to stretch photos slightly while scrolling fast.
- * 3. Headings: section headings drift sideways a little as they cross the screen
- *    (CSS `translate`, so it composes with their own entrance transforms).
- * 4. Trail words: the small words inside headlines play their trail animation as they
- *    enter view; each is told whether its headline sits on a dark or light ground.
+ * 2. Headings: on large screens with a mouse, section headings drift sideways a little
+ *    as they cross the screen (CSS `translate`, composes with their entrance transforms).
+ *    Skipped on phones and tablets, where the per-frame style work made scrolling stutter.
+ * 3. Trail words: the small words inside headlines play their trail animation as they
+ *    enter view, and loop only while on screen; each is told whether its headline sits
+ *    on a dark or light ground.
  *
- * Reduced motion: no speed stretch, drift or trail animation; the page trail still shows progress.
+ * Reduced motion: no drift or trail animation; the page trail still shows progress.
  */
 export default function ScrollFx() {
   const pathname = usePathname();
@@ -36,43 +36,9 @@ export default function ScrollFx() {
     return () => ro.disconnect();
   }, [pathname]);
 
-  // Scroll speed to --sa-v.
+  // Headings drift sideways across their pass through the screen (large screens with a mouse).
   useEffect(() => {
-    if (reduce) return;
-    const root = document.documentElement;
-    let lastY = window.scrollY;
-    let lastT = performance.now();
-    let v = 0;
-    let raf = 0;
-    const tick = () => {
-      const now = performance.now();
-      const y = window.scrollY;
-      const speed = Math.abs(y - lastY) / Math.max(1, now - lastT); // px per ms
-      lastY = y;
-      lastT = now;
-      const target = Math.min(1, speed / 4);
-      v += (target - v) * (target > v ? 0.35 : 0.08);
-      if (v < 0.01 && target < 0.01) v = 0;
-      root.style.setProperty("--sa-v", v === 0 ? "0" : v.toFixed(3));
-      raf = v === 0 ? 0 : requestAnimationFrame(tick);
-    };
-    const onScroll = () => {
-      if (!raf) {
-        lastT = performance.now();
-        raf = requestAnimationFrame(tick);
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-      root.style.removeProperty("--sa-v");
-    };
-  }, [reduce]);
-
-  // Headings drift sideways across their pass through the screen.
-  useEffect(() => {
-    if (reduce) return;
+    if (reduce || !window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches) return;
     const heads = Array.from(document.querySelectorAll<HTMLElement>("main h2:not([data-no-drift])"));
     if (!heads.length) return;
     const visible = new Set<HTMLElement>();
@@ -128,7 +94,19 @@ export default function ScrollFx() {
       w.dataset.sw = "ready";
       io.observe(w);
     });
-    return () => io.disconnect();
+    // Loops (hiker, glow, flag) run only while the word is on screen.
+    const playing = new IntersectionObserver((entries) =>
+      entries.forEach((e) => {
+        const el = e.target as HTMLElement;
+        if (e.isIntersecting) el.dataset.play = "";
+        else delete el.dataset.play;
+      })
+    );
+    document.querySelectorAll<HTMLElement>("[data-sticker-word]").forEach((w) => playing.observe(w));
+    return () => {
+      io.disconnect();
+      playing.disconnect();
+    };
   }, [pathname, reduce]);
 
   if (!tall) return null;

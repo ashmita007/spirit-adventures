@@ -102,6 +102,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Pages revalidate every 60 s. Without a cap, Next tells caches they may keep serving a
+  // stale page for up to a year while refreshing, so visitors could see an old version
+  // after a deploy or an Owner HQ edit. Allow stale copies for 4 minutes at most.
+  expireTime: 300,
   images: {
     // Cloudinary resizes its own images; see src/lib/image-loader.ts
     loader: "custom",

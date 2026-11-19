@@ -49,6 +49,9 @@ function ReelCard({ img, onOpen }: { img: GalleryImage; onOpen: () => void }) {
   );
 }
 
+/** Photos per reel row (each row is drawn twice for the seamless loop). */
+const REEL_ROW = 14;
+
 /**
  * "Moments from the wild" on the home page, from real uploaded photos (curated gallery
  * plus every trip photo).
@@ -65,9 +68,10 @@ export default function GalleryPreview({ images }: { images: GalleryImage[] }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const photos = useMemo(() => images.filter((i) => i.image_url), [images]);
-  const half = Math.ceil(photos.length / 2);
+  // Each reel row is drawn twice for the seamless loop, so cap it: the gallery page has the rest.
+  const half = Math.min(REEL_ROW, Math.ceil(photos.length / 2));
   const rowA = photos.slice(0, Math.max(half, 6));
-  const rowB = photos.slice(half).length >= 6 ? photos.slice(half) : [...photos].reverse();
+  const rowB = photos.slice(half, half + REEL_ROW).length >= 6 ? photos.slice(half, half + REEL_ROW) : [...photos].reverse().slice(0, REEL_ROW);
   const showcase = photos.slice(0, 8);
   const current = showcase[activeIndex] ?? showcase[0];
 
